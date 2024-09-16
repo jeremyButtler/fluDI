@@ -1,0 +1,4 @@
+b getDIIds.c:492
+b getDIIds.c:538 if entryOnUL == 15
+
+r -fq "$HOME/files/testing/diflu/SRR29165088.fastq" -slow

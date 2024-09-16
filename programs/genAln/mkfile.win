@@ -1,0 +1,69 @@
+LD=link
+CC=cl
+CFLAGS= /O2 /Ot /Za /Tc
+genLib=..\genLib
+curDir=..\genAln
+O=.o.win
+ext=.win
+
+sourceFILES= \
+   alnDefs.h \
+   $(genLib)\dataTypeShortHand.h \
+   $(genLib)\genMath.h \
+   $(genLib)\base10str.c \
+   $(genLib)\base10str.h \
+   $(genLib)\numToStr.c \
+   $(genLib)\numToStr.h \
+   $(genLib)\ulCp.c \
+   $(genLib)\ulCp.h \
+   $(genLib)\seqST.c \
+   $(genLib)\seqST.h \
+   $(genLib)\samEntry.c \
+   $(genLib)\samEntry.h
+
+all: memwater$O water$O samToAln$O kmerFind$O
+
+kmerFind$O: kmerFind.c kmerFind.h memwater$O $(genLib)\ntTo2Bit.h $(genLib)\shellSort.c $(genLib)\shellSort.h
+   cd $(genLib)
+	nmake /F mkfile$(ext) CFLAGS="$(CFLAGS)" CC="$(CC)" shellSort$O
+   cd $(curDir)
+	$(CC) /Fo:kmerFind$O /c $(CFLAGS) kmerFind.c
+
+memwater$O: memwater.c memwater.h indexToCoord$O alnSet$O libraries
+	$(CC) /Fo:memwater$O /c $(CFLAGS) memwater.c
+
+water$O: memwater.c memwater.h indexToCoord$O alnSet$O dirMatrix$O
+	$(CC) /Fo:water$O /c $(CFLAGS) water.c
+
+libraries: $(sourceFILES)
+   cd $(genLib)
+	nmake /F $(genLib)\mkfile$(ext) CFLAGS="$(CFLAGS)" CC="$(CC)" base10str$O
+	nmake /F $(genLib)\mkfile$(ext) CFLAGS="$(CFLAGS)" CC="$(CC)" numToStr$O
+	nmake /F $(genLib)\mkfile$(ext) CFLAGS="$(CFLAGS)" CC="$(CC)" ulCp$O
+	nmake /F $(genLib)\mkfile$(ext) CFLAGS="$(CFLAGS)" CC="$(CC)" seqST$O
+	nmake /F $(genLib)\mkfile$(ext) CFLAGS="$(CFLAGS)" CC="$(CC)" samEntry$O
+   cd $(curDir)
+
+indexToCoord$O: indexToCoord.c indexToCoord.h
+	$(CC) /Fo:indexToCoord$O /c $(CFLAGS) indexToCoord.c
+
+alnSet$O: alnSet.c alnSet.h alnDefs.h $(genLib)/dataTypeShortHand.h $(genLib)/base10str.c $(genLib)/base10str.h
+   cd $(genLib)
+	nmake /F $(genLib)\mkfile$(ext) CFLAGS="$(CFLAGS)" CC="$(CC)" base10str$O
+   cd $(curDir)
+	$(CC) /Fo:alnSet$O /c $(CFLAGS) alnSet.c
+
+dirMatrix$O: dirMatrix.c dirMatrix.h libraries $(genLib)/charCp.c $(genLib)/charCp.h
+   cd $(genLib)
+	nmake /F $(genLib)\mkfile$(ext) CFLAGS="$(CFLAGS)" CC="$(CC)" charCp$O
+   cd $(curDir)
+	$(CC) /Fo:dirMatrix$O /c $(CFLAGS) dirMatrix.c
+
+samToAln$O: samToAln.c samToAln.h libraries
+	$(CC) /Fo:samToAln$O /c $(CFLAGS) samToAln.c
+
+clean:
+	del *$O
+   cd $(genLib)
+	nmake /F $(genLib)\mkfile$(ext) clean
+   cd $(curDir)

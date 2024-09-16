@@ -1,0 +1,40 @@
+LD=link
+CC=cl
+CFLAGS= /O2 /Ot /Za /Tc
+NAME=diCoords
+genLib=..\genLib
+O=.o.win
+
+objFiles=\
+   $(genLib)\base10str$O \
+   $(genLib)\ulCp$O \
+   $(genLib)\charCp$O \
+   $(genLib)\numToStr$O \
+   $(genLib)\samEntry$O
+
+all: mainDICoords$O $(objFiles)
+	$(LD) /out:$(NAME).exe mainDICoords$O diCoords$O $(objFiles)
+
+mainDICoords$O: mainDICoords.c diCoords$O
+	$(CC) /Fo:mainDICoords$O /c $(CFLAGS) mainDICoords.c
+
+diCoords$O: diCoords.c diCoords.h $(genLib)\samEntry$O
+	$(CC) /Fo:diCoords$O /c $(CFLAGS) diCoords.c
+
+$(genLib)\base10str$O: $(genLib)\base10str.c $(genLib)\base10str.h
+	$(CC) /Fo:$(genLib)\base10str$O /c $(CFLAGS) $(genLib)\base10str.c
+
+$(genLib)\ulCp$O: $(genLib)\ulCp.c $(genLib)\ulCp.h
+	$(CC) /Fo:$(genLib)\ulCp$O /c $(CFLAGS) $(genLib)\ulCp.c
+
+$(genLib)\charCp$O: $(genLib)\charCp.c $(genLib)\charCp.h
+	$(CC) /Fo:$(genLib)\charCp$O /c $(CFLAGS) $(genLib)\charCp.c
+
+$(genLib)\numToStr$O: $(genLib)\numToStr.c $(genLib)\numToStr.h
+	$(CC) /Fo:$(genLib)\numToStr$O /c $(CFLAGS) $(genLib)\numToStr.c
+
+$(genLib)\samEntry$O: $(genLib)\samEntry.c $(genLib)\samEntry.h $(genLib)\ulCp$O $(genLib)\base10str$O $(genLib)\numToStr$O $(genLib)\ntTo5Bit.h $(genLib)\dataTypeShortHand.h
+	$(CC) /Fo:$(genLib)\samEntry$O /c $(CFLAGS) $(genLib)\samEntry.c
+
+clean:
+	del $(objFiles) mainDICoords$O diCoords$O;

@@ -1,0 +1,60 @@
+</$objtype/mkfile
+
+# call with mk -f makefile.plan9
+
+CFLAGS= -w -DPLAN9
+ext=.plan9
+genLib=../genLib
+
+sourceFILES= \
+   alnDefs.h \
+   $genLib/dataTypeShortHand.h \
+   $genLib/genMath.h \
+   $genLib/base10str.c \
+   $genLib/base10str.h \
+   $genLib/numToStr.c \
+   $genLib/numToStr.h \
+   $genLib/ulCp.c \
+   $genLib/ulCp.h \
+   $genLib/seqST.c \
+   $genLib/seqST.h \
+   $genLib/samEntry.c \
+   $genLib/samEntry.h
+
+
+all: memwater$O water$O samToAln$O kmerFind$O
+
+kmerFind$O: kmerFind.c kmerFind.h memwater$O $genLib/ntTo2Bit.h $genLib/shellSort.c $genLib/shellSort.h
+	make CFLAGS="$CFLAGS" CC="$CC" -f $genLib/mkfile$ext -C $genLib shellSort$O
+	$CC $CFLAGS -o kmerFind$O kmerFind.c
+
+memwater$O: memwater.c memwater.h indexToCoord$O alnSet$O libraries
+	$CC $CFLAGS -o memwater$O memwater.c
+
+water$O: memwater.c memwater.h indexToCoord$O alnSet$O dirMatrix$O
+	$CC $CFLAGS -o water$O water.c
+
+libraries: $(sourceFILES)
+	make CFLAGS="$CFLAGS" CC="$CC" -f $genLib/mkfile$ext -C $genLib base10str$O
+	make CFLAGS="$CFLAGS" CC="$CC" -f $genLib/mkfile$ext -C $genLib numToStr$O
+	make CFLAGS="$CFLAGS" CC="$CC" -f $genLib/mkfile$ext -C $genLib ulCp$O
+	make CFLAGS="$CFLAGS" CC="$CC" -f $genLib/mkfile$ext -C $genLib seqST$O
+	make CFLAGS="$CFLAGS" CC="$CC" -f $genLib/mkfile$ext -C $genLib samEntry$O
+
+indexToCoord$O: indexToCoord.c indexToCoord.h
+	$CC $CFLAGS -o indexToCoord$O indexToCoord.c
+
+alnSet$O: alnSet.c alnSet.h alnDefs.h $genLib/dataTypeShortHand.h $genLib/base10str.c $genLib/base10str.h
+	make CFLAGS="$CFLAGS" CC="$CC" -f $genLib/mkfile$ext -C $genLib base10str$O
+	$CC $CFLAGS -o alnSet$O alnSet.c
+
+dirMatrix$O: dirMatrix.c dirMatrix.h libraries $genLib/charCp.c $genLib/charCp.h
+	make CFLAGS="$CFLAGS" CC="$CC" -f $genLib/mkfile$ext -C $genLib charCp$O
+	$CC $CFLAGS -o dirMatrix$O dirMatrix.c
+
+samToAln$O: samToAln.c samToAln.h libraries
+	$CC $CFLAGS -o samToAln$O samToAln.c
+
+clean:
+	rm *$O
+	make -f $genLib/mkfile$ext -C $genLib clean

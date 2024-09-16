@@ -1,0 +1,60 @@
+CC=cc
+CFLAGS= -O0 -std=c89 -Wall -Wextra -ggdb -g
+O=.o.bug
+ext=.bug
+
+allFILES= \
+   shellSort$O \
+   genMath$O \
+   charCp$O \
+   ulCp$O \
+   numToStr$O \
+   base10str$O \
+   codonTbl$O \
+   seqST$O \
+   kmerCnt$O \
+   geneCoord$O \
+   samEntry$O \
+   trimSam$O \
+
+
+all: $(allFILES)
+
+trimSam$O: trimSam.c trimSam.h samEntry$O dataTypeShortHand.h
+	$(CC) $(CFLAGS) -c -o trimSam$O trimSam.c
+
+samEntry$O: samEntry.c samEntry.h dataTypeShortHand.h ntTo5Bit.h numToStr$O base10str$O ulCp$O
+	$(CC) $(CFLAGS) -c -o samEntry$O samEntry.c
+
+geneCoord$O: geneCoord.c geneCoord.h dataTypeShortHand.h base10str$O ulCp$O genMath$O
+	$(CC) $(CFLAGS) -c -o geneCoord$O geneCoord.c
+
+kmerCnt$O: kmerCnt.c kmerCnt.h dataTypeShortHand.h ulCp$O ntTo2Bit.h
+	$(CC) $(CFLAGS) -c -o kmerCnt$O kmerCnt.c
+
+seqST$O: seqST.c seqST.h dataTypeShortHand.h ulCp$O
+	$(CC) $(CFLAGS) -c -o seqST$O seqST.c
+
+codonTbl$O: codonTbl.c codonTbl.h ntTo2Bit.h revNtTo2Bit.h dataTypeShortHand.h
+	$(CC) $(CFLAGS) -c -o codonTbl$O codonTbl.c
+
+base10str$O: base10str.c base10str.h
+	$(CC) $(CFLAGS) -c -o base10str$O base10str.c
+
+numToStr$O: numToStr.c numToStr.h
+	$(CC) $(CFLAGS) -c -o numToStr$O numToStr.c
+
+ulCp$O: ulCp.c ulCp.h
+	$(CC) $(CFLAGS) -c -o ulCp$O ulCp.c
+
+charCp$O: charCp.c charCp.h
+	$(CC) $(CFLAGS) -c -o charCp$O charCp.c
+
+genMath$O: genMath.c genMath.h
+	$(CC) $(CFLAGS) -c -o genMath$O genMath.c
+
+shellSort$O: shellSort.c shellSort.h
+	$(CC) $(CFLAGS) -c -o shellSort$O shellSort.c
+
+clean:
+	rm *$O

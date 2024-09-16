@@ -1,0 +1,20 @@
+b findDIFrag.c:1248
+
+r -ref $HOME/files/testing/diflu/fluGenbankRef.fa -fq $HOME/files/testing/diflu/SRR29165088.fastq
+
+define pdel
+   set $cigCnt = 0
+   set $samStruct = $arg0
+
+   printf "%s\t", $samStruct->qryIdStr
+
+   while($cigCnt < $samStruct->lenCigUI)
+      if($samStruct->cigTypeStr[$cigCnt] == 'D')
+         printf "%i\t", $samStruct->cigValAryI[$cigCnt]
+      end
+
+      set $cigCnt = $cigCnt + 1
+   end
+
+   printf "\n"
+end

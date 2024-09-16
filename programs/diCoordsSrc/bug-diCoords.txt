@@ -1,0 +1,21 @@
+b getDICoords.c:723
+b getDICoords.c:723 if numEntryUL == 3103
+
+r -sam ~/files/testing/diflu/map-cal2009-filt.sam
+
+define pdel
+   set $cigCnt = 0
+   set $samStruct = $arg0
+
+   printf "%s\t", $samStruct->qryIdStr
+
+   while($cigCnt < $samStruct->lenCigUI)
+      if($samStruct->cigTypeStr[$cigCnt] == 'D')
+         printf "%i\t", $samStruct->cigValAryI[$cigCnt]
+      end
+
+      set $cigCnt = $cigCnt + 1
+   end
+
+   printf "\n"
+end

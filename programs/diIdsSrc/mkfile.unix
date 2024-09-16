@@ -1,0 +1,64 @@
+LD=cc
+CC=cc
+CFLAGS= -O3 -std=c89 -Wall -Wextra
+NAME=diIds
+PREFIX=/usr/local/bin
+genLib=../genLib
+genAln=../genAln
+O=.o.unix
+
+objFiles=\
+   $(genLib)/base10str$O \
+   $(genLib)/ulCp$O \
+   $(genLib)/charCp$O \
+   $(genLib)/shellSort$O \
+   $(genLib)/seqST$O \
+   $(genAln)/indexToCoord$O \
+   $(genAln)/alnSet$O \
+   $(genAln)/memwater$O \
+   $(genAln)/kmerFind$O \
+   fluST$O \
+   diIds$O \
+
+all: diIds$O
+	$(LD) -o $(NAME) $(CFLAGS) $(objFiles)
+
+diIds$O: diIds.c fluST$O $(genLib)/charCp$O $(genAln)/kmerFind$O
+	$(CC) -o diIds$O -c $(CFLAGS) diIds.c
+
+fluST$O: fluST.c fluST.h fluSeg.h $(genLib)/shellSort$O $(genAln)/alnDefs.h $(genLib)/dataTypeShortHand.h
+	$(CC) -o fluST$O -c $(CFLAGS) fluST.c
+
+$(genLib)/base10str$O: $(genLib)/base10str.c $(genLib)/base10str.h
+	$(CC) -o $(genLib)/base10str$O -c $(CFLAGS) $(genLib)/base10str.c
+
+$(genLib)/ulCp$O: $(genLib)/ulCp.c $(genLib)/ulCp.h
+	$(CC) -o $(genLib)/ulCp$O -c $(CFLAGS) $(genLib)/ulCp.c
+
+$(genLib)/charCp$O: $(genLib)/charCp.c $(genLib)/charCp.h
+	$(CC) -o $(genLib)/charCp$O -c $(CFLAGS) $(genLib)/charCp.c
+
+$(genLib)/shellSort$O: $(genLib)/shellSort.c $(genLib)/shellSort.h
+	$(CC) -o $(genLib)/shellSort$O -c $(CFLAGS) $(genLib)/shellSort.c
+
+$(genLib)/seqST$O: $(genLib)/seqST.c $(genLib)/seqST.h $(genLib)/ulCp$O $(genLib)/dataTypeShortHand.h
+	$(CC) -o $(genLib)/seqST$O -c $(CFLAGS) $(genLib)/seqST.c
+
+$(genAln)/indexToCoord$O: $(genAln)/indexToCoord.c $(genAln)/indexToCoord.h
+	$(CC) -o $(genAln)/indexToCoord$O -c $(CFLAGS) $(genAln)/indexToCoord.c
+
+$(genAln)/alnSet$O: $(genAln)/alnSet.c $(genAln)/alnSet.h $(genAln)/alnDefs.h $(genLib)/base10str$O $(genLib)/dataTypeShortHand.h
+	$(CC) -o $(genAln)/alnSet$O -c $(CFLAGS) $(genAln)/alnSet.c
+
+$(genAln)/memwater$O: $(genAln)/memwater.c $(genAln)/memwater.h $(genAln)/alnSet$O $(genAln)/indexToCoord$O $(genLib)/seqST$O $(genLib)/genMath.h
+	$(CC) -o $(genAln)/memwater$O -c $(CFLAGS) $(genAln)/memwater.c
+
+$(genAln)/kmerFind$O: $(genAln)/kmerFind.c $(genAln)/kmerFind.h $(genAln)/memwater$O $(genLib)/shellSort$O 
+	$(CC) -o $(genAln)/kmerFind$O -c $(CFLAGS) $(genAln)/kmerFind.c
+
+install:
+	cp $(NAME) $(PREFIX)
+	chmod a+x $(PREFIX)/$(NAME)
+
+clean:
+	rm $(objFiles)
