@@ -273,6 +273,9 @@ Basically step 6 of diFrag, with coordinate recording.
 
 # Updates:
 
+- 2024-10-30
+  - updateing to keep in sync with my bioTools
+    organization
 - 2024-09-15:
   - modified code base so c89 complaint
   - shorted names of several programs

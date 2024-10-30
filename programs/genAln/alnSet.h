@@ -1,13 +1,7 @@
-/*########################################################
-# Name alnSetStruct
-# Use:
-#  o Holds the settings structures and supporting
-#    functions for setting structures for alnSeq's
-#    pairwise aligners.
-########################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of File
+' alnSet SOF: Start Of File
+'  - holds settings structures and supporting functions
+'    for my pairwise aligners
 '  o header:
 '    - Header guards and defined variables
 '  o .h st01 alnSet:

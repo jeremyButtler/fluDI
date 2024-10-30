@@ -1,60 +1,61 @@
 LD=link
 CC=cl
 CFLAGS= /O2 /Ot /Za /Tc
-NAME=diIds
+NAME=diIds.exe
 PREFIX=
 genLib=..\genLib
+genBio=..\genBio
 genAln=..\genAln
-O=.o.win
+O=o.win
 
 objFiles=\
-   $(genLib)\base10str$O \
-   $(genLib)\ulCp$O \
-   $(genLib)\charCp$O \
-   $(genLib)\shellSort$O \
-   $(genLib)\seqST$O \
-   $(genAln)\indexToCoord$O \
-   $(genAln)\alnSet$O \
-   $(genAln)\memwater$O \
-   $(genAln)\kmerFind$O \
-   fluST$O \
-   diIds$O \
+   $(genLib)\base10str.$O \
+   $(genLib)\ulCp.$O \
+   $(genLib)\charCp.$O \
+   $(genLib)\shellSort.$O \
+   $(genBio)\seqST.$O \
+   $(genAln)\indexToCoord.$O \
+   $(genAln)\alnSet.$O \
+   $(genAln)\memwater.$O \
+   $(genAln)\kmerFind.$O \
+   fluST.$O \
+   diIds.$O \
 
-all: diIds$O
+all: diIds.$O
 	$(LD) /out:$(NAME).exe $(objFiles)
 
-diIds$O: diIds.c fluST$O $(genLib)\charCp$O $(genAln)\kmerFind$O
-	$(CC) /Fo:diIds$O /c $(CFLAGS) diIds.c
+diIds.$O: diIds.c fluST.$O $(genLib)\charCp.$O $(genAln)\kmerFind.$O
+	$(CC) /Fo:diIds.$O /c $(CFLAGS) diIds.c
 
-fluST$O: fluST.c fluST.h fluSeg.h $(genLib)\shellSort$O $(genAln)\alnDefs.h $(genLib)\dataTypeShortHand.h
-	$(CC) /Fo:fluST$O /c $(CFLAGS) fluST.c
+fluST.$O: fluST.c fluST.h fluSeg.h $(genLib)\shellSort.$O $(genAln)\alnDefs.h $(genLib)\dataTypeShortHand.h
+	$(CC) /Fo:fluST.$O /c $(CFLAGS) fluST.c
 
-$(genLib)\base10str$O: $(genLib)\base10str.c $(genLib)\base10str.h
-	$(CC) /Fo:$(genLib)\base10str$O /c $(CFLAGS) $(genLib)\base10str.c
+$(genLib)\base10str.$O: $(genLib)\base10str.c $(genLib)\base10str.h
+	$(CC) /Fo:$(genLib)\base10str.$O /c $(CFLAGS) $(genLib)\base10str.c
 
-$(genLib)\ulCp$O: $(genLib)\ulCp.c $(genLib)\ulCp.h
-	$(CC) /Fo:$(genLib)\ulCp$O /c $(CFLAGS) $(genLib)\ulCp.c
+$(genLib)\ulCp.$O: $(genLib)\ulCp.c $(genLib)\ulCp.h
+	$(CC) /Fo:$(genLib)\ulCp.$O /c $(CFLAGS) $(genLib)\ulCp.c
 
-$(genLib)\charCp$O: $(genLib)\charCp.c $(genLib)\charCp.h
-	$(CC) /Fo:$(genLib)\charCp$O /c $(CFLAGS) $(genLib)\charCp.c
+$(genLib)\charCp.$O: $(genLib)\charCp.c $(genLib)\charCp.h
+	$(CC) /Fo:$(genLib)\charCp.$O /c $(CFLAGS) $(genLib)\charCp.c
 
-$(genLib)\shellSort$O: $(genLib)\shellSort.c $(genLib)\shellSort.h
-	$(CC) /Fo:$(genLib)\shellSort$O /c $(CFLAGS) $(genLib)\shellSort.c
+$(genLib)\shellSort.$O: $(genLib)\shellSort.c $(genLib)\shellSort.h
+	$(CC) /Fo:$(genLib)\shellSort.$O /c $(CFLAGS) $(genLib)\shellSort.c
 
-$(genLib)\seqST$O: $(genLib)\seqST.c $(genLib)\seqST.h $(genLib)\ulCp$O $(genLib)\dataTypeShortHand.h
-	$(CC) /Fo:$(genLib)\seqST$O /c $(CFLAGS) $(genLib)\seqST.c
+$(genBio)\seqST.$O: $(genBio)\seqST.c $(genBio)\seqST.h $(genLib)\ulCp.$O $(genLib)\dataTypeShortHand.h
+	$(CC) /Fo:$(genBio)\seqST.$O /c $(CFLAGS) $(genBio)\seqST.c
 
-$(genAln)\indexToCoord$O: $(genAln)\indexToCoord.c $(genAln)\indexToCoord.h
-	$(CC) /Fo:$(genAln)\indexToCoord$O /c $(CFLAGS) $(genAln)\indexToCoord.c
+$(genAln)\indexToCoord.$O: $(genAln)\indexToCoord.c $(genAln)\indexToCoord.h
+	$(CC) /Fo:$(genAln)\indexToCoord.$O /c $(CFLAGS) $(genAln)\indexToCoord.c
 
-$(genAln)\alnSet$O: $(genAln)\alnSet.c $(genAln)\alnSet.h $(genAln)\alnDefs.h $(genLib)\base10str$O $(genLib)\dataTypeShortHand.h
-	$(CC) /Fo:$(genAln)\alnSet$O /c $(CFLAGS) $(genAln)\alnSet.c
+$(genAln)\alnSet.$O: $(genAln)\alnSet.c $(genAln)\alnSet.h $(genAln)\alnDefs.h $(genLib)\base10str.$O $(genLib)\dataTypeShortHand.h
+	$(CC) /Fo:$(genAln)\alnSet.$O /c $(CFLAGS) $(genAln)\alnSet.c
 
-$(genAln)\memwater$O: $(genAln)\memwater.c $(genAln)\memwater.h $(genAln)\alnSet$O $(genAln)\indexToCoord$O $(genLib)\seqST$O $(genLib)\genMath.h
-	$(CC) /Fo:$(genAln)\memwater$O /c $(CFLAGS) $(genAln)\memwater.c
+$(genAln)\memwater.$O: $(genAln)\memwater.c $(genAln)\memwater.h $(genAln)\alnSet.$O $(genAln)\indexToCoord.$O $(genBio)\seqST.$O $(genLib)\genMath.h
+	$(CC) /Fo:$(genAln)\memwater.$O /c $(CFLAGS) $(genAln)\memwater.c
 
-$(genAln)\kmerFind$O: $(genAln)\kmerFind.c $(genAln)\kmerFind.h $(genAln)\memwater$O $(genLib)\shellSort$O 
-	$(CC) /Fo:$(genAln)\kmerFind$O /c $(CFLAGS) $(genAln)\kmerFind.c
+$(genAln)\kmerFind.$O: $(genAln)\kmerFind.c $(genAln)\kmerFind.h $(genAln)\memwater.$O $(genLib)\shellSort.$O 
+	$(CC) /Fo:$(genAln)\kmerFind.$O /c $(CFLAGS) $(genAln)\kmerFind.c
 
 install:
 	copy $(NAME).exe $(PREFIX)

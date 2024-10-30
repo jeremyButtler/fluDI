@@ -1,16 +1,12 @@
-/*########################################################
-# Name: shellSort
-#   - holds functions for doing shell sorts on arrays
-# Note:
-#   - most of this code is from
-#      o Adam Drozdek. 2013. Data Structures and
-#        Algorithims in c++. Cengage Leraning. fourth
-#        edition. pages 505-508
-########################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of File
-'   - note: this is long, but is really a set of three
+' shellSort SOF: Start Of File
+'   - holds functions for doing shell sorts on arrays
+'   o note:
+'     - most of this code is from
+'        o Adam Drozdek. 2013. Data Structures and
+'          Algorithims in c++. Cengage Leraning. fourth
+'          edition. pages 505-508
+'   o note: this is long, but is really a set of three
 '     functions per data type
 '     o xxSearch_shellSort
 '       - search for query in a sorted array
@@ -68,6 +64,8 @@
 '     - searches for range in singed char array
 '   o fun24: sc_shellSort
 '     - sorts signed char array from least to greatest
+'   o fun25: dbl_shellSort
+'     - sorts a double array from least to greatest
 '   o license:
 '     - licensing for this code (public domain / mit)
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -1659,7 +1657,7 @@ sc_shellSort(
    ^   - find the max search value (number rounds to sort)
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
-   /*Recursion formsca: h[0] = 1, h[n] = 3 * h[n - 1] +1*/
+   /*Recursion formula: h[0] = 1, h[n] = 3 * h[n - 1] +1*/
    subUL = 1; /*Initialzie first array*/
 
    while(subUL < numElmUL - 1)
@@ -1715,6 +1713,117 @@ sc_shellSort(
       subUL = (subUL - 1) / 3; /*Move to next round*/
    } /*Loop: all rounds*/
 } /*sc_shellSort*/
+
+/*-------------------------------------------------------\
+| Fun25: dbl_shellSort
+|   - sorts a double array from least to greatest
+| Input:
+|   - dblAry:
+|     o array to sort
+|   - startUL:
+|     o first element to start sorting at
+|   - endUL:
+|     o last element to sort (index 0)
+| Output:
+|   - Modifies:
+|     o scAry to be sorted form least to greatest
+\-------------------------------------------------------*/
+void
+dbl_shellSort(
+   double *dblAry,
+   unsigned long startUL,
+   unsigned long endUL
+){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+   ' Fun25 TOC:
+   '   - sorts a double array from least to greatest
+   '   o fun24 sec01:
+   '     - variable declerations
+   '   o fun24 sec02:
+   '     - find the number of rounds to sort for
+   '   o fun24 sec03:
+   '     - sort the arrays
+   \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun25 Sec01:
+   ^   - variable declerations
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   /*Number of elements to sort*/
+   unsigned long numElmUL = endUL - startUL;
+   double swapDbl = 0;
+
+   /*Number of sorting rounds*/
+   unsigned long subUL = 0;
+   unsigned long nextUL = 0;
+   unsigned long lastUL = 0;
+   unsigned long onUL = 0;
+
+   /*Variables to incurment loops*/
+   unsigned long ulIndex = 0;
+   unsigned long ulElm = 0;
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun25 Sec02:
+   ^   - find the max search value (number rounds to sort)
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   /*Recursion formula: h[0] = 1, h[n] = 3 * h[n - 1] +1*/
+   subUL = 1; /*Initialzie first array*/
+
+   while(subUL < numElmUL - 1)
+      subUL = (3 * subUL) + 1;
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun25 Sec03:
+   ^   - sort arrays
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   while(subUL > 0)
+   { /*Loop: all rounds*/
+      for(
+         ulIndex = 0;
+         ulIndex <= subUL;
+         ++ulIndex
+      ){ /*Loop: though sub array*/
+         ulElm = ulIndex;
+
+         for(
+            ulElm = ulIndex;
+            ulElm + subUL <= endUL;
+            ulElm += subUL
+         ){ /*Loop: swap elements in subarray*/
+            nextUL = ulElm + subUL;
+
+            if(dblAry[ulElm] > dblAry[nextUL])
+            { /*If I need to swap an element*/
+               swapDbl = dblAry[ulElm];
+               dblAry[ulElm] = dblAry[nextUL];
+               dblAry[ulElm] = swapDbl;
+
+               lastUL = ulElm;
+               onUL = ulElm;
+
+               while(lastUL >= subUL)
+               { /*loop: move swapped element back*/
+                  lastUL -= subUL;
+
+                  if(dblAry[onUL] > dblAry[lastUL])
+                     break; /*Positioned the element*/
+
+                  swapDbl = dblAry[onUL];
+                  dblAry[onUL] = dblAry[lastUL];
+                  dblAry[onUL] = swapDbl;
+   
+                  onUL = lastUL;
+               } /*Loop: move swapped element back*/
+            } /*If I need to swap elements*/
+         } /*Loop: swap elements in subarray*/
+      } /*Loop: though sub array*/
+
+      subUL = (subUL - 1) / 3; /*Move to next round*/
+   } /*Loop: all rounds*/
+} /*dbl_shellSort*/
 
 /*=======================================================\
 : License:

@@ -1,79 +1,84 @@
-</$objtype/mkfile
+<$objtype/mkfile
 
-CFLAGS= -w -DPLAN9
+CFLAGS= -DPLAN9
 NAME=diFrag
-PREFIX=/usr/local/bin
+PREFIX=$home/bin
 genLib=../genLib
+genBio=../genBio
 genAln=../genAln
 diCoords=../diCoordsSrc
 
 objFiles=\
-   $genLib/base10str$O \
-   $genLib/numToStr$O \
-   $genLib/ulCp$O \
-   $genLib/charCp$O \
-   $genLib/genMath$O \
-   $genLib/seqST$O \
-   $genLib/kmerCnt$O \
-   $genLib/samEntry$O \
-   $diCoords/diCoords$O \
-   $genAln/indexToCoord$O \
-   $genAln/alnSet$O \
-   $genAln/dirMatrix$O \
-   $genAln/water$O \
-   diScan$O \
-   diFrag$O
+   $genLib/base10str.$O \
+   $genLib/numToStr.$O \
+   $genLib/ulCp.$O \
+   $genLib/charCp.$O \
+   $genLib/genMath.$O \
+   $genLib/strAry.$O \
+   $genBio/seqST.$O \
+   $genBio/kmerCnt.$O \
+   $genBio/samEntry.$O \
+   $diCoords/diCoords.$O \
+   $genAln/indexToCoord.$O \
+   $genAln/alnSet.$O \
+   $genAln/dirMatrix.$O \
+   $genAln/water.$O \
+   diScan.$O \
+   diFrag.$O
 
-all: diFrag$O
+all: diFrag.$O
 	$LD -o $NAME $CFLAGS $objFiles
 
-diFrag$O: diFrag.c diScan$O
-	$CC $CFLAGS diFrag.c
+diFrag.$O: diFrag.c diScan.$O
+	$CC -o diFrag.$O $CFLAGS diFrag.c
 
-diScan$O: diScan.c diScan.h  $genLib/kmerCnt$O $genLib/genMath$O $diCoords/diCoords$O $genAln/water$O $genAln/dirMatrix$O 
-	$CC $CFLAGS diScan.c
+diScan.$O: diScan.c diScan.h  $genBio/kmerCnt.$O $genLib/genMath.$O $diCoords/diCoords.$O $genAln/water.$O $genAln/dirMatrix.$O 
+	$CC -o diScan.$O $CFLAGS diScan.c
 
-$genLib/base10str$O: $genLib/base10str.c $genLib/base10str.h
-	$CC $CFLAGS $genLib/base10str.c
+$genLib/base10str.$O: $genLib/base10str.c $genLib/base10str.h
+	$CC -o $genLib/base10str.$O $CFLAGS $genLib/base10str.c
 
-$genLib/numToStr$O: $genLib/numToStr.c $genLib/numToStr.h
-	$CC $CFLAGS $genLib/numToStr.c
+$genLib/numToStr.$O: $genLib/numToStr.c $genLib/numToStr.h
+	$CC -o $genLib/numToStr.$O $CFLAGS $genLib/numToStr.c
 
-$genLib/ulCp$O: $genLib/ulCp.c $genLib/ulCp.h
-	$CC $CFLAGS $genLib/ulCp.c
+$genLib/ulCp.$O: $genLib/ulCp.c $genLib/ulCp.h
+	$CC -o $genLib/ulCp.$O $CFLAGS $genLib/ulCp.c
 
-$genLib/charCp$O: $genLib/charCp.c $genLib/charCp.h
-	$CC $CFLAGS $genLib/charCp.c
+$genLib/charCp.$O: $genLib/charCp.c $genLib/charCp.h
+	$CC -o $genLib/charCp.$O $CFLAGS $genLib/charCp.c
 
-$genLib/genMath$O: $genLib/genMath.c $genLib/genMath.h
-	$CC $CFLAGS $genLib/genMath.c
+$genLib/genMath.$O: $genLib/genMath.c $genLib/genMath.h
+	$CC -o $genLib/genMath.$O $CFLAGS $genLib/genMath.c
 
-$genLib/seqST$O: $genLib/seqST.c $genLib/seqST.h $genLib/ulCp$O $genLib/dataTypeShortHand.h
-	$CC $CFLAGS $genLib/seqST.c
+$genLib/strAry.$O: $genLib/strAry.c $genLib/strAry.h $genLib/ulCp.$O
+	$CC -o $genLib/strAry.$O $CFLAGS $genLib/strAry.c
 
-$genLib/kmerCnt$O: $genLib/kmerCnt.c $genLib/kmerCnt.h $genLib/seqST$O $genLib/ntTo2Bit.h $genLib/genMath.h
-	$CC $CFLAGS $genLib/kmerCnt.c
+$genBio/seqST.$O: $genBio/seqST.c $genBio/seqST.h $genLib/ulCp.$O $genLib/dataTypeShortHand.h
+	$CC -o $genBio/seqST.$O $CFLAGS $genBio/seqST.c
 
-$genLib/samEntry$O: $genLib/samEntry.c $genLib/samEntry.h $genLib/ulCp$O $genLib/base10str$O $genLib/numToStr$O $genLib/ntTo5Bit.h $genLib/dataTypeShortHand.h
-	$CC $CFLAGS $genLib/samEntry.c
+$genBio/kmerCnt.$O: $genBio/kmerCnt.c $genBio/kmerCnt.h $genBio/seqST.$O $genBio/ntTo2Bit.h $genLib/genMath.h
+	$CC -o $genBio/kmerCnt.$O $CFLAGS $genBio/kmerCnt.c
 
-$diCoords/diCoords$O: $diCoords/diCoords.c $diCoords/diCoords.h $genLib/samEntry$O
-	$CC $CFLAGS $diCoords/diCoords.c
+$genBio/samEntry.$O: $genBio/samEntry.c $genBio/samEntry.h $genLib/strAry.$O $genLib/base10str.$O $genLib/numToStr.$O $genBio/ntTo5Bit.h $genLib/dataTypeShortHand.h
+	$CC -o $genBio/samEntry.$O $CFLAGS $genBio/samEntry.c
 
-$genAln/indexToCoord$O: $genAln/indexToCoord.c $genAln/indexToCoord.h
-	$CC $CFLAGS $genAln/indexToCoord.c
+$diCoords/diCoords.$O: $diCoords/diCoords.c $diCoords/diCoords.h $genBio/samEntry.$O
+	$CC -o $diCoords/diCoords.$O $CFLAGS $diCoords/diCoords.c
 
-$genAln/alnSet$O: $genAln/alnSet.c $genAln/alnSet.h $genAln/alnDefs.h $genLib/base10str$O $genLib/dataTypeShortHand.h
-	$CC $CFLAGS $genAln/alnSet.c
+$genAln/indexToCoord.$O: $genAln/indexToCoord.c $genAln/indexToCoord.h
+	$CC -o $genAln/indexToCoord.$O $CFLAGS $genAln/indexToCoord.c
 
-$genAln/dirMatrix$O: $genAln/dirMatrix.c $genAln/dirMatrix.h $genAln/indexToCoord$O $genAln/alnSet$O $genLib/samEntry$O $genLib/seqST$O $genLib/charCp$O
-	$CC $CFLAGS $genAln/dirMatrix.c
+$genAln/alnSet.$O: $genAln/alnSet.c $genAln/alnSet.h $genAln/alnDefs.h $genLib/base10str.$O $genLib/dataTypeShortHand.h
+	$CC -o $genAln/alnSet.$O $CFLAGS $genAln/alnSet.c
 
-$genAln/water$O: $genAln/water.c $genAln/water.h $genAln/dirMatrix$O $genLib/genMath.h
-	$CC $CFLAGS $genAln/water.c
+$genAln/dirMatrix.$O: $genAln/dirMatrix.c $genAln/dirMatrix.h $genAln/indexToCoord.$O $genAln/alnSet.$O $genBio/samEntry.$O $genBio/seqST.$O $genLib/charCp.$O
+	$CC -o $genAln/dirMatrix.$O $CFLAGS $genAln/dirMatrix.c
+
+$genAln/water.$O: $genAln/water.c $genAln/water.h $genAln/dirMatrix.$O $genLib/genMath.h
+	$CC -o $genAln/water.$O $CFLAGS $genAln/water.c
 
 install:
-	cp $NAME $PREFIX
+	mv $NAME $PREFIX
 	chmod a+x $PREFIX/$NAME
 
 clean:

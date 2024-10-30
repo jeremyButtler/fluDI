@@ -35,7 +35,7 @@
 
 #include "../genLib/base10str.h"
 #include "../genLib/charCp.h"
-#include "../genLib/samEntry.h"
+#include "../genBio/samEntry.h"
 
 #include "diCoords.h"
 
@@ -47,7 +47,8 @@
 !   o std #include <stdio.h>
 !   o .c  #include "../genLib/numToStr.h"
 !   o .c  #include "../genLib/ulCp.h"
-!   o .h  #include "../genLib/ntTo5Bit.h"
+!   o .c  #include "../genLib/strAry.h"
+!   o .h  #include "../genBio/ntTo5Bit.h"
 \%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #define def_year_mainDiCoords 2024

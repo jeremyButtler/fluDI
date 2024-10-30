@@ -1,0 +1,47 @@
+LD=cc
+CC=cc
+CFLAGS= -O0 -std=c89 -Wall -Wextra -Werror -ggdb -g
+NAME=varFilt
+PREFIX=/usr/local/bin
+O=o.bug
+
+genBio=../genBio
+genLib=../genLib
+
+objFiles= \
+   $(genBio)/samEntry.$O \
+   $(genLib)/strAry.$O \
+   $(genLib)/ulCp.$O \
+   $(genLib)/numToStr.$O \
+   $(genLib)/base10str.$O \
+   $(genBio)/tbCon.$O \
+   varFilt.$O
+
+all: varFilt.$O
+	$(LD) -o $(NAME) $(CFLAGS) $(objFiles)
+
+varFilt.$O: varFilt.c $(genBio)/samEntry.$O $(genBio)/tbCon.$O
+	$(CC) -o varFilt.$O -c $(CFLAGS) varFilt.c
+
+$(genBio)/samEntry.$O: $(genBio)/samEntry.c $(genBio)/samEntry.h $(genLib)/strAry.$O $(genLib)/base10str.$O $(genLib)/numToStr.$O $(genBio)/ntTo5Bit.h $(genLib)/dataTypeShortHand.h
+	$(CC) -o $(genBio)/samEntry.$O -c $(CFLAGS) $(genBio)/samEntry.c
+
+$(genLib)/strAry.$O: $(genLib)/strAry.c $(genLib)/strAry.h $(genLib)/ulCp.$O
+	$(CC) -o $(genLib)/strAry.$O -c $(CFLAGS) $(genLib)/strAry.c
+
+$(genLib)/ulCp.$O: $(genLib)/ulCp.c $(genLib)/ulCp.h
+	$(CC) -o $(genLib)/ulCp.$O -c $(CFLAGS) $(genLib)/ulCp.c
+
+$(genLib)/numToStr.$O: $(genLib)/numToStr.c $(genLib)/numToStr.h
+	$(CC) -o $(genLib)/numToStr.$O -c $(CFLAGS) $(genLib)/numToStr.c
+
+$(genLib)/base10str.$O: $(genLib)/base10str.c $(genLib)/base10str.h
+	$(CC) -o $(genLib)/base10str.$O -c $(CFLAGS) $(genLib)/base10str.c
+
+$(genBio)/tbCon.$O: $(genBio)/tbCon.c $(genBio)/tbCon.h $(genBio)/samEntry.$O $(genBio)/tbConDefs.h $(genLib)/genMath.h
+	$(CC) -o $(genBio)/tbCon.$O -c $(CFLAGS) $(genBio)/tbCon.c
+
+
+
+clean:
+	rm $(objFiles)

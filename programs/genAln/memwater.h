@@ -1,12 +1,6 @@
-/*########################################################
-# Name memwater
-# Use:
-#  o Holds functions doing a memory efficent Smith
-#    Waterman pairwise alignments.
-########################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of Functions
+' memwater SOF: Start Of Functions
+'   - has memory efficent Waterman Smith alignment
 '   o header:
 '     - forward declartions and guards
 '   o fun01 memwater:

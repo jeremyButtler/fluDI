@@ -1,58 +1,59 @@
 </$objtype/mkfile
 
-CFLAGS= -w -DPLAN9
+CFLAGS= -DPLAN9
 NAME=diIds
-PREFIX=/usr/local/bin
+PREFIX=$home/bin
 genLib=../genLib
+genBio=../genBio
 genAln=../genAln
 
 objFiles=\
-   $genLib/base10str$O \
-   $genLib/ulCp$O \
-   $genLib/charCp$O \
-   $genLib/shellSort$O \
-   $genLib/seqST$O \
-   $genAln/indexToCoord$O \
-   $genAln/alnSet$O \
-   $genAln/memwater$O \
-   $genAln/kmerFind$O \
-   fluST$O \
-   diIds$O \
+   $genLib/base10str.$O \
+   $genLib/ulCp.$O \
+   $genLib/charCp.$O \
+   $genLib/shellSort.$O \
+   $genBio/seqST.$O \
+   $genAln/indexToCoord.$O \
+   $genAln/alnSet.$O \
+   $genAln/memwater.$O \
+   $genAln/kmerFind.$O \
+   fluST.$O \
+   diIds.$O \
 
-all: diIds$O
+all: diIds.$O
 	$LD -o $NAME $CFLAGS $objFiles
 
-diIds$O: diIds.c fluST$O $genLib/charCp$O $genAln/kmerFind$O
+diIds.$O: diIds.c fluST.$O $genLib/charCp.$O $genAln/kmerFind.$O
 	$CC g$CFLAGS diIds.c
 
-fluST$O: fluST.c fluST.h fluSeg.h $genLib/shellSort$O $genAln/alnDefs.h $genLib/dataTypeShortHand.h
+fluST.$O: fluST.c fluST.h fluSeg.h $genLib/shellSort.$O $genAln/alnDefs.h $genLib/dataTypeShortHand.h
 	$CC g$CFLAGS fluST.c
 
-$genLib/base10str$O: $genLib/base10str.c $genLib/base10str.h
+$genLib/base10str.$O: $genLib/base10str.c $genLib/base10str.h
 	$CC g$CFLAGS $genLib/base10str.c
 
-$genLib/ulCp$O: $genLib/ulCp.c $genLib/ulCp.h
+$genLib/ulCp.$O: $genLib/ulCp.c $genLib/ulCp.h
 	$CC g$CFLAGS $genLib/ulCp.c
 
-$genLib/charCp$O: $genLib/charCp.c $genLib/charCp.h
+$genLib/charCp.$O: $genLib/charCp.c $genLib/charCp.h
 	$CC g$CFLAGS $genLib/charCp.c
 
-$genLib/shellSort$O: $genLib/shellSort.c $genLib/shellSort.h
+$genLib/shellSort.$O: $genLib/shellSort.c $genLib/shellSort.h
 	$CC g$CFLAGS $genLib/shellSort.c
 
-$genLib/seqST$O: $genLib/seqST.c $genLib/seqST.h $genLib/ulCp$O $genLib/dataTypeShortHand.h
-	$CC g$CFLAGS $genLib/seqST.c
+$genBio/seqST.$O: $genBio/seqST.c $genBio/seqST.h $genLib/ulCp.$O $genLib/dataTypeShortHand.h
+	$CC g$CFLAGS $genBio/seqST.c
 
-$genAln/indexToCoord$O: $genAln/indexToCoord.c $genAln/indexToCoord.h
+$genAln/indexToCoord.$O: $genAln/indexToCoord.c $genAln/indexToCoord.h
 	$CC g$CFLAGS $genAln/indexToCoord.c
 
-$genAln/alnSet$O: $genAln/alnSet.c $genAln/alnSet.h $genAln/alnDefs.h $genLib/base10str$O $genLib/dataTypeShortHand.h
+$genAln/alnSet.$O: $genAln/alnSet.c $genAln/alnSet.h $genAln/alnDefs.h $genLib/base10str.$O $genLib/dataTypeShortHand.h
 	$CC g$CFLAGS $genAln/alnSet.c
 
-$genAln/memwater$O: $genAln/memwater.c $genAln/memwater.h $genAln/alnSet$O $genAln/indexToCoord$O $genLib/seqST$O $genLib/genMath.h
+$genAln/memwater.$O: $genAln/memwater.c $genAln/memwater.h $genAln/alnSet.$O $genAln/indexToCoord.$O $genBio/seqST.$O $genLib/genMath.h
 	$CC g$CFLAGS $genAln/memwater.c
 
-$genAln/kmerFind$O: $genAln/kmerFind.c $genAln/kmerFind.h $genAln/memwater$O $genLib/shellSort$O 
+$genAln/kmerFind.$O: $genAln/kmerFind.c $genAln/kmerFind.h $genAln/memwater.$O $genLib/shellSort.$O 
 	$CC g$CFLAGS $genAln/kmerFind.c
 
 install:

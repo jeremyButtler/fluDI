@@ -1,11 +1,7 @@
-/*########################################################
-# Name: alnDefs
-#   o Holds the default settings and global definitions for
-#     find alignSeq
-########################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of File
+' alnDefs SOF: Start Of File
+'   - holds default settings and global definitions for
+'     sequence alignment
 '   o header:
 '     - guards
 '   o sec02:

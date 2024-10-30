@@ -1,0 +1,4 @@
+b varFilt.c:825
+#b varFilt.c:537 if samSTPtr->alnReadLenUI > 6000
+
+r $HOME/files/testing/mixedInfect/fiveCo-60-65-81-85-86--map.sam > del.sam

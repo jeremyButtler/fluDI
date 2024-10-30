@@ -35,9 +35,10 @@
 #include "../genLib/base10str.h"
 #include "../genLib/ulCp.h"
 #include "../genLib/charCp.h"
-#include "../genLib/seqST.h"
-#include "../genLib/kmerCnt.h"
-#include "../genLib/samEntry.h"
+
+#include "../genBio/seqST.h"
+#include "../genBio/kmerCnt.h"
+#include "../genBio/samEntry.h"
 
 #include "../genAln/alnSet.h"
 #include "../genAln/dirMatrix.h"
@@ -51,10 +52,11 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
 ! Hidden libraries:
 !   - .c  #include "../genLib/genMath.h"
+!   - .c  #include "../genLib/strAry.h"
 !   - .c  #include "../genAln/indexToCoord.h"
 !   - .c  #include "../diCoordsSrc/diCoords.h"
-!   - .h  #include "../geLib/ntTo2Bit.h"
-!   - .h  #include "../geLib/ntTo5Bit.h"
+!   - .h  #include "../geBio/ntTo2Bit.h"
+!   - .h  #include "../geBio/ntTo5Bit.h"
 !   - .h  #include "../geAln/alnDefs.h"
 \%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 

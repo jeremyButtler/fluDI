@@ -1,12 +1,8 @@
-/*########################################################
-# Name: charCp
-#   - Copies contents of string 1 to string using chars
-#   - These functions are slower than strcpy and strlen,
-#     but they allow deliminators to be used.
-########################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of File
+' charCp SOF: Start Of File
+'   - Copies contents of string 1 to string using chars
+'   - These functions are slower than strcpy and strlen,
+'     but they allow deliminators to be used.
 '   o header:
 '     - included libraries
 '   o fun01: cpLen_charCp
@@ -61,14 +57,13 @@ cpLen_charCp(
    signed char *cpStr,
    unsigned int lenUI
 ){
-   unsigned int uiIter = 0;
-   for(
-      uiIter = 0;
-      uiIter < lenUI;
-      ++uiIter
-   ) dupStr[uiIter] = cpStr[uiIter];
+   dupStr[lenUI] = '\0';
 
-   dupStr[uiIter] = '\0';
+   while(lenUI > 0)
+   { /*Loop: copy strings*/
+      --lenUI;
+      dupStr[lenUI] = cpStr[lenUI];
+   } /*Loop: copy strings*/
 } /*cpLen_charCp*/
 
 /*-------------------------------------------------------\
@@ -221,7 +216,7 @@ match_charCp(
 ){
    signed char *qryTmpStr = qryStr;
 
-   while(*qryTmpStr++ == *refStr++)\
+   while(*qryTmpStr++ == *refStr++)
    { /*Loop: compare query and reference*/
       if(*qryTmpStr == delimSC)
       { /*If: I found the  deliminator*/

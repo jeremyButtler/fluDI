@@ -1,11 +1,7 @@
-/*########################################################
-# Name indexToCoord
-#  o Holds functions to convert alignment matrix index's
-#    to coordinates
-########################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of Functions
+' indexToCoord SOF: Start Of Functions
+'  - holds functions to convert alignment matrix index's
+'    to coordinates
 '   o header:
 '     - guards
 '   o fun01: qryCoord_water

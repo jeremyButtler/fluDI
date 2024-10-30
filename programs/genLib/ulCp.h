@@ -30,6 +30,12 @@
 '     - copies string until white space
 '   o fun09: rmWhite_ulCp
 '     - removes white space from c-string
+'   o fun10: swapDelim_ulCp
+'     - swaps two strings until deliminator is found
+'   o fun11: cmpDelim_ulCp
+'     - compares two strings until deliminator is found
+'   o fun12: eqlNull_ulCp
+'     - compares two strings until null is found
 '   o license:
 '     - licensing for this code (public domain / mit)
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -274,6 +280,88 @@ cpWhite_ulCp(
 unsigned int
 rmWhite_ulCp(
    signed char *inStr
+);
+
+/*-------------------------------------------------------\
+| Fun10: swapDelim_ulCp
+|   - swaps two strings until deliminator is found
+| Input:
+|   - firstStr:
+|     o Pointer to string to first string to swap
+|   - secStr:
+|     o Pointer to second string to swap
+|   - delimUL:
+|     o delminator to end at (as long). Use makeULDelim
+|       to build this deliminator
+|   - delimSC:
+|     o delminator (as char) to stop copying at
+| Output:
+|   - Modifies:
+|     o firstStr to have secStr string
+|     o secStr to have firstStr string
+| Note:
+|   - This will likely not be very good at swapping short
+|     strings.
+\-------------------------------------------------------*/
+void
+swapDelim_ulCp(
+   signed char *firstStr,
+   signed char *secStr,
+   unsigned long delimUL,
+   signed char delimSC
+);
+
+/*-------------------------------------------------------\
+| Fun11: cmpDelim_ulCp
+|   - compares two strings until deliminator is found
+| Input:
+|   - qryStr:
+|     o Pointer to query string
+|   - refStr:
+|     o Pointer to reference strin
+|   - delimUL:
+|     o delminator to end at (as long). Use makeULDelim
+|       to build this deliminator
+|   - delimSC:
+|     o delminator (as char) to stop copying at
+| Output:
+|   - Returns:
+|     o 0 if strings are equal
+|     o > 0 if query > reference
+|     o < 0 if query < reference
+| Note:
+|   - This will likely not be very good at comparing
+|     short strings.
+\-------------------------------------------------------*/
+signed long
+eql_ulCp(
+   signed char *qryStr,
+   signed char *refStr,
+   unsigned long delimUL,
+   signed char delimSC
+);
+
+/*-------------------------------------------------------\
+| Fun12: eqlNull_ulCp
+|   - compares two strings until null is found
+| Input:
+|   - qryStr:
+|     o Pointer to query string
+|   - refStr:
+|     o Pointer to reference strin
+| Output:
+|   - Returns:
+|     o 0 if strings are equal
+|     o > 0 if query > reference
+|     o < 0 if query < reference
+| Note:
+|   - this will likely not be very good at comparing
+|     short strings.
+\-------------------------------------------------------*/
+signed long
+eqlNull_ulCp(
+   signed char *qryStr,
+   signed char *refStr
 );
 
 #endif

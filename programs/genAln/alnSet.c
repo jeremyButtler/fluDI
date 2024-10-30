@@ -1,13 +1,7 @@
-/*########################################################
-# Name alnSetStruct
-# Use:
-#  o Holds the settings structures and supporting
-#    functions for setting structures for alnSeq's
-#    pairwise aligners.
-########################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of File
+' alnSet SOF: Start Of File
+'  - holds settings structures and supporting functions
+'    for my pairwise aligners
 '  o header:
 '    - included libraries
 '  o .h st01 alnSet:
@@ -146,16 +140,16 @@ readScoreFile_alnSet(
    ^  - Variable declerations and set up
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
-   #define lenBuffUS 1024
-   schar buffStr[lenBuffUS];
+   #define def_lenBuff_fun07 1024
+   schar buffStr[def_lenBuff_fun07];
    schar *tmpStr = 0;
    sshort scoreSS = 0;
 
    uchar colUC = 0;
    uchar rowUC = 0;
 
-   buffStr[lenBuffUS - 1] = '\0';
-   buffStr[lenBuffUS - 2] = '\0';
+   buffStr[def_lenBuff_fun07 - 1] = '\0';
+   buffStr[def_lenBuff_fun07 - 2] = '\0';
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
    ^ Fun07 Sec02:
@@ -179,10 +173,10 @@ readScoreFile_alnSet(
        if(buffStr[0] == '/' && buffStr[1] == '/')
        { /*On a comment, move onto the next line*/
            while(
-               buffStr[lenBuffUS - 2] != '\0' &&
-               buffStr[lenBuffUS - 2] != '\n'
+               buffStr[def_lenBuff_fun07 - 2] != '\0' &&
+               buffStr[def_lenBuff_fun07 - 2] != '\n'
            ){ /*Loop: read in more buffer*/
-               buffStr[lenBuffUS - 2] = '\0';
+               buffStr[def_lenBuff_fun07 - 2] = '\0';
 
                tmpStr =
                   (schar *)
@@ -194,7 +188,7 @@ readScoreFile_alnSet(
            } /*Loop: read in more buffer*/
 
            /*Reset the buffer*/
-           buffStr[lenBuffUS - 2] = '\0';
+           buffStr[def_lenBuff_fun07 - 2] = '\0';
 
            continue;
        } /*On a comment, move onto the next line*/
@@ -227,10 +221,10 @@ readScoreFile_alnSet(
            return ftell(scoreFILE);         /*No score*/
 
        while(
-           buffStr[lenBuffUS - 2] != '\0' &&
-           buffStr[lenBuffUS - 2] != '\n'
+           buffStr[def_lenBuff_fun07 - 2] != '\0' &&
+           buffStr[def_lenBuff_fun07 - 2] != '\n'
        ){ /*While have more buffer to read in*/
-           buffStr[lenBuffUS - 2] = '\0';
+           buffStr[def_lenBuff_fun07 - 2] = '\0';
 
            tmpStr =
               (schar *)
@@ -242,7 +236,7 @@ readScoreFile_alnSet(
        } /*While have more buffer to read in*/
 
        /*Reset the buffer*/
-       buffStr[lenBuffUS - 2] = '\0';
+       buffStr[def_lenBuff_fun07 - 2] = '\0';
    } /*While I have scores to read in*/
 
    return 0;
@@ -287,14 +281,14 @@ readMatchFile_alnSet(
    ^  - Variable declerations and set up
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
-   #define lenBuffUS 1024
-   schar buffStr[lenBuffUS];
+   #define def_lenBuff_fun08 1024
+   schar buffStr[def_lenBuff_fun08];
 
    uchar colUC = 0;
    uchar rowUC = 0;
 
-   buffStr[lenBuffUS - 1] = '\0';
-   buffStr[lenBuffUS - 2] = '\0';
+   buffStr[def_lenBuff_fun08 - 1] = '\0';
+   buffStr[def_lenBuff_fun08 - 2] = '\0';
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
    ^ Fun08 Sec02:
@@ -319,10 +313,10 @@ readMatchFile_alnSet(
        if(buffStr[0] == '/' && buffStr[1] == '/')
        { /*On a comment, move onto the next line*/
            while(
-               buffStr[lenBuffUS - 2] != '\0' &&
-               buffStr[lenBuffUS - 2] != '\n'
+               buffStr[def_lenBuff_fun08 - 2] != '\0' &&
+               buffStr[def_lenBuff_fun08 - 2] != '\n'
            ) { /*While have more buffer to read in*/
-               buffStr[lenBuffUS - 2] = '\0';
+               buffStr[def_lenBuff_fun08 - 2] = '\0';
 
                fgets(
                   (char *) buffStr,
@@ -332,7 +326,7 @@ readMatchFile_alnSet(
            } /*While have more buffer to read in*/
 
            /*Reset the buffer*/
-           buffStr[lenBuffUS - 2] = '\0';
+           buffStr[def_lenBuff_fun08 - 2] = '\0';
 
            continue;
        } /*On a comment, move onto the next line*/
@@ -357,10 +351,10 @@ readMatchFile_alnSet(
        ); /*Add the match to the matrix*/
 
        while(
-           buffStr[lenBuffUS - 2] != '\0' &&
-           buffStr[lenBuffUS - 2] != '\n'
+           buffStr[def_lenBuff_fun08 - 2] != '\0' &&
+           buffStr[def_lenBuff_fun08 - 2] != '\n'
        ){ /*While have more buffer to read in*/
-           buffStr[lenBuffUS - 2] = '\0';
+           buffStr[def_lenBuff_fun08 - 2] = '\0';
 
            fgets(
               (char *) buffStr,
@@ -370,7 +364,7 @@ readMatchFile_alnSet(
        } /*While have more buffer to read in*/
 
        /*Reset the buffer*/
-       buffStr[lenBuffUS - 2] = '\0';
+       buffStr[def_lenBuff_fun08 - 2] = '\0';
    } /*While I have matchs to read in*/
 
    return 0;

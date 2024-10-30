@@ -1,10 +1,6 @@
-/*########################################################
-# Name: numToStr
-#   - function(s) to convert a number to a string
-########################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of File
+' numToStr SOF: Start Of File
+'   - function(s) to convert a number to a string
 '   o header:
 '     - included libraries
 '   o fun01: numToStr

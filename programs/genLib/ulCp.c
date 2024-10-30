@@ -1,7 +1,7 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
 ' ulCp SOF: Start Of File
 '   - uses longs to copy contents of a string
-'   - These functions are slower than strcpy and strlen,
+'   - these functions are slower than strcpy and strlen,
 '     but they allow deliminators to be used.
 '   o header:
 '     - included libraries
@@ -29,6 +29,12 @@
 '     - copies string until white space
 '   o fun09: rmWhite_ulCp
 '     - removes white space from c-string
+'   o fun10: swapDelim_ulCp
+'     - swaps two strings until deliminator is found
+'   o fun11: eql_ulCp
+'     - compares two strings until deliminator is found
+'   o fun12: eqlNull_ulCp
+'     - compares two strings until null is found
 '   o license:
 '     - licensing for this code (public domain / mit)
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -136,7 +142,7 @@ mkDelim_ulCp(
 /*Logic:
 `  * checkUL holds the comparision/is temporary variable
 `  * strUL are the bytes being compared
-`  * delimUL is the deliminator to check for (as ulong)
+`  * delimUL is the deliminator to check for (as unsigned long)
 `  - checkUL = *strUL ^ delimUL:
 `    o Converts all values matching delimUL to 0, and
 `      everything else to > 0. Saves result to retUL
@@ -543,6 +549,303 @@ rmWhite_ulCp(
    *dupStr = '\0';
    return dupStr - inStr;
 } /*rmWhite_ulCp*/
+
+/*-------------------------------------------------------\
+| Fun10: swapDelim_ulCp
+|   - swaps two strings until deliminator is found
+| Input:
+|   - firstStr:
+|     o Pointer to string to first string to swap
+|   - secStr:
+|     o Pointer to second string to swap
+|   - delimUL:
+|     o delminator to end at (as long). Use makeULDelim
+|       to build this deliminator
+|   - delimSC:
+|     o delminator (as char) to stop copying at
+| Output:
+|   - Modifies:
+|     o firstStr to have secStr string
+|     o secStr to have firstStr string
+| Note:
+|   - This will likely not be very good at swapping short
+|     strings.
+\-------------------------------------------------------*/
+void
+swapDelim_ulCp(
+   signed char *firstStr,
+   signed char *secStr,
+   unsigned long delimUL,
+   signed char delimSC
+){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+   ' Fun10: swapDelim_ulCp
+   '   - swaps two strings until deliminator is found
+   '   o fun10 sec01:
+   '     - variable declarations
+   '   o fun10 sec02:
+   '     - swap until first deliminator
+   '   o fun10 sec03:
+   '     - if 1st string ends early, finsh swapping second
+   '   o fun10 sec04:
+   '     - else 2nd string ends early, finsh swapping 1st
+   \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun10 Sec01:
+   ^   - variable declarations
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   unsigned long *firstUL = (unsigned long *) firstStr;
+   unsigned long *secUL = (unsigned long *) secStr;
+
+   unsigned long checkUL = 0;
+   unsigned long secCheckUL = 0;
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun10 Sec02:
+   ^   - swap until first deliminator
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   /*see note01 ifDelim_ulCp for logic)*/
+   checkUL = *firstUL ^ delimUL;
+   checkUL -= def_one_ulCp;
+   checkUL = checkUL & def_highBit_ulCp;
+
+   secCheckUL = *secUL ^ delimUL;
+   secCheckUL -= def_one_ulCp;
+   secCheckUL = checkUL & def_highBit_ulCp;
+
+   while(! (checkUL & secCheckUL))
+   { /*Loop: Copy cpStr to dupStr*/
+      *firstUL ^= *secUL;
+      *secUL ^= *firstUL;
+      *firstUL++ ^= *secUL++;
+
+      checkUL = *firstUL ^ delimUL;
+      checkUL -= def_one_ulCp;
+      checkUL = checkUL & def_highBit_ulCp;
+
+      secCheckUL = *secUL ^ delimUL;
+      secCheckUL -= def_one_ulCp;
+      secCheckUL = checkUL & def_highBit_ulCp;
+   } /*Loop: Copy cpStr to dupStr*/
+
+   firstStr = (signed char *) firstUL;
+   secStr = (signed char *) secUL;
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun10 Sec03:
+   ^   - if first string ends early, finsh swapping second
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   if(checkUL)
+   { /*If: first string ended*/
+      while(*firstStr != delimSC)
+      { /*Loop: copy first string*/
+         *firstStr ^= *secStr;
+         *secStr ^= *firstStr;
+         *firstStr ^= *secStr;
+      } /*Loop: copy first string*/
+
+      *firstStr++ = *secStr;
+      *secStr++ = '\0';
+
+      firstUL = (unsigned long *) firstStr;
+      secUL = (unsigned long *) secStr;
+
+      /*finish copying second string*/
+      checkUL = *secUL ^ delimUL;
+      checkUL -= def_one_ulCp;
+      checkUL = checkUL & def_highBit_ulCp;
+
+      while(! checkUL)
+      { /*Loop: Copy cpStr to dupStr*/
+         *firstUL++ = *secUL++;
+
+         checkUL = *firstUL ^ delimUL;
+         checkUL -= def_one_ulCp;
+         checkUL = checkUL & def_highBit_ulCp;
+      } /*Loop: Copy cpStr to dupStr*/
+
+      firstStr = (signed char *) firstUL;
+      secStr = (signed char *) secUL;
+
+      while(*firstStr != delimSC)
+         *firstStr++ = *secStr++;
+
+      *firstStr = '\0';
+   } /*If: first string ended*/
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun10 Sec04:
+   ^   - else 2nd string ends early, finsh swapping 1st
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   else
+   { /*Else: second string ended*/
+      while(*firstStr != delimSC)
+      { /*Loop: copy first string*/
+         *firstStr ^= *secStr;
+         *secStr ^= *firstStr;
+         *firstStr ^= *secStr;
+      } /*Loop: copy first string*/
+
+      *secStr++ = *firstStr;
+      *firstStr++ = '\0';
+
+      firstUL = (unsigned long *) firstStr;
+      secUL = (unsigned long *) secStr;
+
+      /*finish copying first string*/
+      checkUL = *firstUL ^ delimUL;
+      checkUL -= def_one_ulCp;
+      checkUL = checkUL & def_highBit_ulCp;
+
+      while(! checkUL)
+      { /*Loop: Copy cpStr to dupStr*/
+         *secUL++ = *firstUL++;
+
+         checkUL = *firstUL ^ delimUL;
+         checkUL -= def_one_ulCp;
+         checkUL = checkUL & def_highBit_ulCp;
+      } /*Loop: Copy cpStr to dupStr*/
+
+      firstStr = (signed char *) firstUL;
+      secStr = (signed char *) secUL;
+
+      while(*firstStr != delimSC)
+         *secStr++ = *firstStr++;
+
+      *secStr = '\0';
+   } /*Else: second string ended*/
+} /*swapDelim_ulCp*/
+
+/*-------------------------------------------------------\
+| Fun11: eql_ulCp
+|   - compares two strings until deliminator is found
+| Input:
+|   - qryStr:
+|     o Pointer to query string
+|   - refStr:
+|     o Pointer to reference strin
+|   - delimUL:
+|     o delminator to end at (as long). Use makeULDelim
+|       to build this deliminator
+|   - delimSC:
+|     o delminator (as char) to stop copying at
+| Output:
+|   - Returns:
+|     o 0 if strings are equal
+|     o > 0 if query > reference
+|     o < 0 if query < reference
+| Note:
+|   - This will likely not be very good at comparing
+|     short strings.
+\-------------------------------------------------------*/
+signed long
+eql_ulCp(
+   signed char *qryStr,
+   signed char *refStr,
+   unsigned long delimUL,
+   signed char delimSC
+){
+   unsigned long *qryUL = (unsigned long *) qryStr;
+   unsigned long *refUL = (unsigned long *) refStr;
+
+   unsigned long checkUL = 0;
+
+   /*see note01 ifDelim_ulCp for logic)*/
+   checkUL = *qryUL ^ delimUL;
+   checkUL -= def_one_ulCp;
+   checkUL = checkUL & def_highBit_ulCp;
+
+   while(! checkUL)
+   { /*Loop: Copy cpStr to dupStr*/
+      if(*qryUL != *refUL)
+         return *(qryUL - 1) - *(refUL - 1);
+
+      ++qryUL;
+      ++refUL;
+
+      checkUL = *qryUL ^ delimUL;
+      checkUL -= def_one_ulCp;
+      checkUL = checkUL & def_highBit_ulCp;
+   } /*Loop: Copy cpStr to dupStr*/
+
+   qryStr = (signed char *) qryUL;
+   refStr = (signed char *) refUL;
+
+   while(*qryStr != delimSC)
+   { /*Loop: find difference*/
+      if(*qryStr != *refStr)
+         break;
+
+      ++qryStr;
+      ++refStr;
+   } /*Loop: find difference*/
+
+   return *qryStr - *refStr;
+} /*eql_ulCp*/
+
+/*-------------------------------------------------------\
+| Fun12: eqlNull_ulCp
+|   - compares two strings until null is found
+| Input:
+|   - qryStr:
+|     o Pointer to query string
+|   - refStr:
+|     o Pointer to reference strin
+| Output:
+|   - Returns:
+|     o 0 if strings are equal
+|     o > 0 if query > reference
+|     o < 0 if query < reference
+| Note:
+|   - this will likely not be very good at comparing
+|     short strings.
+\-------------------------------------------------------*/
+signed long
+eqlNull_ulCp(
+   signed char *qryStr,
+   signed char *refStr
+){
+   unsigned long *qryUL = (unsigned long *) qryStr;
+   unsigned long *refUL = (unsigned long *) refStr;
+
+   unsigned long checkUL = 0;
+
+   /*see note01 ifDelim_ulCp for logic)*/
+   checkUL = *qryUL ^ def_null_ulCp;
+   checkUL -= def_one_ulCp;
+   checkUL = checkUL & def_highBit_ulCp;
+
+   while(! checkUL)
+   { /*Loop: Copy cpStr to dupStr*/
+      if(*qryUL != *refUL)
+         return *(qryUL - 1) - *(refUL - 1);
+
+      ++qryUL;
+      ++refUL;
+
+      checkUL = *qryUL ^ def_null_ulCp;
+      checkUL -= def_one_ulCp;
+      checkUL = checkUL & def_highBit_ulCp;
+   } /*Loop: Copy cpStr to dupStr*/
+
+   qryStr = (signed char *) qryUL;
+   refStr = (signed char *) refUL;
+
+   while(*qryStr != (signed char) '\0')
+   { /*Loop: find difference*/
+      if(*qryStr != *refStr)
+         break;
+
+      ++qryStr;
+      ++refStr;
+   } /*Loop: find difference*/
+
+   return *qryStr - *refStr;
+} /*eqlNull_ulCp*/
 
 /*=======================================================\
 : License:

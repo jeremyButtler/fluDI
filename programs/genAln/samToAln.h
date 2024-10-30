@@ -1,11 +1,7 @@
-/*#######################################################\
-# Name: samToAln
-#   - has functions to convert a sam entry and the
-#     reference sequence to an alignment
-\#######################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of File
+' samToAln SOF: Start Of File
+'   - has functions to convert a sam entry and the
+'     reference sequence to an alignment
 '   o header:
 '     - forward declerations and guards
 '   o fun01: psamPg_samToAln
