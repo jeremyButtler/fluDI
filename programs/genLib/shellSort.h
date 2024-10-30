@@ -1,16 +1,12 @@
-/*########################################################
-# Name: shellSort
-#   - holds functions for doing shell sorts on arrays
-# Note:
-#   - most of this code is from
-#      o Adam Drozdek. 2013. Data Structures and
-#        Algorithims in c++. Cengage Leraning. fourth
-#        edition. pages 505-508
-########################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of File
-'   - note: this is long, but is really a set of three
+' shellSort SOF: Start Of File
+'   - holds functions for doing shell sorts on arrays
+'   o note:
+'     - most of this code is from
+'        o Adam Drozdek. 2013. Data Structures and
+'          Algorithims in c++. Cengage Leraning. fourth
+'          edition. pages 505-508
+'   o note: this is long, but is really a set of three
 '     functions per data type
 '     o xxSearch_shellSort
 '       - search for query in a sorted array
@@ -68,6 +64,8 @@
 '     - searches for range in singed char array
 '   o fun24: sc_shellSort
 '     - sorts signed char array from least to greatest
+'   o fun25: dbl_shellSort
+'     - sorts a double array from least to greatest
 '   o license:
 '     - licensing for this code (public domain / mit)
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -620,6 +618,27 @@ scRange_shellSort(
 void
 sc_shellSort(
    signed char *scAry,
+   unsigned long startUL,
+   unsigned long endUL
+);
+
+/*-------------------------------------------------------\
+| Fun25: dbl_shellSort
+|   - sorts a double array from least to greatest
+| Input:
+|   - dblAry:
+|     o array to sort
+|   - startUL:
+|     o first element to start sorting at
+|   - endUL:
+|     o last element to sort (index 0)
+| Output:
+|   - Modifies:
+|     o scAry to be sorted form least to greatest
+\-------------------------------------------------------*/
+void
+dbl_shellSort(
+   double *dblAry,
    unsigned long startUL,
    unsigned long endUL
 );

@@ -1,7 +1,7 @@
-/*########################################################
-# Name: dataTypeShortHand
-#   - holds short name for signed and unsigned dataypes
-########################################################*/
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+' dataTypeShortHand SOF: Start Of File
+'   - holds short name for signed and unsigned dataypes
+\~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #ifndef DATATYPE_SHORTHAND_H
 #define DATATYPE_SHORTHAND_H

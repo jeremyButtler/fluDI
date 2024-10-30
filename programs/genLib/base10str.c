@@ -1,12 +1,6 @@
-/*########################################################
-# Name: base10str
-#   - functions to convert strings with base 10 numbers
-#     to numbers
-########################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of Header
-'   - Functions to converts c-strings to numbers
+' base10str SOF: Start Of Header
+'   - functions to converts c-strings to numbers
 '   o header:
 '     - included libraries
 '   o fun01: strToUL_base10str

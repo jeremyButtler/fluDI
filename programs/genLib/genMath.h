@@ -1,14 +1,8 @@
-/*########################################################
-# Name: genMath.h
-#   - Has my math functions I use. These are often
-#     branchless (noBrach) variations.
-# Note:
-#   Most of the branchless code is from or modified from:
-#   - https://graphics.stanford.edu/~seander/bithacks.html
-########################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of File
+' genMath SOF: Start Of File
+'   - has math functions I use (most branchless)
+'   - Most of the branchless code is from or modified:
+'     https://graphics.stanford.edu/~seander/bithacks.html
 '   o header:
 '     - guards
 '   o fun01: noBranchHiBit2

@@ -99,7 +99,8 @@
 
 #include "../genLib/ulCp.h"
 #include "../genLib/shellSort.h"
-#include "../genLib/seqST.h"
+
+#include "../genBio/seqST.h"
 
 #include "alnSet.h"
 #include "memwater.h"
@@ -1304,8 +1305,8 @@ tsvToAry_refST_kmerFind(
    ^   - variable declerations 
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
-   #define lenBuffUS 4096
-   signed char buffStr[lenBuffUS];
+   #define def_lenBuff_fun15 4096
+   signed char buffStr[def_lenBuff_fun15];
    signed char *tmpStr = 0;
 
    uchar pairBl = 0;
@@ -1349,7 +1350,7 @@ tsvToAry_refST_kmerFind(
    *   - find number of lines in the file
    \*****************************************************/
 
-   while(fgets((char *) buffStr, lenBuffUS, tsvFILE))
+   while(fgets((char *) buffStr, def_lenBuff_fun15, tsvFILE))
       ++numSeqSI;
 
    --numSeqSI;     /*account for the header*/
@@ -1423,11 +1424,11 @@ tsvToAry_refST_kmerFind(
       (schar *)
       fgets(
          (char *) buffStr,
-         lenBuffUS,
+         def_lenBuff_fun15,
          tsvFILE
       );
 
-   while(fgets((char *) buffStr, lenBuffUS, tsvFILE))
+   while(fgets((char *) buffStr, def_lenBuff_fun15, tsvFILE))
    { /*Loop: read in each sequence in the file*/
 
        /*************************************************\
@@ -1788,8 +1789,8 @@ faToAry_refST_kmerFind(
    ^   - variable declerations 
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
-   #define lenBuffUS 4096
-   signed char buffStr[lenBuffUS];
+   #define def_lenBuff_fun16 4096
+   signed char buffStr[def_lenBuff_fun16];
    ulong bytesUL = 0;
    ulong posUL = 0;
    schar newLineBl = 0;
@@ -1837,7 +1838,7 @@ faToAry_refST_kmerFind(
       fread(
          (char *) buffStr,
          sizeof(char),
-         lenBuffUS - 1,
+         def_lenBuff_fun16 - 1,
          faFILE
       );
 
@@ -1863,7 +1864,7 @@ faToAry_refST_kmerFind(
                   fread(
                      (char *) buffStr,
                      sizeof(char),
-                     lenBuffUS - 1,
+                     def_lenBuff_fun16 - 1,
                      faFILE
                   );
 
@@ -1897,7 +1898,7 @@ faToAry_refST_kmerFind(
             fread(
                (char *) buffStr,
                sizeof(char),
-               lenBuffUS,
+               def_lenBuff_fun16,
                faFILE
             );
 

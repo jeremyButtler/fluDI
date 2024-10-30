@@ -1,11 +1,7 @@
-/*########################################################
-# Name: dirMatrix
-#  - holds functions for dealing with the dirMatrix
-#    returned by water and needle
-########################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of File
+' dirMatrix SOF: Start Of File
+'   - holds functions for dealing with the dirMatrix
+'     returned by water and needle
 '   o header:
 '     - forward declerations and guards
 '   o .h st01: alnMatrixStruct

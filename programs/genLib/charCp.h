@@ -1,12 +1,8 @@
-/*########################################################
-# Name: charCp
-#   - Copies contents of string 1 to string using chars
-#   - These functions are slower than strcpy and strlen,
-#     but they allow deliminators to be used.
-########################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of File
+' charCp SOF: Start Of File
+'   - Copies contents of string 1 to string using chars
+'   - These functions are slower than strcpy and strlen,
+'     but they allow deliminators to be used.
 '   o header:
 '     - guards
 '   o fun01: cpLen_charCp

@@ -39,7 +39,7 @@
 #include "../genLib/base10str.h"
 #include "../genLib/charCp.h"
 #include "../genLib/ulCp.h"
-#include "../genLib/seqST.h"
+#include "../genBio/seqST.h"
 #include "../genAln/alnSet.h"
 #include "../genAln/kmerFind.h"
 
@@ -47,7 +47,7 @@
 
 /*.h files only*/
 #include "../genLib/dataTypeShortHand.h"
-#include "../genLib/ntTo2Bit.h"
+#include "../genBio/ntTo2Bit.h"
 
 #include "../genAln/alnDefs.h"
 

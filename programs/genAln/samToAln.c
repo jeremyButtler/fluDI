@@ -1,11 +1,7 @@
-/*#######################################################\
-# Name: samToAln
-#   - has functions to convert a sam entry and the
-#     reference sequence to an alignment
-\#######################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of File
+' samToAln SOF: Start Of File
+'   - has functions to convert a sam entry and the
+'     reference sequence to an alignment
 '   o header:
 '     - included libraries
 '   o fun01: psamPg_samToAln
@@ -34,10 +30,11 @@
 
 #include <stdio.h>
 
-#include "../genLib/samEntry.h"
-#include "../genLib/seqST.h"
 #include "../genLib/numToStr.h"
 #include "../genLib/base10str.h"
+
+#include "../genBio/samEntry.h"
+#include "../genBio/seqST.h"
 
 #include "alnSet.h"
 
@@ -48,7 +45,7 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
 ! Hidden libraries:
 !   o .c  #include "../generalLib/ulCp.h"
-!   o .h  #include "../generalLib/ntTo5Bit.h"
+!   o .h  #include "../generalBio/ntTo5Bit.h"
 \%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #define def_maxDig_samToAln 9

@@ -33,9 +33,10 @@
 #include <stdio.h>
 
 #include "../genLib/genMath.h"
-#include "../genLib/kmerCnt.h"
-#include "../genLib/seqST.h"
-#include "../genLib/samEntry.h"
+
+#include "../genBio/kmerCnt.h"
+#include "../genBio/seqST.h"
+#include "../genBio/samEntry.h"
 
 #include "../genAln/alnSet.h"
 #include "../genAln/dirMatrix.h"
@@ -50,9 +51,10 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
 ! Hidden libraries:
 !   - .c  #incldue "../genLib/ulCp.h"
+!   - .c  #incldue "../genLib/strAry.h"
 !   - .c  #include "../genAln/indexToCoord.h"
-!   - .h  #include "../genLib/ntTo2Bit.h"
-!   - .h  #include "../genLib/ntTo5Bit.h"
+!   - .h  #include "../genBio/ntTo2Bit.h"
+!   - .h  #include "../genBio/ntTo5Bit.h"
 \%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /*-------------------------------------------------------\

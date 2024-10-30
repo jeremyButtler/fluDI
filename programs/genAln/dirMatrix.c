@@ -1,11 +1,7 @@
-/*########################################################
-# Name: dirMatrix
-#  - holds functions for dealing with the dirMatrix
-#    returned by water and needle
-########################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of File
+' dirMatrix SOF: Start Of File
+'   - holds functions for dealing with the dirMatrix
+'     returned by water and needle
 '   o header:
 '     - included libraries
 '   o .h st01: alnMatrixStruct
@@ -42,13 +38,15 @@
    #include <stdlib.h>
 #endif
 
-#include "../genLib/samEntry.h"
-#include "../genLib/seqST.h"
+#include "dirMatrix.h"
+
 #include "../genLib/ulCp.h"
 #include "../genLib/charCp.h"
 #include "../genLib/numToStr.h"
 
-#include "dirMatrix.h"
+#include "../genBio/samEntry.h"
+#include "../genBio/seqST.h"
+
 #include "alnSet.h"
 #include "indexToCoord.h"
 
@@ -60,7 +58,8 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
 ! Hidden libraries:
 !   o .c  #include "../genLib/base10str.h"
-!   o .h  #include "../genLib/ntTo5Bit.h"
+!   o .c  #include "../genLib/strAry.h"
+!   o .h  #include "../genBio/ntTo5Bit.h"
 \%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /*-------------------------------------------------------\

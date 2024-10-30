@@ -1,12 +1,6 @@
-/*########################################################
-# Name memwater
-# Use:
-#  o Holds functions doing a memory efficent Smith
-#    Waterman pairwise alignments.
-########################################################*/
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' SOF: Start Of Functions
+' memwater SOF: Start Of Functions
+'   - has memory efficent Waterman Smith alignment
 '   o header:
 '     - Included libraries
 '   o fun01 memwater:
@@ -30,7 +24,7 @@
 
 #include "memwater.h"
 
-#include "../genLib/seqST.h"
+#include "../genBio/seqST.h"
 
 #include "alnSet.h"
 #include "indexToCoord.h"

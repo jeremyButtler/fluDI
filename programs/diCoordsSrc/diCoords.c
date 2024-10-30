@@ -34,7 +34,7 @@
 #endif
 
 #include <stdio.h>
-#include "../genLib/samEntry.h"
+#include "../genBio/samEntry.h"
 
 /*.h files only*/
 #include "../genLib/dataTypeShortHand.h"
@@ -42,9 +42,10 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
 ! Hidden libraries:
 !   o .h  #include "../genLib/base10str.h"
-!   o .h  #include "../genLib/ulCp.h"
 !   o .h  #include "../genLib/numToStr.h"
-!   o .h  #include "../genLib/ntTo5Bit.h"
+!   o .h  #include "../genLib/ulCp.h"
+!   o .h  #include "../genLib/strAry.h"
+!   o .h  #include "../genBio/ntTo5Bit.h"
 \%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /*-------------------------------------------------------\
