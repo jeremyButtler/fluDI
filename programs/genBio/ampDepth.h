@@ -23,8 +23,8 @@
 #ifndef AMPLICON_DEPTH_H
 #define AMPLICON_DEPTH_H
 
-typedef struct samEntry samEntry;
-typedef struct geneCoord geneCoord;
+struct samEntry;
+struct geneCoord;
 
 /*-------------------------------------------------------\
 | Fun01: addRead_ampDepth

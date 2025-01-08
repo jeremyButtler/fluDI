@@ -24,9 +24,9 @@
 #ifndef SAM_FILE_TO_ALIGNMENT
 #define SAM_FILE_TO_ALIGNMENT
 
-typedef samEntry samEntry;
-typedef seqST seqST;
-typedef alnSet alnSet;
+struct samEntry;
+struct seqST;
+struct alnSet;
 
 /*-------------------------------------------------------\
 | Fun01: psamPg_samToAln

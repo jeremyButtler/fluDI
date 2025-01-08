@@ -89,8 +89,8 @@
 #ifndef KMER_FIND_H
 #define KMER_FIND_H
 
-typedef struct seqST seqST;
-typedef struct alnSet alnSet;
+struct seqST;
+struct alnSet;
 
 #define def_noKmer_kmerFind -1
 #define def_endKmers_kmerFind -2

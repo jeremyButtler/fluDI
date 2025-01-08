@@ -18,6 +18,8 @@
 '     - print out header for fragment tsv
 '   o fun04: pfrag_diScan
 '     - print out the fragment
+'   o fun05: rmEndDels_diScan
+'     - removes deletions at the ends of reads
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 /*-------------------------------------------------------\
@@ -210,6 +212,33 @@ pfrag_diScan(
    signed long scoreSL,
    signed int numKmersSI,
    void * outFILE
+);
+
+/*-------------------------------------------------------\
+| Fun05: rmEndDels_diScan
+|   - removes deletions at the ends of reads
+| Input:
+|   - samSTPtr:
+|     o pointer to samEntry struct with read to fix
+|   - largeDelSI:
+|     o minimum length to be a large deletion
+|   - maxStartSI:
+|     o maximum starting coordinate to remove large
+|       deletions (stuff before is masked if large del)
+|   - minEndSI:
+|     o minimum ending coordinate for large deletions
+|       to be removed (stuff after masked for large del)
+| Ouput:
+|   - Modifies:
+|     o cigar in samSTPtr to have large ending deletions
+|       removed (everything after/before is masked)
+\-------------------------------------------------------*/
+void
+rmEndDels_diScan(
+   struct samEntry *samSTPtr,
+   signed int largeDelSI,/*size of large deletion*/
+   signed int maxStartSI,/*starting coordinate for del*/
+   signed int minEndSI   /*ending coordinate for del*/
 );
 
 #endif

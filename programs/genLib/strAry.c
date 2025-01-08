@@ -8,21 +8,30 @@
 '     - make a string array
 '   o fun02: realloc_strAry
 '     - rellocates memory for a string array
-'   o fun04: add_strAry
-'     - adds a string to a string array
 '   o .h fun03: get_strAry
 '     - finds pointer of a string in a string array
+'   o fun04: add_strAry
+'     - adds a string to a string array
+'   o fun05: swap_strAry
+'     - swaps two strings in a string array
 '   o fun06: cmp_strAry
+'     - compares a string to a string array
+'   o fun07: cmpIndex_strAry
 '     - compares two strings in a string array
-'   o fun07: sort_strAry
+'   o fun08: findInsert_strAry
+'     - finds location to insert query in string array
+'       (must be sorted)
+'   o fun09: addSort_strAry
+'     - adds a string to string array in a sorted positon
+'   o fun10: sort_strAry
 '     - sorts a string array from least to greatest; is
 '       case sensitive
-'   o fun08: sortSync_strAry
+'   o fun11: sortSync_strAry
 '     - sorts a string array from least to greatest, but
 '       keeps the unsigned int array in sync with strings
-'   o fun09: find_strAry
+'   o fun12: find_strAry
 '     - search for query in string array (must be sorted)
-'   o fun10: findNoSort_strAry
+'   o fun13: findNoSort_strAry
 '     - search for query in string array (dumb search)
 '   o license:
 '     - licensing for this code (public domain / mit)
@@ -47,7 +56,7 @@
 | Fun01: mk_strAry
 |   - make a string array
 | Input:
-|   - sizeUL:
+<|   - sizeUL:
 |     o number of strings to store
 | Output:
 |   - Returns:
@@ -114,14 +123,11 @@ add_strAry(
    signed char *tmpStr = get_strAry(strAry, indexUL);
 
    tmpStr +=
-      cpDelim_ulCp(
+      cpStr_ulCp(
          tmpStr,
-         newStr,
-         0,
-         '\0'
+         newStr
       );
 } /*add_strAry*/
-
 
 /*-------------------------------------------------------\
 | Fun05: swap_strAry
@@ -153,6 +159,36 @@ swap_strAry(
 
 /*-------------------------------------------------------\
 | Fun06: cmp_strAry
+|   - compares a string to a string array
+| Input:
+|   - qryStr:
+|     o c-string with query to compare
+|   - strAry:
+|     o c-string array with strings to compare
+|   - refUL:
+|     o index of reference to compare
+| Output:
+|   - Returns:
+|     o 0 if strings are equal
+|     o > 0 if query is greater
+|     o < 0 if reference is greater
+\-------------------------------------------------------*/
+signed long
+cmp_strAry(
+   signed char *qryStr,
+   signed char *strAry,
+   unsigned long refUL
+){
+   return
+      eqlNull_ulCp(
+         qryStr,
+         get_strAry(strAry, refUL)
+      ); /*compare strings*/
+} /*cmp_strAry*/
+
+
+/*-------------------------------------------------------\
+| Fun07: cmpIndex_strAry
 |   - compares two strings in a string array
 | Input:
 |   - strAry:
@@ -168,22 +204,173 @@ swap_strAry(
 |     o < 0 if reference is greater
 \-------------------------------------------------------*/
 signed long
-cmp_strAry(
+cmpIndex_strAry(
    signed char *strAry,
    unsigned long qryUL,
    unsigned long refUL
 ){
    return
-      eql_ulCp(
+      eqlNull_ulCp(
          get_strAry(strAry, qryUL),
-         get_strAry(strAry, refUL),
-         0,
-         '\0'
+         get_strAry(strAry, refUL)
       ); /*compare strings*/
-} /*cmp_strAry*/
+} /*cmpIndex_strAry*/
 
 /*-------------------------------------------------------\
-| Fun07: sort_strAry
+| Fun08: findInsert_strAry
+|  - finds location to insert query in string array
+|    (must be sorted)
+| Input:
+|  - strAry:
+|    o string array
+|  - qryStr:
+|    o string to find insert location
+|  - lenUL:
+|    o length of strAry (index 1)
+| Output:
+|  - Returns:
+|    o index to insert qryStr at
+\-------------------------------------------------------*/
+signed long
+findClose_strAry(
+   signed char *strAry,
+   signed char *qryStr,
+   signed long lenSL
+){
+   signed long midSL = 0;
+   signed long rightSL = lenSL - 1;
+   signed long leftSL = 0;
+   signed long cmpSL = 0;
+
+   while(leftSL <= rightSL)
+   { /*Loop: Search for the querys index*/
+      midSL = (leftSL + rightSL) >> 1;
+
+      cmpSL =
+         eql_ulCp(
+            qryStr,
+            get_strAry(strAry, midSL),
+            0,
+            '\0'
+         ); /*compare query to array value*/
+
+      if(cmpSL > 0)
+          leftSL = midSL + 1;
+
+      else if(cmpSL < 0)
+          rightSL = midSL - 1;
+
+      else
+      { /*Else: found matching string*/
+         if(midSL + 1 >= rightSL)
+            return midSL;
+
+         cmpSL =
+            eql_ulCp(
+               qryStr,
+               get_strAry(strAry, midSL + 1),
+               0,
+               '\0'
+            ); /*compare query to array value*/
+
+         if(! cmpSL)
+            leftSL = midSL + 1; /*find end of duplicates*/
+         else
+            return midSL;
+      } /*Else: found matching string*/
+   } /*Loop: Search for the querys index*/
+
+   if(midSL == lenSL)
+      return midSL;     /*at end of array, insert here*/
+   if(cmpSL > 0)
+      return midSL + 1; /*query still greater*/
+   else
+      return midSL;     /*query less than, insert here*/
+} /*findClose_strAry*/
+
+/*-------------------------------------------------------\
+| Fun09: addSort_strAry
+|   - adds a string to a string array in a sorted positon
+|   - assumes you do not manipulate array in other ways
+| Input:
+|   - newStr:
+|     o string to add to array; must be 63 char or shorter
+|   - strAry:
+|     o string array to add string to
+|   - lenUL:
+|     o has number of elements in array
+| Output:
+|   - Modifies:
+|     o strAry to have newStr at closest index
+|   - Returns:
+|     o index of added string
+\-------------------------------------------------------*/
+unsigned long
+addSort_strAry(
+   signed char *newStr, /*string to add to array*/
+   signed char *strAry, /*string array to add newStr to*/
+   unsigned long lenUL  /*number of elements in array*/
+){
+   unsigned long indexUL = 0;
+   signed long diffSL = 0;
+
+
+   if(! lenUL)
+   { /*If: first string in array*/
+      cpStr_ulCp(
+         strAry,
+         newStr
+      );
+
+      indexUL = 0;
+      goto ret_fun09;
+   } /*If: first string in array*/
+
+
+   indexUL =
+      (unsigned long)
+      findClose_strAry(
+         strAry,
+         newStr,
+         (signed long) lenUL
+      ); /*find insert location*/
+
+   diffSL = (signed long) lenUL;
+
+   if(diffSL > (signed long) indexUL)
+   { /*If: can copy last value*/
+      cpStr_ulCp(
+         get_strAry(strAry, diffSL),
+         get_strAry(strAry, diffSL - 1)
+      ); /*prevents copying unitialized last value*/
+
+      --diffSL;
+   } /*If: can copy last value*/
+
+   while(diffSL > (signed long) indexUL)
+   { /*Loop: move strings up (clear position)*/
+      swap_strAry(
+         strAry,
+         diffSL,
+         diffSL - 1
+      );
+
+      --diffSL;
+   } /*Loop: move strings up (clear position)*/
+   
+
+   add_strAry(
+      newStr,
+      strAry,
+      indexUL
+   ); /*add new string in*/
+
+   ret_fun09:;
+      return indexUL;
+} /*addSort_strAry*/
+
+/*-------------------------------------------------------\
+| Fun10: sort_strAry
 |   - sorts a string array from least to greatest; is case
 |     sensitive
 | Input:
@@ -200,19 +387,19 @@ sort_strAry(
    signed char *strAry,
    unsigned long lenUL
 ){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-   ' Fun07 TOC:
+   ' Fun10 TOC:
    '   - sorts a string array from least to greatest; is
    '     case sensitive
-   '   o fun07 sec01:
+   '   o fun10 sec01:
    '     - variable declerations
-   '   o fun07 sec02:
+   '   o fun10 sec02:
    '     - find the number of rounds to sort for
-   '   o fun07 sec03:
+   '   o fun10 sec03:
    '     - sort the arrays
    \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun07 Sec01:
+   ^ Fun10 Sec01:
    ^   - variable declerations
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -227,7 +414,7 @@ sort_strAry(
    unsigned long ulElm = 0;
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun07 Sec02:
+   ^ Fun10 Sec02:
    ^   - find the max search value (number rounds to sort)
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -238,7 +425,7 @@ sort_strAry(
       subUL = (3 * subUL) + 1;
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun07 Sec03:
+   ^ Fun10 Sec03:
    ^   - sort arrays
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -259,7 +446,7 @@ sort_strAry(
             nextUL = ulElm + subUL;
 
             if(
-               cmp_strAry(
+               cmpIndex_strAry(
                   strAry,
                   ulElm,
                   nextUL
@@ -279,7 +466,7 @@ sort_strAry(
                   lastUL -= subUL;
 
                   if(
-                     cmp_strAry(
+                     cmpIndex_strAry(
                         strAry,
                         onUL,
                         lastUL
@@ -303,7 +490,7 @@ sort_strAry(
 } /*sort_strAry*/
 
 /*-------------------------------------------------------\
-| Fun08: sortSync_strAry
+| Fun11: sortSync_strAry
 |   - sorts a string array from least to greatest, but
 |     keeps the unsigned int array in sync with strings
 | Input:
@@ -323,19 +510,19 @@ sortSync_strAry(
    unsigned int *uiAry,
    unsigned long lenUL
 ){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-   ' Fun08 TOC:
+   ' Fun11 TOC:
    '   - sorts a string array from least to greatest, but
    '     keeps the unsigned int array in sync with strings
-   '   o fun08 sec01:
+   '   o fun11 sec01:
    '     - variable declerations
-   '   o fun08 sec02:
+   '   o fun11 sec02:
    '     - find the number of rounds to sort for
-   '   o fun08 sec03:
+   '   o fun11 sec03:
    '     - sort the arrays
    \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun08 Sec01:
+   ^ Fun11 Sec01:
    ^   - variable declerations
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -350,7 +537,7 @@ sortSync_strAry(
    unsigned long ulElm = 0;
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun08 Sec02:
+   ^ Fun11 Sec02:
    ^   - find the max search value (number rounds to sort)
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -364,7 +551,7 @@ sortSync_strAry(
       subUL = (3 * subUL) + 1;
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun08 Sec03:
+   ^ Fun11 Sec03:
    ^   - sort arrays
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -385,7 +572,7 @@ sortSync_strAry(
             nextUL = ulElm + subUL;
 
             if(
-               cmp_strAry(
+               cmpIndex_strAry(
                   strAry,
                   ulElm,
                   nextUL
@@ -409,7 +596,7 @@ sortSync_strAry(
                   lastUL -= subUL;
 
                   if(
-                     cmp_strAry(
+                     cmpIndex_strAry(
                         strAry,
                         onUL,
                         lastUL
@@ -437,7 +624,7 @@ sortSync_strAry(
 } /*sortSync_strAry*/
 
 /*-------------------------------------------------------\
-| Fun09: find_strAry
+| Fun12: find_strAry
 |  - search for query in string array (must be sorted)
 | Input:
 |  - strAry:
@@ -488,7 +675,7 @@ find_strAry(
 } /*find_strAry*/
 
 /*-------------------------------------------------------\
-| Fun10: findNoSort_strAry
+| Fun13: findNoSort_strAry
 |  - search for query in string array (dumb search)
 | Input:
 |  - strAry:

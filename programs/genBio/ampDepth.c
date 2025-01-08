@@ -20,7 +20,7 @@
 |   - indcluded libraries
 \-------------------------------------------------------*/
 
-#ifdef plan9
+#ifdef PLAN9
    #include <u.h>
    #include <libc.h>
 #else

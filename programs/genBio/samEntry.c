@@ -69,7 +69,9 @@
 '   o fun26: getRefLen_samEntry
 '     - gets reference ids & length from a sam file header
 '   o fun27: findRef_refs_samEntry
-'     - find index of a reference id in a refs_samEntry
+'     - finds a reference id in a refs_samEntry struct
+'   o fun28: addRef_samEntry
+'     - adds reference information to array in refStack
 '   o .h note01:
 '      - Notes about the sam file format from the sam file
 '        pdf
@@ -530,7 +532,7 @@ findQScores_samEntry(
     uint uiQScore = 0;
     uint uiChar = 0;
     
-    ulong qAdjustUL =
+    ulong_ulCp qAdjustUL =
        mkDelim_ulCp((schar) def_adjQ_samEntry);
 
     /*Find the number of q-score characters in buffer*/
@@ -629,7 +631,10 @@ cpQEntry_samEntry(
   uchar *tmpStr = 0;
   uint uiQ = 0;
   uint uiChar = 0;
-  ulong qAdjustUL=mkDelim_ulCp((schar) def_adjQ_samEntry);
+
+  ulong_ulCp qAdjustUL =
+     mkDelim_ulCp((schar) def_adjQ_samEntry);
+
   ulong *cpPtrUL = (ulong *) (cpQStr);
   ulong *dupPtrUL = (ulong *) samSTPtr->qStr;
   ulong qScoreUL = 0;
@@ -788,7 +793,8 @@ getLine_samEntry(
    ^   - make sure hav entire line
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
-   oldLenUL += endLine_ulCp(tmpStr);
+   oldLenUL += endLineUnix_ulCp(tmpStr);
+      /*just want line end, so can ignore '\r'*/
    tmpStr = *buffStr + oldLenUL;
 
    while(*tmpStr != '\n')
@@ -825,7 +831,7 @@ getLine_samEntry(
 
       checkEOL_fun10_sec03_samEntry:;
 
-      oldLenUL += endLine_ulCp(tmpStr);
+      oldLenUL += endLineUnix_ulCp(tmpStr);
       tmpStr = *buffStr + oldLenUL;
    } /*Loop: Find the length of  the line*/
    
@@ -906,7 +912,6 @@ lineTo_samEntry(
    ^   - variable declerations
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
-   ulong tabUL = mkDelim_ulCp((schar) '\t');
    signed char *tmpStr = 0;
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
@@ -927,7 +932,7 @@ lineTo_samEntry(
       cpDelim_ulCp(
          samSTPtr->qryIdStr,
          buffStr,
-         tabUL,
+         def_tab_ulCp,
          '\t'
       ); /*Copy the reference id/name*/
 
@@ -957,7 +962,7 @@ lineTo_samEntry(
       cpDelim_ulCp(
          samSTPtr->refIdStr,
          buffStr,
-         tabUL,
+         def_tab_ulCp,
          '\t'
       ); /*Copy the reference id/name*/
    
@@ -1169,7 +1174,7 @@ lineTo_samEntry(
       cpDelim_ulCp(
          samSTPtr->rNextStr,
          buffStr,
-         tabUL,
+         def_tab_ulCp,
          '\t'
       ); /*Copy the query id/name*/
 
@@ -1210,7 +1215,8 @@ lineTo_samEntry(
 
    if(samSTPtr->readLenUI == 0 && buffStr[0] != '*')
       samSTPtr->readLenUI =
-         lenStr_ulCp(buffStr, tabUL, '\t');
+         (uint)
+         lenStr_ulCp(buffStr, def_tab_ulCp, '\t');
 
    else if(buffStr[0] == '*')
    { /*Else If: There  is no sequence entry*/
@@ -1307,7 +1313,8 @@ lineTo_samEntry(
    else
    { /*Else: have extra entry*/
       /*not sure if char or ul copy better here*/
-      samSTPtr->lenExtraUI = endLine_ulCp(buffStr);
+      samSTPtr->lenExtraUI = endLineUnix_ulCp(buffStr);
+         /*this will save '\r' on windows*/
 
       if(samSTPtr->lenExtraUI > samSTPtr->lenExtraBuffUI)
       { /*If: I need to resize the buffer*/
@@ -2760,12 +2767,13 @@ realloc_refs_samEntry(
 
    refSTPtr->idAryStr = tmpSCPtr;
 
+   refSTPtr->arySizeUI = numRefsUI;
 
    done_fun24:;
-   return 0;
+      return 0;
 
    memErr_fun24:;
-   return def_memErr_samEntry;
+      return def_memErr_samEntry;
 } /*realloc_refs_samEntry*/
 
 /*-------------------------------------------------------\
@@ -2790,7 +2798,7 @@ realloc_refs_samEntry(
 |     o FILE pointer to print all headers to (0 no print)
 |   - headStrPtr:
 |     o pointer to c-string to hold non-reference headers
-|     o use null (0) to not save headers
+|     o use null for if not saving headers
 |   - lenHeadULPtr:
 |     o unsigned long with headStrPtr length
 | Output:
@@ -2849,17 +2857,18 @@ getRefLen_samEntry(
 
    blank_refs_samEntry(refSTPtr);
 
-   if(
-         headStrPtr    /*check if user input*/
-      && ! *headStrPtr
-   ){ /*If: need memory to save header*/
+   if(! headStrPtr) ;
+      /*not saving headers*/
+
+   else if(! *headStrPtr)
+   { /*If: need memory*/
       *headStrPtr = malloc(4096 * sizeof(schar));
 
       if(! *headStrPtr)
          goto memErr_fun26_sec04;
 
       *lenHeadULPtr = 4069;
-   } /*If: need memory to save header*/
+   } /*If: need memory*/
 
    if(! *buffStrPtr)
    { /*If: need memory*/
@@ -2952,19 +2961,18 @@ getRefLen_samEntry(
           *   - copy reference id and move to length
           \**********************************************/
 
-          cpStr =
-             get_strAry(
-                refSTPtr->idAryStr,
-                refSTPtr->numRefUI
-             );
+          
+          cpStr = tmpStr;
 
-          tmpStr +=
-             cpDelim_ulCp(
-                cpStr,
-                tmpStr,
-                def_tab_ulCp,
-                '\t'
-             );
+          while(*tmpStr != '\t' && *tmpStr != '\0')
+             ++tmpStr;
+          *tmpStr = '\0';
+
+          add_strAry(
+             cpStr,
+             refSTPtr->idAryStr,
+             refSTPtr->numRefUI
+          ); /*sorting at end for better speed*/
 
           ++tmpStr;
          
@@ -3002,7 +3010,8 @@ getRefLen_samEntry(
        \*************************************************/
 
        else if(headStrPtr)
-       { /*Else If: is non-reference header and saving*/
+       { /*Else: is non-reference header*/
+
           if(
                 headBytesUL + samSTPtr->lenExtraUI + 1
              >= *lenHeadULPtr
@@ -3019,7 +3028,7 @@ getRefLen_samEntry(
                 goto memErr_fun26_sec04;
 
             *headStrPtr = tmpStr;
-            tmpStr = '\0';
+            *tmpStr = '\0';
             *lenHeadULPtr <<= 1;
           } /*If: need to resize*/
 
@@ -3036,7 +3045,7 @@ getRefLen_samEntry(
           *cpStr = '\0';
 
           headBytesUL += samSTPtr->lenExtraUI + 1;
-       } /*Else If: is non-reference header and saving*/
+       } /*Else: is non-reference header*/
 
        /*************************************************\
        * Fun26 Sec03 Sub06:
@@ -3088,42 +3097,111 @@ getRefLen_samEntry(
    goto ret_fun26_sec04;
 
    memErr_fun26_sec04:;
-      errSC = def_memErr_samEntry;
-      goto ret_fun26_sec04;
+   errSC = def_memErr_samEntry;
+   goto ret_fun26_sec04;
 
    fileErr_fun26_sec04:;
-      errSC = def_fileErr_samEntry;
-      goto ret_fun26_sec04;
+   errSC = def_fileErr_samEntry;
+   goto ret_fun26_sec04;
 
    ret_fun26_sec04:;
-      return errSC;
+   return errSC;
 } /*getRefLen_samEntry*/
 
 /*-------------------------------------------------------\
 | Fun27: findRef_refs_samEntry
-|   - find index of a reference id in a refs_samEntry
+|   - finds a reference id in a refs_samEntry struct
 | Input:
-|   - refStr:
-|     o c-string with reference name to search for
+|   - idStr:
+|     o c-string with reference id to find
 |   - refSTPtr:
-|     o pointer to refs_samEntry array with references
+|     o pointer to refs_samEntry struct with references
 | Output:
 |   - Returns:
-|     o index of reference in refSTPtr arrays
-|     o < 0 if could not find reference
+|     o index of reference id if found
+|     o < 0 if reference id not in list
 \-------------------------------------------------------*/
 signed long
 findRef_refs_samEntry(
-   signed char *refStr,
-   struct refs_samEntry *refSTPtr
+   signed char *idStr,            /*id to find*/
+   struct refs_samEntry *refSTPtr /*holds ref lengths*/
 ){
    return
       find_strAry(
          refSTPtr->idAryStr,
-         refStr,
+         idStr,
          refSTPtr->numRefUI
       );
 } /*findRef_refs_samEntry*/
+
+/*-------------------------------------------------------\
+| Fun28: addRef_samEntry
+|   - adds reference information to array in refStack
+| Input:
+|   - idStr:
+|     o c-string with id to add
+|   - lenUI:
+|     o length of reference sequence
+|   - refsPtr:
+|     o pointer to refs_samEntry struct to add ref to
+|   - errSCPtr:
+|     o pointer to signed char to hold errors
+| Output:
+|   - Modifies:
+|     o idAryStr in refsPtr to have idStr
+|     o lenAryUI in refsPtr to have lenUI
+|     o numRefUI in refsPtr to be resized if realloc used
+|     o arrySizeUI in refsPtr to be incurmented by 1
+|     o errSCPtr to be
+|       * 0 for no error
+|       * def_expand_samEntry if needed to realloc
+|       * def_memErr_samEntry for memory error
+|   - Returns
+|     o index of reference
+|     o -1 for errors
+\-------------------------------------------------------*/
+signed long
+addRef_samEntry(
+   signed char *idStr,
+   unsigned int lenUI,
+   struct refs_samEntry *refsPtr,
+   signed char *errSCPtr
+){
+   unsigned long retUL = 0;
+
+   *errSCPtr = 0;
+
+
+   if(refsPtr->numRefUI >= refsPtr->arySizeUI)
+   { /*If: need more memory*/
+      *errSCPtr =
+         realloc_refs_samEntry(
+            refsPtr,
+            refsPtr->arySizeUI + 16
+         );
+
+      if(*errSCPtr)
+         goto memErr_fun28;
+
+      *errSCPtr = def_expand_samEntry;
+   } /*If: need more memory*/
+
+
+   retUL =
+      addSort_strAry(
+         idStr,
+         refsPtr->idAryStr,
+         refsPtr->numRefUI
+      );
+
+   refsPtr->lenAryUI[retUL] = lenUI;
+   ++refsPtr->numRefUI;
+
+   return *errSCPtr;
+
+   memErr_fun28:;
+      return def_memErr_samEntry;
+} /*addRef_samEntry*/
 
 /*=======================================================\
 : License:

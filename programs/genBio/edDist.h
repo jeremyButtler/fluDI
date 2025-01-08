@@ -41,8 +41,8 @@
 #ifndef SAM_FILE_CLUSTERING_H
 #define SAM_FILE_CLUSTERING_H
 
-typedef struct samEntry samEntry;
-typedef struct seqST seqST;
+struct samEntry;
+struct seqST;
 
 #define def_memErr_edDist -16
 #define def_fileErr_edDist -32

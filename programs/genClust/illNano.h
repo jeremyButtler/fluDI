@@ -52,7 +52,7 @@
 #ifndef ILLUMINA_NANOPORE_READ_EXTRACT_H
 #define ILLUMINA_NANOPORE_READ_EXTRACT_H
 
-typedef struct samEntry samEntry;
+struct samEntry;
 
 #define def_memErr_illNano 1
 #define def_fileErr_illNano 2

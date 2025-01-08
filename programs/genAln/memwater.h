@@ -18,8 +18,8 @@
 #ifndef MEMORY_EFFICENT_WATERMAN_H
 #define MEMORY_EFFICENT_WATERMAN_H
 
-typedef struct seqST seqST;
-typedef struct alnSet alnSet;
+struct seqST;
+struct alnSet;
 
 /*-------------------------------------------------------\
 | Fun01: memwater

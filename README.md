@@ -273,7 +273,10 @@ Basically step 6 of diFrag, with coordinate recording.
 
 # Updates:
 
-- 2024-10-30
+- 2025-01-07:
+  - fluDI working better, but still segfaulting at
+    clustering setp
+- 2024-10-30:
   - updateing to keep in sync with my bioTools
     organization
 - 2024-09-15:

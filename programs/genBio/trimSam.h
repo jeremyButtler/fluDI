@@ -23,7 +23,7 @@
 #ifndef TRIMSAM_H
 #define TRIMSAM_H
 
-typedef struct samEntry samEntry;
+struct samEntry;
 
 #define def_rangeErr_trimSam 1
 #define def_memErr_trimSam 2

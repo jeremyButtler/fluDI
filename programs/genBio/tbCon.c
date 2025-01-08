@@ -389,7 +389,7 @@ freeStack_set_tbCon(
 \-------------------------------------------------------*/
 signed char
 addRead_tbCon(
-   samEntry *samSTPtr,       /*read to add to consensus*/
+   struct samEntry *samSTPtr, /*read to add to consensus*/
    struct conNt_tbCon *conNtAryST[], /*consensus array*/
    unsigned int *lenRefUI,       /*length of reference*/
    struct set_tbCon *settings
@@ -949,7 +949,7 @@ addRead_tbCon(
 |         amplicons it will be an array
 |     o 0 for memory erors
 \-------------------------------------------------------*/
-samEntry *
+struct samEntry *
 collapse_tbCon(
    struct conNt_tbCon conNtAryST[], /*to collapse*/
    unsigned int lenConAryUI,   /*length of consensus*/
@@ -1185,15 +1185,33 @@ collapse_tbCon(
             `  uiEndRef
             */
 
-         insPerSupF =
-              (float) conNtAryST[uiEndRef].numInsSI
-            / (float) keptReadsSI;
+         if(keptReadsSI > 0)
+            insPerSupF =
+                 (float) conNtAryST[uiEndRef].numInsSI
+               / (float) keptReadsSI;
+         else
+            insPerSupF = 0;
 
-         delPerSupF =
-              (float) conNtAryST[uiEndRef].numDelSI
-            / (float) conNtAryST[uiEndRef].ntKeptSI;
+         if(conNtAryST[uiEndRef].ntKeptSI > 0)
+            delPerSupF =
+                 (float) conNtAryST[uiEndRef].numDelSI
+               / (float) conNtAryST[uiEndRef].ntKeptSI;
+         else
+            delPerSupF = 0;
 
-         snpPerSupF = 1 - delPerSupF;
+         nonMaskBaseUI = conNtAryST[uiRef].numASI;
+         nonMaskBaseUI += conNtAryST[uiRef].numTSI;
+         nonMaskBaseUI += conNtAryST[uiRef].numGSI;
+         nonMaskBaseUI += conNtAryST[uiRef].numCSI;
+
+         snpPerSupF = nonMaskBaseUI;
+         nonMaskBaseUI += conNtAryST[uiRef].numDelSI;
+
+
+         if(nonMaskBaseUI > 0)
+            snpPerSupF /= (float) nonMaskBaseUI;
+         else
+            snpPerSupF = 0;
 
          /*++++++++++++++++++++++++++++++++++++++++++++++\
          + Fun13 Sec04 Sub02 Cat03:
@@ -1288,7 +1306,24 @@ collapse_tbCon(
       \+++++++++++++++++++++++++++++++++++++++++++++++++*/
 
       retSamST[siFrag].lenQryIdUC =
-         numToStr(retSamST[siFrag].qryIdStr, uiRef);
+         cpStr_ulCp(
+             retSamST[siFrag].qryIdStr,
+             refIdStr
+         );
+
+      retSamST[siFrag].qryIdStr[
+         retSamST[siFrag].lenQryIdUC
+      ] = '_';
+
+      ++retSamST[siFrag].lenQryIdUC;
+
+      retSamST[siFrag].lenQryIdUC +=
+         numToStr(
+            &retSamST[siFrag].qryIdStr[
+               retSamST[siFrag].lenQryIdUC
+            ],
+         uiRef
+      );
 
       retSamST[siFrag].qryIdStr[
          retSamST[siFrag].lenQryIdUC
@@ -1447,17 +1482,22 @@ collapse_tbCon(
             `  uiRef
             */
 
-         insPerSupF =
-              (float) conNtAryST[uiRef].numInsSI
-            / (float) keptReadsSI;
+         if(keptReadsSI > 0)
+            insPerSupF =
+                 (float) conNtAryST[uiRef].numInsSI
+               / (float) keptReadsSI;
+         else
+            insPerSupF = 0;
 
          /*For deletions an masked base is equivlent to no
          `   support
          */
-         delPerSupF = (float) conNtAryST[uiRef].numDelSI;
-
-         delPerSupF /=
-            (float) conNtAryST[uiRef].ntKeptSI;
+         if(conNtAryST[uiRef].numDelSI > 0)
+            delPerSupF =
+                 (float) conNtAryST[uiRef].numDelSI
+               / (float) conNtAryST[uiRef].ntKeptSI;
+         else
+            delPerSupF = 0;
 
          /*Find the number of non-anonymous bases
          `   For tbCon all anonymous bases are N's (masked)
@@ -1469,7 +1509,12 @@ collapse_tbCon(
 
          snpPerSupF = nonMaskBaseUI;
          nonMaskBaseUI += conNtAryST[uiRef].numDelSI;
-         snpPerSupF /= (float) nonMaskBaseUI;
+
+
+         if(nonMaskBaseUI > 0)
+            snpPerSupF /= (float) nonMaskBaseUI;
+         else
+            snpPerSupF = 0;
 
          /***********************************************\
          * Fun13 Sec05 Sub02:
@@ -1842,7 +1887,7 @@ collapse_tbCon(
 |         amplicons it will be an array
 |     o 0 for memory erors
 \-------------------------------------------------------*/
-samEntry *
+struct samEntry *
 noFragCollapse_tbCon(
    struct conNt_tbCon conNtAryST[], /*to collapse*/
    unsigned int lenConAryUI,   /*length of consensus*/
@@ -1993,15 +2038,33 @@ noFragCollapse_tbCon(
          `  uiRef
          */
 
-      insPerSupF =
-           (float) conNtAryST[uiRef].numInsSI
-         / (float) keptReadsSI;
+      if(keptReadsSI > 0)
+         insPerSupF =
+              (float) conNtAryST[uiRef].numInsSI
+            / (float) keptReadsSI;
+      else
+         insPerSupF = 0;
 
-      delPerSupF =
-           (float) conNtAryST[uiRef].numDelSI
-         / (float) conNtAryST[uiRef].ntKeptSI;
+      if(conNtAryST[uiRef].ntKeptSI > 0)
+         delPerSupF =
+              (float) conNtAryST[uiRef].numDelSI
+            / (float) conNtAryST[uiRef].ntKeptSI;
+      else
+         delPerSupF = 0;
 
-      snpPerSupF = 1 - delPerSupF;
+      nonMaskBaseUI = conNtAryST[uiRef].numASI;
+      nonMaskBaseUI += conNtAryST[uiRef].numTSI;
+      nonMaskBaseUI += conNtAryST[uiRef].numGSI;
+      nonMaskBaseUI += conNtAryST[uiRef].numCSI;
+
+      snpPerSupF = nonMaskBaseUI;
+      nonMaskBaseUI += conNtAryST[uiRef].numDelSI;
+
+
+      if(nonMaskBaseUI > 0)
+         snpPerSupF /= (float) nonMaskBaseUI;
+      else
+         snpPerSupF = 0;
 
       /*+++++++++++++++++++++++++++++++++++++++++++++++++\
       + Fun14 Sec04 Sub01 Cat03:
@@ -2096,20 +2159,28 @@ noFragCollapse_tbCon(
    \++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
    retSamST->lenQryIdUC =
-      numToStr(retSamST->qryIdStr, (uint) startSI);
+      cpStr_ulCp(
+          retSamST->qryIdStr,
+          refIdStr
+      ); /*get reference id*/
 
-   retSamST->qryIdStr[
-      retSamST->lenQryIdUC
-   ] = '-';
-
+   retSamST->qryIdStr[retSamST->lenQryIdUC] = '_';
    ++retSamST->lenQryIdUC;
 
    retSamST->lenQryIdUC +=
       (uchar)
       numToStr(
-         &retSamST->qryIdStr[
-            retSamST->lenQryIdUC
-         ],
+         &retSamST->qryIdStr[retSamST->lenQryIdUC],
+         (uint) startSI
+      ); /*add starting coordinate*/
+
+   retSamST->qryIdStr[retSamST->lenQryIdUC] = '-';
+   ++retSamST->lenQryIdUC;
+
+   retSamST->lenQryIdUC +=
+      (uchar)
+      numToStr(
+         &retSamST->qryIdStr[retSamST->lenQryIdUC],
          (uint) endSI
       ); /*Copy the ending position*/
 
@@ -2292,17 +2363,22 @@ noFragCollapse_tbCon(
          `  startSI
          */
 
-      insPerSupF =
-           (float) conNtAryST[startSI].numInsSI
-         / (float) keptReadsSI;
+      if(keptReadsSI > 0)
+         insPerSupF =
+              (float) conNtAryST[startSI].numInsSI
+            / (float) keptReadsSI;
+      else
+         insPerSupF = 0;
 
       /*For deletions an masked base is equivlent to no
       `   support
       */
-      delPerSupF = (float) conNtAryST[startSI].numDelSI;
-
-      delPerSupF /=
-         (float) conNtAryST[startSI].ntKeptSI;
+      if(conNtAryST[startSI].ntKeptSI > 0)
+         delPerSupF =
+              (float) conNtAryST[startSI].numDelSI
+            / (float) conNtAryST[startSI].ntKeptSI;
+      else
+         delPerSupF = 0;
 
       /*Find the number of non-anonymous bases
       `   For tbCon all anonymous bases are N's (masked)
@@ -2314,7 +2390,11 @@ noFragCollapse_tbCon(
 
       snpPerSupF = nonMaskBaseUI;
       nonMaskBaseUI += conNtAryST[startSI].numDelSI;
-      snpPerSupF /= (float) nonMaskBaseUI;
+
+      if(nonMaskBaseUI > 0)
+         snpPerSupF /= (float) nonMaskBaseUI;
+      else
+         snpPerSupF = 0;
 
       /**************************************************\
       * Fun14 Sec05 Sub03:
@@ -2645,7 +2725,6 @@ noFragCollapse_tbCon(
 |     o c-string with referernce sequence name
 |   - outFILE:
 |     o c-string with name of file to print everything to
-|     o will append to file if already exists
 | Output:
 |   - Prints:
 |     o entries in conNtAryST to outFILE
@@ -2702,29 +2781,8 @@ pvar_tbCon(
       outFILE =
          fopen(
             (char *) outStr,
-            "r"
+            "w"
          );
-
-      if(outFILE)
-      { /*If: output file already exists*/
-         fclose(outFILE);
-         outFILE = 0;
-
-         outFILE =
-            fopen(
-               (char *) outStr,
-               "a"
-            );
-      } /*If: output file already exists*/
-
-      else
-      { /*Else: output file does not exist*/
-         outFILE =
-            fopen(
-               (char *) outStr,
-               "w"
-            );
-      } /*Else: output file does not exist*/
 
       if(! outFILE)
          goto fileErr_fun15_sec04;

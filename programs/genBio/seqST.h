@@ -1,39 +1,51 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
 ' seqST SOF: Start Of File
-'  - holds functions for reading in or manipulating
-'    sequences
-'  o header:
-'    - guards and defined variables
-'  o .h st01: seqST
-'    - holds an single sequence (fasta/fastq)
-'  o .c fun01 addLine_seqST:
-'    - add characters from file to buffer, if needed 
-'      resize. This will only read in till the end of the
-'      line
-'  o fun02 getFqSeq_seqST:
-'    - reads a fastq sequence from a fastq file
-'  o fun03 getFaSeq_seqST:
-'    - grabs the next read in the fasta file
-'  o fun04 revComp_seqST:
-'    - reverse complement a sequence
-'  o fun05 blank_seqST:
-'    - sets values in seqST to zero
-'  o fun06 init_seqST:
-'    - sets values in seqST to blank values
-'  o fun07 freeStack_seqST:
-'    - frees variables in an seqST (calls blank_seqST)
-'  o fun08 freeHeap_seqST:
-'    - frees an seqST strucuter (calls fredSeqSTStack)
-'  o fun09: freeHeapAry_seqST
-'    - frees an array of seqST's
-'  o fun10 cpIdEndPad_seqST:
-'     - copies read id to a buffer and adds in endIdC to
-'       the end. If needed, this function will add right
-'       padding of spaces to the end.
-'  o fun11: cp_seqST
-'    - copies an seqST structure
-'  o license:
-'    - licensing for this code (public domain / mit)
+'   - holds functions for reading in or manipulating
+'     sequences
+'   o header:
+'     - guards and defined variables
+'   o .h st01: seqST
+'     - holds an single sequence (fasta/fastq)
+'   o .c fun01 addLine_seqST:
+'     - add characters from file to buffer, if needed 
+'       resize. This will only read in till the end of the
+'       line
+'   o fun02 getFqSeq_seqST:
+'     - reads a fastq sequence from a fastq file
+'   o fun03 getFaSeq_seqST:
+'     - grabs the next read in the fasta file
+'   o fun04 revComp_seqST:
+'     - reverse complement a sequence
+'   o fun05 blank_seqST:
+'     - sets values in seqST to zero
+'   o fun06 init_seqST:
+'     - sets values in seqST to blank values
+'   o fun07 freeStack_seqST:
+'     - frees variables in an seqST (calls blank_seqST)
+'   o fun08 freeHeap_seqST:
+'     - frees an seqST strucuter (calls fredSeqSTStack)
+'   o fun09: freeHeapAry_seqST
+'     - frees an array of seqST's
+'   o fun10 cpIdEndPad_seqST:
+'      - copies read id to a buffer and adds in endIdC to
+'        the end. If needed, this function will add right
+'        padding of spaces to the end.
+'   o fun11: cp_seqST
+'     - copies an seqST structure
+'   o fun12: swap_seqST
+'     - swaps values in two seqST structs
+'   o fun13: sort_seqST
+'     - sorts an array of seqST structs
+'   o fun14: search_seqST
+'     - searchs for sequence in seqST struct array
+'   o fun15: mkAry_seqST
+'     - makes a seqST struct array
+'   o fun16: realloc_seqST
+'     - add more memory to a seqST struct array
+'   o fun17: readFaFile_seqST
+'     - get all sequences from a fasta file
+'   o license:
+'     - licensing for this code (public domain / mit)
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 /*-------------------------------------------------------\
@@ -228,7 +240,7 @@ freeHeap_seqST(
 void
 freeHeapAry_seqST(
    struct seqST *seqAryST,
-   signed int  numSeqSI
+   signed long  numSeqSL
 );
 
 /*-------------------------------------------------------\
@@ -283,6 +295,140 @@ signed char
 cp_seqST(
    struct seqST *dupSeqST, /*copy to (duplicate)*/
    struct seqST *cpSeqST   /*seqSTPtr to copy*/
+);
+
+/*-------------------------------------------------------\
+| Fun12: swap_seqST
+|   - swaps values in two seqST structs
+| Input:
+|   - firstSTPtr:
+|     o pointer first seqST struct to swap
+|   - secSTPtr:
+|     o pointer second seqST struct to swap
+| Output:
+|   - Modifies:
+|     o firstSTPtr to have values from secSTPtr
+|     o secSTPtr to have values from firstSTPtr
+\-------------------------------------------------------*/
+void
+swap_seqST(
+   struct seqST *firstSTPtr,
+   struct seqST *secSTPtr
+);
+
+/*-------------------------------------------------------\
+| Fun13: sort_seqST
+|   - sorts an array of seqST structs
+| Input:
+|   - arySTPtr:
+|     o pointer to array of seqST struct to sort
+|   - lenSL:
+|     o length to sort in array
+| Output:
+|   - Modifies:
+|     o arySTPtr to be sorted by read/ref id
+\-------------------------------------------------------*/
+void
+sort_seqST(
+   struct seqST *arySTPtr, /*array to sort*/
+   signed long lenSL       /*length of array*/
+);
+
+/*-------------------------------------------------------\
+| Fun14: search_seqST
+|  - searchs for sequence in seqST struct array
+| Input:
+|  - seqArySTPtr:
+|    o pionter to seqST stuct array to search
+|  - qryStr:
+|    o query to find
+|  - lenSL:
+|    o length of seqArySTPtr (index 1)
+| Output:
+|  - Returns:
+|    o index of qryStr in seqArySTPtr
+|    o -1 if qryUL is not in ulAry
+\-------------------------------------------------------*/
+signed long
+search_seqST(
+   struct seqST *seqArySTPtr, /*sequence array to search*/
+   signed char *qryStr,       /*query to hunt for*/
+   signed long lenSL          /*length to search in*/
+);
+
+/*-------------------------------------------------------\
+| Fun15: mkAry_seqST
+|  - makes a seqST struct array
+| Input:
+|  - sizeSL:
+|    o size of seqST struct array
+| Output:
+|  - Returns:
+|    o pointer to seqST struct array
+|    o 0 for memory errors
+\-------------------------------------------------------*/
+struct seqST *
+mkAry_seqST(
+   signed long sizeSL         /*new length (size)*/
+);
+
+/*-------------------------------------------------------\
+| Fun16: realloc_seqST
+|  - add more memory to a seqST struct array
+| Input:
+|  - seqArySTPtr:
+|    o pionter to seqST stuct array to expand
+|  - lenSL:
+|    o index of last item
+|    o this marks the start of initialization
+|  - sizeSL:
+|    o new size of seqST struct array
+| Output:
+|  - Returns:
+|    o 0 for no errors
+|    o def_memErr_seqST for memory errors
+\-------------------------------------------------------*/
+signed char
+realloc_seqST(
+   struct seqST **seqArySTPtr,/*sequence array to expand*/
+   signed long lenSL,         /*index of last item*/
+   signed long sizeSL         /*new length (size)*/
+);
+
+/*-------------------------------------------------------\
+| Fun17: readFaFile_seqST
+|   - get all sequences from a fasta file
+| Input:
+|   - faFILE:
+|     o FILE pointer to file to get sequences from
+|   - lenSLPtr:
+|     o pointer to signed long to hold number sequences
+|       in returned array (also in faFILE)
+|   - sizeSLPtr:
+|     o pointer to signed long to hold returned array size
+|   - errSCPtr:
+|     o pointer to signed char to hold errors
+| Output:
+|   - Modifies:
+|     o faFILE to be at end of file
+|     o lenSLPtr to have number sequences in faFILE/array
+|     o sizeSLPtr to have size of returned array
+|     o errSCPtr to have errors
+|       * 0 for no errors
+|       * def_fileErr_seqST if had file error
+|       * def_badLine_seqST | def_fileErr_seqST for
+|         invalid fasta entry
+|       * def_memErr_seqST for memory errors
+|   - Returns:
+|     o seqST struct array with sequences
+|     o 0 for errors
+\-------------------------------------------------------*/
+struct seqST *
+readFaFile_seqST(
+   void *faFILE,           /*file to get reads from*/
+   signed long *lenSLPtr,  /*number items in array*/
+   signed long *sizeSLPtr, /*length of array*/
+   signed char *errSCPtr   /*holds error values*/
 );
 
 #endif

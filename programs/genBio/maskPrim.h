@@ -41,7 +41,7 @@
 #ifndef SAM_PRIMER_MASK_H
 #define SAM_PRIMER_MASK_H
 
-typedef struct samEntry samEntry;
+struct samEntry;
 
 /*Do not change these*/
 #define def_reverse_maskPrim 1

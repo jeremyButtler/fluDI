@@ -229,6 +229,9 @@ ul_shellSort(
    ^   - find the max search value (number rounds to sort)
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
+   if(! numElmUL)
+      return;
+
    /*Recursion formula: h[0] = 1, h[n] = 3 * h[n - 1] +1*/
    subUL = 1; /*Initialzie first array*/
 
@@ -432,6 +435,9 @@ ui_shellSort(
    ^ Fun06 Sec02:
    ^   - find the max search value (number rounds to sort)
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   if(! numElmUL)
+      return;
 
    /*Recursion formuia: h[0] = 1, h[n] = 3 * h[n - 1] +1*/
    subUL = 1; /*Initialzie first array*/
@@ -637,6 +643,9 @@ us_shellSort(
    ^   - find the max search value (number rounds to sort)
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
+   if(! numElmUL)
+      return;
+
    /*Recursion formusa: h[0] = 1, h[n] = 3 * h[n - 1] +1*/
    subUL = 1; /*Initialzie first array*/
 
@@ -840,6 +849,9 @@ uc_shellSort(
    ^ Fun12 Sec02:
    ^   - find the max search value (number rounds to sort)
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   if(! numElmUL)
+      return;
 
    /*Recursion formuca: h[0] = 1, h[n] = 3 * h[n - 1] +1*/
    subUL = 1; /*Initialzie first array*/
@@ -1045,6 +1057,9 @@ sl_shellSort(
    ^   - find the max search value (number rounds to sort)
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
+   if(! numElmUL)
+      return;
+
    /*Recursion formsla: h[0] = 1, h[n] = 3 * h[n - 1] +1*/
    subUL = 1; /*Initialzie first array*/
 
@@ -1248,6 +1263,9 @@ si_shellSort(
    ^ Fun18 Sec02:
    ^   - find the max search value (number rounds to sort)
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   if(! numElmUL)
+      return;
 
    /*Recursion formsia: h[0] = 1, h[n] = 3 * h[n - 1] +1*/
    subUL = 1; /*Initialzie first array*/
@@ -1453,6 +1471,9 @@ ss_shellSort(
    ^   - find the max search value (number rounds to sort)
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
+   if(! numElmUL)
+      return;
+
    /*Recursion formssa: h[0] = 1, h[n] = 3 * h[n - 1] +1*/
    subUL = 1; /*Initialzie first array*/
 
@@ -1656,6 +1677,9 @@ sc_shellSort(
    ^ Fun24 Sec02:
    ^   - find the max search value (number rounds to sort)
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   if(! numElmUL)
+      return;
 
    /*Recursion formula: h[0] = 1, h[n] = 3 * h[n - 1] +1*/
    subUL = 1; /*Initialzie first array*/

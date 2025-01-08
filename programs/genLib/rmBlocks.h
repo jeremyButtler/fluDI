@@ -1,90 +1,59 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' numToStr SOF: Start Of File
-'   - function(s) to convert a number to a string
+' rmBlocks SOF: Start Of File
+'   - has functions to remove blocks (start ---, end ---)
+'     from file and merge block contents onto a line
+'   - also removes all comments
+'     - formats: #.*\n; #---.*---#; or #---.*---#
 '   o header:
 '     - guards
-'   o fun01: numToStr
-'     - converts a number to a c-string
-'   o fun02: backNumToStr
-'     - converts a number to a c-string backwards
+'   o fun01: str_rmBlocks
+'     - converts blocks in string (---) to single lines
 '   o license:
 '     - licensing for this code (public domain / mit)
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 /*-------------------------------------------------------\
 | Header:
-|   - guards
+|   - gaurds
 \-------------------------------------------------------*/
 
-#ifndef NUMBER_TO_CSTRING
-#define NUMBER_TO_CSTRING
-
-#define max_dblDecimal_numToStr 17
-   /*maximum percsion of double*/
+#ifndef REMOVE_BLOCKS_AND_COMMENTS_H
+#define REMOVE_BLOCKS_AND_COMMENTS_H
 
 /*-------------------------------------------------------\
-| Fun01: numToStr
-|   - converts a number to a c-string
+| Fun01: str_rmBlocks
+|   - converts blocks in string (---) to single lines
 | Input:
-|   - cstr:
-|     o c-string to hold the converted number
-|   - numUL:
-|     o number to convert
+|   - textStr:
+|     o c-string with blocks to convert to lines
+|   - lenUL:
+|     o has length of textStr
+|     o 0 if modifying original string
+|   - retLenULPtr:
+|     o pointer to unsigned long with new string length
+|     o can set equal to lenUL
+|     o if length not waned, use null
+|   - keepCommentBl:
+|     o 1: keep all non-block comments
+|     o 0: remove all comments
 | Output:
 |   - Modifies:
-|     o cstr to have the number (adds a '\0' at the end)
+|     o retLenULPtr to have length of modified string
+|     0 textStr to have not blocks if lenUL is 0
 |   - Returns:
-|     o number of characters copied to cstr
+|     o modified c-string with textStr with all blocks
+|       (start and end with ---) symbols removed and
+|       block entries converted to a single line
+|       - is new pointer if lenUL is not 0
+|       - pointer to textStr if lenUL is 0
+|     o 0 for memory errors
 \-------------------------------------------------------*/
-unsigned int
-numToStr(
-   signed char *cstr,
-   unsigned long numUL
-);
-
-/*-------------------------------------------------------\
-| Fun02: backNumToStr
-|   - converts a number to a c-string backwards
-| Input:
-|   - cstr:
-|     o c-string to hold the converted number
-|   - numUL:
-|     o number to convert
-| Output:
-|   - Modifies:
-|     o cstr to have the backwards number (adds a '\0' at
-|       the end)
-|   - Returns:
-|     o number of characters copied to cstr
-\-------------------------------------------------------*/
-unsigned int
-backwards_numToStr(
-   signed char *cstr,
-   unsigned long numUL
-);
-
-/*-------------------------------------------------------\
-| Fun03: double_numToStr
-|   - converts a double to a c-string
-| Input:
-|   - cstr:
-|     o c-string to hold the converted number
-|   - numDbl:
-|     o number to convert
-|   - decUC:
-|     o number decimal digits to keep
-|       (max_dblDecimal_numToStr)
-| Output:
-|   - Modifies:
-|     o cstr to have the number (adds a '\0' at the end)
-|   - Returns:
-|     o number of characters copied to cstr
-\-------------------------------------------------------*/
-unsigned int
-double_numToStr(
-   signed char *cstr,
-   double numDbl,
-   unsigned char decUC
+signed char *
+str_rmBlocks(
+   signed char *textStr,
+   unsigned long lenUL,
+   unsigned long *retLenULPtr,
+   signed char keepCommentBl
 );
 
 #endif
@@ -96,8 +65,8 @@ double_numToStr(
 :   However, for cases were the public domain is not
 :   suitable, such as countries that do not respect the
 :   public domain or were working with the public domain
-:   is inconvient / not possible, this code is under the
-:   MIT license.
+:   is inconveint / not possible, this code is under the
+:   MIT license
 : 
 : Public domain:
 : 

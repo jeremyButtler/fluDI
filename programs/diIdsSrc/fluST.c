@@ -162,6 +162,9 @@ void
 freeStack_segIdSearch_fluST( 
    struct segIdSearch_fluST *segSTPtr
 ){
+   if(! segSTPtr)
+      return;
+
    if(segSTPtr->aNtST)
    { /*If: have A nucleotide*/
       freeStack_segIdSearch_fluST(segSTPtr->aNtST);
@@ -1254,6 +1257,8 @@ setup_fluST(
          tmpStr[ssId] = segIdAryStr_fluSeg[ssSeg][ssId];
          ++ssId;
       } /*Loop: copy segment id*/
+
+      tmpStr[ssId] = '\0';
    } /*Loop: add segments to search list*/
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
@@ -1280,28 +1285,31 @@ void
 freeStack_fluST(
    struct fluST *fluSTPtr
 ){
-   if(fluSTPtr)
-   { /*If: have structure to free*/
-      /*free forward search structures*/
-      freeHeap_segIdSearch_fluST(fluSTPtr->forSearchST);
-      fluSTPtr->forSearchST = 0;
+   if(! fluSTPtr)
+      return;
 
+   /*free forward search structures*/
+   if(fluSTPtr->forSearchST)
+     freeHeap_segIdSearch_fluST(fluSTPtr->forSearchST);
+   fluSTPtr->forSearchST = 0;
+
+   if(fluSTPtr->forCompSearchST)
       freeHeap_segIdSearch_fluST(
          fluSTPtr->forCompSearchST
       );
+   fluSTPtr->forCompSearchST = 0;
 
-      fluSTPtr->forCompSearchST = 0;
+   /*free reverse search structures*/
+   if(fluSTPtr->revSearchST)
+     freeHeap_segIdSearch_fluST(fluSTPtr->revSearchST);
+   fluSTPtr->revSearchST = 0;
 
-      /*free reverse search structures*/
-      freeHeap_segIdSearch_fluST(fluSTPtr->revSearchST);
-      fluSTPtr->revSearchST = 0;
-
+   if(fluSTPtr->revCompSearchST)
       freeHeap_segIdSearch_fluST(
          fluSTPtr->revCompSearchST
       );
 
-      fluSTPtr->revCompSearchST = 0;
-   } /*If: have structure to free*/
+   fluSTPtr->revCompSearchST = 0;
 } /*freeStack_fluST*/
 
 /*-------------------------------------------------------\
@@ -1516,22 +1524,22 @@ detectDI_fluST(
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
    if(numRevSegUC < 1)
-   { /*If: forward supports id*/
+   { /*If: only forward supports id*/
       if(numForSegUC != 1)
          return 0; /*can not get id*/
 
       *segSC = *forArySC;
       retSC = def_partSeg_fluST;
-   } /*If: forward supports id*/
+   } /*If: only forward supports id*/
 
    else if(numForSegUC < 1)
-   { /*If: forward supports id*/
+   { /*If: only reverse supports id*/
       if(numRevSegUC != 1)
          return 0; /*can not get id*/
 
       *segSC = *revArySC;
       retSC = def_revSegSup_fluST | def_partSeg_fluST;
-   } /*If: forward supports id*/
+   } /*If: only reverse supports id*/
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
    ^ Fun16 Sec05:
@@ -1574,11 +1582,15 @@ detectDI_fluST(
 
       if(numSegsUC > 1)
          return def_multiSeg_fluST; /*to many segments*/
+
       else if(numSegsUC)
       { /*Else If: have a segment*/
          *segSC = keepArySC[0];
          retSC = def_segFound_fluST | def_revSegSup_fluST;
       } /*Else If: have a segment*/
+
+      else
+         return def_multiSeg_fluST; /*primers disagree*/
    } /*Else: have two primers supporting a segment*/
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
@@ -1739,6 +1751,12 @@ pid_fluST(
    --nullSCPtr;
    nullSC = *nullSCPtr;
    *nullSCPtr = '\0';
+   nullSCPtr = idStr;
+
+   if(
+         *nullSCPtr == '>'
+      || *nullSCPtr == '@'
+   ) ++nullSCPtr;
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
    ^ Fun18 Sec02:
@@ -1748,7 +1766,7 @@ pid_fluST(
    fprintf(
       (FILE *) outFILE,
       "%s\t%s",
-      idStr + 1,
+      nullSCPtr, /*read id; after header (> or @) symbol*/
       fluSTPtr->segIdAryStr[segArySC]
    ); /*print out read id and segment id*/
 

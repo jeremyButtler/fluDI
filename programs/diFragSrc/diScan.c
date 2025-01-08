@@ -14,6 +14,8 @@
 '     - print out header for fragment tsv
 '   o fun04: pfrag_diScan
 '     - print out the fragment
+'   o fun05: rmEndDels_diScan
+'     - removes deletions at the ends of reads
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 /*-------------------------------------------------------\
@@ -33,6 +35,7 @@
 #include <stdio.h>
 
 #include "../genLib/genMath.h"
+#include "../genLib/ulCp.h"
 
 #include "../genBio/kmerCnt.h"
 #include "../genBio/seqST.h"
@@ -50,8 +53,7 @@
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
 ! Hidden libraries:
-!   - .c  #incldue "../genLib/ulCp.h"
-!   - .c  #incldue "../genLib/strAry.h"
+!   - .c  #include "../genLib/strAry.h"
 !   - .c  #include "../genAln/indexToCoord.h"
 !   - .h  #include "../genBio/ntTo2Bit.h"
 !   - .h  #include "../genBio/ntTo5Bit.h"
@@ -549,3 +551,256 @@ pfrag_diScan(
       samSTPtr->meanQF
    ); /*print out read stats*/
 } /*pfrag_diScan*/
+
+/*-------------------------------------------------------\
+| Fun05: rmEndDels_diScan
+|   - removes deletions at the ends of reads
+| Input:
+|   - samSTPtr:
+|     o pointer to samEntry struct with read to fix
+|   - largeDelSI:
+|     o minimum length to be a large deletion
+|   - maxStartSI:
+|     o maximum starting coordinate to remove large
+|       deletions (stuff before is masked if large del)
+|   - minEndSI:
+|     o minimum ending coordinate for large deletions
+|       to be removed (stuff after masked for large del)
+| Ouput:
+|   - Modifies:
+|     o cigar in samSTPtr to have large ending deletions
+|       removed (everything after/before is masked)
+\-------------------------------------------------------*/
+void
+rmEndDels_diScan(
+   struct samEntry *samSTPtr,
+   signed int largeDelSI,/*size of large deletion*/
+   signed int maxStartSI,/*starting coordinate for del*/
+   signed int minEndSI   /*ending coordinate for del*/
+){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+   ' Fun05 TOC:
+   '   - removes deletions at the ends of reads
+   '   o fun05 sec01:
+   '     - variable declarations
+   '   o fun05 sec02:
+   '     - find and remove starting large deletions
+   '   o fun05 sec03:
+   '     - find start of read end deletion removal
+   '   o fun05 sec04:
+   '     - find and remove large deletions at end
+   \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun05 Sec01:
+   ^   - variable declarations
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   sint cigPosSI = 0;
+   sint delPosSI = -1; /*large deletion position*/
+   sint tmpSI = 0;
+   sint posSI = 0;
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun05 Sec02:
+   ^   - find and remove starting large deletions
+   ^   o fun05 sec02 sub01:
+   ^     - find last starting large deletion
+   ^   o fun05 sec02 sub02:
+   ^     - remove starting large deletions
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   /*****************************************************\
+   * Fun05 Sec02 Sub01:
+   *   - find last starting large deletion
+   \*****************************************************/
+
+   tmpSI = 0;
+
+   while(tmpSI < maxStartSI)
+   { /*Loop: find starting deletions*/
+      if(cigPosSI >= (sint) samSTPtr->lenCigUI)
+         break; /*end of read*/
+
+      switch(samSTPtr->cigTypeStr[cigPosSI])
+      { /*Switch: find cigar type*/
+         case 'M':
+         case 'X':
+         case '=':
+         case 'I':
+            tmpSI += samSTPtr->cigArySI[cigPosSI];
+            posSI += samSTPtr->cigArySI[cigPosSI];
+            ++cigPosSI;
+            break;
+
+         case 'S':
+            ++cigPosSI;
+            posSI += samSTPtr->cigArySI[cigPosSI];
+            break;
+
+         case 'D':
+            if(samSTPtr->cigArySI[cigPosSI] >= largeDelSI)
+               delPosSI = cigPosSI;
+
+            ++cigPosSI;
+            break;
+      } /*Switch: find cigar type*/
+   } /*Loop: find starting deletions*/
+
+   /*****************************************************\
+   * Fun05 Sec02 Sub02:
+   *   - remove starting large deletions
+   \*****************************************************/
+
+   if(delPosSI >= 0)
+   { /*If: need to remove a large deletion*/
+      for(
+         tmpSI = 1;
+         tmpSI < delPosSI;
+         ++tmpSI
+      ){ /*Loop: mask starting bases*/
+        if(samSTPtr->cigTypeStr[tmpSI] != 'D') 
+           samSTPtr->cigArySI[0] +=
+              samSTPtr->cigArySI[tmpSI];
+      } /*Loop: mask starting bases*/
+
+      ++tmpSI; /*get off deletion entry*/
+
+      cpLen_ulCp(
+         samSTPtr->cigTypeStr,
+         &samSTPtr->cigTypeStr[tmpSI],
+         samSTPtr->lenCigUI - delPosSI
+      );
+
+      cpLen_ulCp(
+         (schar *) samSTPtr->cigArySI,
+         (schar *) &samSTPtr->cigArySI[tmpSI],
+         (samSTPtr->lenCigUI - delPosSI) * sizeof(sint)
+      );
+
+      samSTPtr->cigTypeStr[0] = 'S';
+
+      samSTPtr->lenCigUI =
+         1 + samSTPtr->lenCigUI - delPosSI;
+
+      if(cigPosSI >= (sint) samSTPtr->lenCigUI)
+         return; /*end of read*/
+   } /*If: need to remove a large deletion*/
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun05 Sec03:
+   ^   - find start of read end deletion removal
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   tmpSI = (sint) samSTPtr->readLenUI - minEndSI;
+   tmpSI -= posSI;
+
+   if(samSTPtr->cigTypeStr[samSTPtr->lenCigUI - 1] == 'S')
+      tmpSI -= samSTPtr->cigArySI[samSTPtr->lenCigUI - 1];
+      /*account for softmasking at end*/
+
+   if(samSTPtr->cigTypeStr[0] == 'S')
+      tmpSI -= samSTPtr->cigArySI[0];
+      /*account for softmasking at end*/
+
+   while(tmpSI > 0)
+   { /*Loop: find end*/
+      if(cigPosSI >= (sint) samSTPtr->lenCigUI)
+         return; /*end of read*/
+
+      switch(samSTPtr->cigTypeStr[cigPosSI])
+      { /*Switch: find cigar type*/
+         case 'M':
+         case 'X':
+         case '=':
+         case 'I':
+         case 'S':
+            tmpSI -= samSTPtr->cigArySI[cigPosSI];
+            ++cigPosSI;
+            break;
+
+         case 'D':
+            ++cigPosSI;
+            break;
+      } /*Switch: find cigar type*/
+   } /*Loop: find end*/
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun05 Sec04:
+   ^   - find and remove large deletions at end
+   ^   o fun05 sec04 sub01:
+   ^     - see if have at least one large deletion
+   ^   o fun05 sec04 sub02:
+   ^     - mask everything past ending large deletion
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   /*****************************************************\
+   * Fun05 Sec04 Sub01:
+   *   - see if have at least one large deletion
+   \*****************************************************/
+
+   delPosSI = -1;
+
+   while(cigPosSI >= (sint) samSTPtr->lenCigUI)
+   { /*Loop: remove starting deletions*/
+         break; /*end of read*/
+
+      switch(samSTPtr->cigTypeStr[cigPosSI])
+      { /*Switch: find cigar type*/
+         case 'M':
+         case 'X':
+         case '=':
+         case 'I':
+         case 'S':
+            ++cigPosSI;
+            break;
+
+         case 'D':
+            if(samSTPtr->cigArySI[cigPosSI] < largeDelSI)
+            { /*If: deletion to small to care about*/
+               ++cigPosSI;
+               break;
+            } /*If: deletion to small to care about*/
+
+            delPosSI = cigPosSI;
+            ++cigPosSI;
+            goto endLoop_fun05_sec04_sub01;
+      } /*Switch: find cigar type*/
+   } /*Loop: remove starting deletions*/
+
+    endLoop_fun05_sec04_sub01:;
+
+   /*****************************************************\
+   * Fun05 Sec04 Sub02:
+   *   - mask everything past ending large deletion
+   \*****************************************************/
+
+   if(delPosSI >= 0)
+   { /*If: have deletion to remove*/
+      samSTPtr->cigArySI[delPosSI] = 0;
+      samSTPtr->cigTypeStr[delPosSI] = 'S';
+      samSTPtr->lenCigUI = (uint) delPosSI + 1;
+
+      while(cigPosSI >= (sint) samSTPtr->lenCigUI)
+      { /*Loop: remove large deletions (mask) at end*/
+         switch(samSTPtr->cigTypeStr[cigPosSI])
+         { /*Switch: find cigar type*/
+            case 'M':
+            case 'X':
+            case '=':
+            case 'I':
+            case 'S':
+               samSTPtr->cigArySI[delPosSI] +=
+                  samSTPtr->cigArySI[cigPosSI];
+               break;
+
+            case 'D':
+               break;
+         } /*Switch: find cigar type*/
+
+         ++cigPosSI;
+      } /*Loop: remove large deletions (mask) at end*/
+
+      samSTPtr->cigTypeStr[delPosSI + 1] = '\0';
+   } /*If: have deletion to remove*/
+} /*rmEndDels_diScan*/
+   

@@ -23,13 +23,13 @@
 #ifndef EDIT_DISTANCE_CLUSTER_H
 #define EDIT_DISTANCE_CLUSTER_H
 
-typedef struct samEntry samEntry;
-typedef struct set_tbCon set_tbCon;
-typedef struct res_edDist res_edDist;
+struct samEntry;
+struct set_tbCon;
+struct res_edDist;
 
-typedef struct set_clustST set_clustST;
-typedef struct index_clustST index_clustST;
-typedef struct con_clustST con_clustST;
+struct set_clustST ;
+struct index_clustST;
+struct con_clustST;
 
 #define def_memErr_edClust -1
 #define def_fileErr_edClust -2
@@ -253,7 +253,7 @@ getMaxDepth_edClust(
 |     o list of con_clustST structs with consensus
 |       clusters
 \-------------------------------------------------------*/
-con_clustST *
+struct con_clustST *
 cluster_edClust(
    struct index_clustST **indexSTPtr,
    struct set_clustST *clustSetSTPtr,

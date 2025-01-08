@@ -121,16 +121,16 @@ blank_prof_illNano(
          ++uiPos
       ){ /*Loop: blank arrays*/
          if(profSTPtr->posAryUI)
-            profSTPtr->posAryUI = 0;
+            profSTPtr->posAryUI[uiPos] = 0;
 
          if(profSTPtr->ntArySC)
-            profSTPtr->ntArySC = (schar) '\0';
+            profSTPtr->ntArySC[uiPos] = (schar) '\0';
 
          if(profSTPtr->depthAryUI)
-            profSTPtr->depthAryUI = 0;
+            profSTPtr->depthAryUI[uiPos] = 0;
 
          if(profSTPtr->xDepthAryUI)
-            profSTPtr->xDepthAryUI = 0;
+            profSTPtr->xDepthAryUI[uiPos] = 0;
       } /*Loop: blank arrays*/
    } /*If: at least on array to blank*/
 } /*blank_prof_illNano*/

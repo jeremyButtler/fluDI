@@ -19,8 +19,8 @@
 #ifndef ADJUST_COORDINATES_FUN_H
 #define ADJUST_COORDINATES_FUN_H
 
-typedef struct geneCoord geneCoord;
-typedef struct samEntry samEntry; /*forward decleration*/
+struct geneCoord;
+struct samEntry; /*forward decleration*/
 
 /*-------------------------------------------------------\
 | Fun-01: adjCoords

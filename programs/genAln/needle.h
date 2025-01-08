@@ -20,9 +20,9 @@
 #ifndef NEEDLEMAN_WUNSCH_ALIGNMENT_H
 #define NEEDLEMAN_WUNSCH_ALIGNMENT_H
 
-typedef struct seqST seqST;
-typedef struct alnSet alnSet;
-typedef struct dirMatrix dirMatrix;
+struct seqST;
+struct alnSet;
+struct dirMatrix;
 
 #define def_memErr_needle 1
 

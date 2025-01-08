@@ -49,7 +49,6 @@
 
 #include <stdio.h>
 
-#include "../genLib/ulCp.h"
 #include "../genLib/base10str.h"
 #include "../genLib/shellSort.h"
 #include "samEntry.h"
@@ -60,6 +59,7 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
 ! Hidden libraries
 !   o .c  #include "../genLib/numToStr.h"
+!   o .c  #include "../genLib/ulCp.h"
 !   o .c  #include "../genLib/strAry.h"
 !   o .h  #include "ntTo5Bit.h"
 \%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/

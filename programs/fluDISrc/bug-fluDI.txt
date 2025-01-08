@@ -1,0 +1,10 @@
+b fluDI.c:1475
+
+# memroy error tracking
+b edClust.c:1182
+b edClust.c:729
+
+# current problem is -1 (memory error) returned by 
+#   findNumMap_edClust one line 1182 of edClust.c
+
+r -fq $HOME/files/testing/diflu/SRR29165088.fastq -ref ../diFragSrc/fluGenbankRef.fa -prefix delete

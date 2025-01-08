@@ -1,39 +1,51 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
 ' seqST SOF: Start Of File
-'  - holds functions for reading in or manipulating
-'    sequences
-'  o header:
-'    - included libraries
-'  o .h st01: seqST
-'    - holds an single sequence (fasta/fastq)
-'  o .c fun01 addLine_seqST:
-'    - add characters from file to buffer, if needed 
-'      resize. This will only read in till the end of the
-'      line
-'  o fun02 getFqSeq_seqST:
-'    - reads a fastq sequence from a fastq file
-'  o fun03 getFaSeq_seqST:
-'    - grabs the next read in the fasta file
-'  o fun04 revComp_seqST:
-'    - reverse complement a sequence
-'  o fun05 blank_seqST:
-'    - sets values in seqST to zero
-'  O fun06 init_seqST:
-'    - sets values in seqST to blank values
-'  o fun07 freeStack_seqST:
-'    - frees variables in an seqST (calls blank_seqST)
-'  o fun08 freeHeap_seqST:
-'    - frees an seqST strucuter (calls fredSeqSTStack)
-'  o fun09: freeHeapAry_seqST
-'    - frees an array of seqST's
-'  o fun10 cpIdEndPad_seqST:
-'     - copies read id to a buffer and adds in endIdC to
-'       the end. If needed, this function will add right
-'       padding of spaces to the end.
-'  o fun11: cp_seqST
-'    - copies an seqST structure
-'  o license:
-'    - licensing for this code (public domain / mit)
+'   - holds functions for reading in or manipulating
+'     sequences
+'   o header:
+'     - included libraries
+'   o .h st01: seqST
+'     - holds an single sequence (fasta/fastq)
+'   o .c fun01 addLine_seqST:
+'     - add characters from file to buffer, if needed 
+'       resize. This will only read in till the end of the
+'       line
+'   o fun02 getFqSeq_seqST:
+'     - reads a fastq sequence from a fastq file
+'   o fun03 getFaSeq_seqST:
+'     - grabs the next read in the fasta file
+'   o fun04 revComp_seqST:
+'     - reverse complement a sequence
+'   o fun05 blank_seqST:
+'     - sets values in seqST to zero
+'   O fun06 init_seqST:
+'     - sets values in seqST to blank values
+'   o fun07 freeStack_seqST:
+'     - frees variables in an seqST (calls blank_seqST)
+'   o fun08 freeHeap_seqST:
+'     - frees an seqST strucuter (calls fredSeqSTStack)
+'   o fun09: freeHeapAry_seqST
+'     - frees an array of seqST's
+'   o fun10 cpIdEndPad_seqST:
+'      - copies read id to a buffer and adds in endIdC to
+'        the end. If needed, this function will add right
+'        padding of spaces to the end.
+'   o fun11: cp_seqST
+'     - copies an seqST structure
+'   o fun12: swap_seqST
+'     - swaps values in two seqST structs
+'   o fun13: sort_seqST
+'     - sorts an array of seqST structs
+'   o fun14: search_seqST
+'     - searchs for sequence in seqST struct array
+'   o fun15: mkAry_seqST
+'     - makes a seqST struct array
+'   o fun16: realloc_seqST
+'     - add more memory to a seqST struct array
+'   o fun17: readFaFile_seqST
+'     - get all sequences from a fasta file
+'   o license:
+'     - licensing for this code (public domain / mit)
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 /*-------------------------------------------------------\
@@ -166,6 +178,8 @@ addLine_seqST(
        fgets((char *) tmpStr,spareBuffUL,(FILE *) inFILE)
     ){ /*While I have lines to read*/
         tmpUL = endLine_ulCp(tmpStr);
+           /*will end at '\r' from windows*/
+
         *curBuffUL += tmpUL;
         tmpStr = *buffStr + *curBuffUL;
         *filePosUL += tmpUL;
@@ -190,7 +204,7 @@ addLine_seqST(
             tmpStr = *buffStr + *curBuffUL;
         } /*If: need to resize buffer*/
 
-        if (*tmpStr == '\n')
+        if(*tmpStr != '\0')
         { /*If: found end of line*/
             ++(*filePosUL);
             return 0; /*finshed with line*/
@@ -281,7 +295,6 @@ getFqSeq_seqST(
             &filePosUL,
             (FILE *) fqFILE     /*fq file with header*/
     ); /*get the header (will resize as needed)*/
-
 
     if(errUC)
        return errUC; /*EOF or memory allocation error*/
@@ -542,6 +555,16 @@ getFaSeq_seqST(
        seqSTPtr->seqStr =
           malloc((extraBuffUS + 9) * sizeof(schar));
 
+       seqSTPtr->seqStr[extraBuffUS] = '\0';
+       seqSTPtr->seqStr[extraBuffUS + 1] = '\0';
+       seqSTPtr->seqStr[extraBuffUS + 2] = '\0';
+       seqSTPtr->seqStr[extraBuffUS + 3] = '\0';
+       seqSTPtr->seqStr[extraBuffUS + 4] = '\0';
+       seqSTPtr->seqStr[extraBuffUS + 5] = '\0';
+       seqSTPtr->seqStr[extraBuffUS + 6] = '\0';
+       seqSTPtr->seqStr[extraBuffUS + 7] = '\0';
+       seqSTPtr->seqStr[extraBuffUS + 8] = '\0';
+
        seqSTPtr->lenSeqBuffUL = extraBuffUS;
     } /*Else: allocate memory*/
 
@@ -564,10 +587,7 @@ getFaSeq_seqST(
         *   - remove white space & check if end of entry
         \************************************************/
 
-        seqSTPtr->lenSeqUL +=
-           rmWhite_ulCp(
-              seqSTPtr->seqStr + seqSTPtr->lenSeqUL
-           );
+        seqSTPtr->lenSeqUL += rmWhite_ulCp(tmpStr);
 
         /*peek ahead in the file*/
         tmpSC = 0;
@@ -611,6 +631,16 @@ getFaSeq_seqST(
 
            seqSTPtr->seqStr = tmpStr;
            seqSTPtr->lenSeqBuffUL +=  extraBuffUS;
+
+           seqSTPtr->seqStr[seqSTPtr->lenSeqUL] = '\0';
+           seqSTPtr->seqStr[seqSTPtr->lenSeqUL + 1] ='\0';
+           seqSTPtr->seqStr[seqSTPtr->lenSeqUL + 2] ='\0';
+           seqSTPtr->seqStr[seqSTPtr->lenSeqUL + 3] ='\0';
+           seqSTPtr->seqStr[seqSTPtr->lenSeqUL + 4] ='\0';
+           seqSTPtr->seqStr[seqSTPtr->lenSeqUL + 5] ='\0';
+           seqSTPtr->seqStr[seqSTPtr->lenSeqUL + 6] ='\0';
+           seqSTPtr->seqStr[seqSTPtr->lenSeqUL + 7] ='\0';
+           seqSTPtr->seqStr[seqSTPtr->lenSeqUL + 8] ='\0';
         } /*If: need to allocate more memory*/
 
         /*add peek character to buffer*/
@@ -652,8 +682,19 @@ getFaSeq_seqST(
     \****************************************************/
 
     eof_fun03_sec04_sub02:;
-    errSC = def_EOF_seqST;
-    goto seqChecks_fun03_sec04_sub03;
+       errSC = def_EOF_seqST;
+
+       if(
+             seqSTPtr->seqStr == 0
+          || *seqSTPtr->seqStr == '\0'
+       ){ /*If: no sequence (true EOF)*/
+          if(seqSTPtr->idStr)
+             seqSTPtr->idStr[0] = '\0';
+          goto ret_fun03_sec04_sub05;
+       } /*If: no sequence (true EOF)*/
+
+       else
+          goto seqChecks_fun03_sec04_sub03;
 
     /****************************************************\
     * Fun03 Sec04 Sub03:
@@ -661,15 +702,14 @@ getFaSeq_seqST(
     \****************************************************/
 
     seqChecks_fun03_sec04_sub03:;
+       if(
+             seqSTPtr->seqStr == 0
+          || *seqSTPtr->seqStr == '\0'
+       ) return def_badLine_seqST | def_fileErr_seqST;
 
-    if(
-          seqSTPtr->seqStr == 0
-       || *seqSTPtr->seqStr == '\0'
-    ) return def_badLine_seqST | def_fileErr_seqST;
-
-    seqSTPtr->endAlnUL = seqSTPtr->lenSeqUL - 1;
-    seqSTPtr->offsetUL = 0;
-    goto ret_fun03_sec04_sub05;
+       seqSTPtr->endAlnUL = seqSTPtr->lenSeqUL - 1;
+       seqSTPtr->offsetUL = 0;
+       goto ret_fun03_sec04_sub05;
 
     /****************************************************\
     * Fun03 Sec04 Sub04:
@@ -677,8 +717,8 @@ getFaSeq_seqST(
     \****************************************************/
 
     memErr_fun03_sec04_sub04:;
-    errSC = def_memErr_seqST;
-    goto ret_fun03_sec04_sub05;
+       errSC = def_memErr_seqST;
+       goto ret_fun03_sec04_sub05;
 
     /****************************************************\
     * Fun03 Sec04 Sub05:
@@ -686,7 +726,7 @@ getFaSeq_seqST(
     \****************************************************/
 
     ret_fun03_sec04_sub05:;
-    return errSC;
+       return errSC;
 } /*getFaSeq_seqST*/
 
 /*-------------------------------------------------------\
@@ -988,16 +1028,16 @@ freeHeap_seqST(
 void
 freeHeapAry_seqST(
    struct seqST *seqAryST,
-   signed int numSeqSI
+   signed long numSeqSL
 ){
-   sint siFree = 0;
+   slong slFree = 0;
 
    for(
-      siFree = 0;
-      siFree < numSeqSI;
-      ++siFree
+      slFree = 0;
+      slFree < numSeqSL;
+      ++slFree
    ){ /*Loop: Free the individual structures*/
-      freeStack_seqST(&seqAryST[siFree]);
+      freeStack_seqST(&seqAryST[slFree]);
    } /*Loop: Free the individual structures*/
 
    free(seqAryST);
@@ -1226,6 +1266,482 @@ cp_seqST(
    memErr_fun11:;
    return def_memErr_seqST;
 } /*cp_seqST*/
+
+/*-------------------------------------------------------\
+| Fun12: swap_seqST
+|   - swaps values in two seqST structs
+| Input:
+|   - firstSTPtr:
+|     o pointer first seqST struct to swap
+|   - secSTPtr:
+|     o pointer second seqST struct to swap
+| Output:
+|   - Modifies:
+|     o firstSTPtr to have values from secSTPtr
+|     o secSTPtr to have values from firstSTPtr
+\-------------------------------------------------------*/
+void
+swap_seqST(
+   struct seqST *firstSTPtr,
+   struct seqST *secSTPtr
+){
+   signed char *swapStr = 0;
+
+   /*read id*/
+   swapStr = firstSTPtr->idStr;
+   firstSTPtr->idStr = secSTPtr->idStr;
+   secSTPtr->idStr = swapStr;
+
+   firstSTPtr->lenIdUL ^= secSTPtr->lenIdUL;
+   secSTPtr->lenIdUL ^= firstSTPtr->lenIdUL;
+   firstSTPtr->lenIdUL ^= secSTPtr->lenIdUL;
+
+   firstSTPtr->lenIdBuffUL ^= secSTPtr->lenIdBuffUL;
+   secSTPtr->lenIdBuffUL ^= firstSTPtr->lenIdBuffUL;
+   firstSTPtr->lenIdBuffUL ^= secSTPtr->lenIdBuffUL;
+
+
+   /*sequence*/
+   swapStr = firstSTPtr->seqStr;
+   firstSTPtr->seqStr = secSTPtr->seqStr;
+   secSTPtr->seqStr = swapStr;
+
+   firstSTPtr->lenSeqUL ^= secSTPtr->lenSeqUL;
+   secSTPtr->lenSeqUL ^= firstSTPtr->lenSeqUL;
+   firstSTPtr->lenSeqUL ^= secSTPtr->lenSeqUL;
+
+   firstSTPtr->lenSeqBuffUL ^= secSTPtr->lenSeqBuffUL;
+   secSTPtr->lenSeqBuffUL ^= firstSTPtr->lenSeqBuffUL;
+   firstSTPtr->lenSeqBuffUL ^= secSTPtr->lenSeqBuffUL;
+
+
+   /*q-score entry*/
+   swapStr = firstSTPtr->qStr;
+   firstSTPtr->qStr = secSTPtr->qStr;
+   secSTPtr->qStr = swapStr;
+
+   firstSTPtr->lenQUL ^= secSTPtr->lenQUL;
+   secSTPtr->lenQUL ^= firstSTPtr->lenQUL;
+   firstSTPtr->lenQUL ^= secSTPtr->lenQUL;
+
+   firstSTPtr->lenQBuffUL ^= secSTPtr->lenQBuffUL;
+   secSTPtr->lenQBuffUL ^= firstSTPtr->lenQBuffUL;
+   firstSTPtr->lenQBuffUL ^= secSTPtr->lenQBuffUL;
+
+
+   /*alignent variables*/
+   firstSTPtr->offsetUL ^= secSTPtr->offsetUL;
+   secSTPtr->offsetUL ^= firstSTPtr->offsetUL;
+   firstSTPtr->offsetUL ^= secSTPtr->offsetUL;
+
+   firstSTPtr->endAlnUL ^= secSTPtr->endAlnUL;
+   secSTPtr->endAlnUL ^= firstSTPtr->endAlnUL;
+   firstSTPtr->endAlnUL ^= secSTPtr->endAlnUL;
+} /*swap_seqST*/
+
+/*-------------------------------------------------------\
+| Fun13: sort_seqST
+|   - sorts an array of seqST structs
+| Input:
+|   - arySTPtr:
+|     o pointer to array of seqST struct to sort
+|   - lenSL:
+|     o length to sort in array
+| Output:
+|   - Modifies:
+|     o arySTPtr to be sorted by read/ref id
+\-------------------------------------------------------*/
+void
+sort_seqST(
+   struct seqST *arySTPtr, /*array to sort*/
+   signed long lenSL       /*length of array*/
+){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+   ' Fun13 TOC:
+   '   - sorts an array of seqST structs
+   '   o fun13 sec01:
+   '     - variable declerations
+   '   o fun13 sec02:
+   '     - find the number of rounds to sort for
+   '   o fun13 sec03:
+   '     - sort the arrays
+   \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun13 Sec01:
+   ^   - variable declerations
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   signed long cmpSL = 0;
+
+   /*Number of sorting rounds*/
+   signed long subSL = 0;
+   signed long nextSL = 0;
+   signed long lastSL = 0;
+   signed long onSL = 0;
+
+   /*Variables to incurment loops*/
+   signed long slIndex = 0;
+   signed long slElm = 0;
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun13 Sec02:
+   ^   - find the max search value (number rounds to sort)
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   if(! lenSL)
+      return;
+
+   /*Recursion formsla: h[0] = 1, h[n] = 3 * h[n - 1] +1*/
+   subSL = 1; /*Initialzie first array*/
+
+   while(subSL < lenSL - 1)
+      subSL = (3 * subSL) + 1;
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun13 Sec03:
+   ^   - sort arrays
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   while(subSL > 0)
+   { /*Loop: all rounds*/
+      for(
+         slIndex = 0;
+         slIndex <= subSL;
+         ++slIndex
+      ){ /*Loop: though sub array*/
+         slElm = slIndex;
+
+         for(
+            slElm = slIndex;
+            slElm + subSL < lenSL;
+            slElm += subSL
+         ){ /*Loop: swap elements in subarray*/
+            nextSL = slElm + subSL;
+
+            cmpSL =
+               eqlNull_ulCp(
+                  arySTPtr[slElm].idStr,
+                  arySTPtr[nextSL].idStr
+               ); /*See if need to sort structs*/
+
+            if(cmpSL > 0)
+            { /*If I need to swap an element*/
+               swap_seqST(
+                  &arySTPtr[slElm],
+                  &arySTPtr[nextSL]
+               );
+
+               lastSL = slElm;
+               onSL = slElm;
+
+               while(lastSL >= subSL)
+               { /*loop: move swapped element back*/
+                  lastSL -= subSL;
+
+                  cmpSL =
+                     eqlNull_ulCp(
+                        arySTPtr[onSL].idStr,
+                        arySTPtr[lastSL].idStr
+                     ); /*See if need to sort structs*/
+
+                  if(cmpSL > 0)
+                     break; /*Positioned the element*/
+   
+                  swap_seqST(
+                     &arySTPtr[onSL],
+                     &arySTPtr[lastSL]
+                  );
+
+                  onSL = lastSL;
+               } /*Loop: move swapped element back*/
+            } /*If I need to swap elements*/
+         } /*Loop: swap elements in subarray*/
+      } /*Loop: though sub array*/
+
+      subSL = (subSL - 1) / 3; /*Move to next round*/
+   } /*Loop: all rounds*/
+} /*sort_seqST*/
+
+/*-------------------------------------------------------\
+| Fun14: search_seqST
+|  - searchs for sequence in seqST struct array
+| Input:
+|  - seqArySTPtr:
+|    o pionter to seqST stuct array to search
+|  - qryStr:
+|    o query to find
+|  - lenSL:
+|    o length of seqArySTPtr (index 1)
+| Output:
+|  - Returns:
+|    o index of qryStr in seqArySTPtr
+|    o -1 if qryUL is not in ulAry
+\-------------------------------------------------------*/
+signed long
+search_seqST(
+   struct seqST *seqArySTPtr, /*sequence array to search*/
+   signed char *qryStr,       /*query to hunt for*/
+   signed long lenSL          /*length to search in*/
+){
+   signed long cmpSL = 0;
+   signed long midSL = 0;
+   signed long rightSL = lenSL - 1;
+   signed long leftSL = 0;
+
+   while(leftSL <= rightSL)
+   { /*Loop: Search for the querys index*/
+      midSL = (leftSL + rightSL) >> 1;
+
+      cmpSL =
+         eqlNull_ulCp(
+            qryStr,
+            seqArySTPtr[midSL].idStr
+         ); /*compare query to sequence at midpiont*/
+
+      if(cmpSL > 0)
+         leftSL = midSL + 1;
+
+      else if(cmpSL < 0)
+         rightSL = midSL - 1;
+
+      else
+        return midSL;
+   } /*Loop: Search for the querys index*/
+
+   return -1; /*query not found*/
+} /*search_seqST*/
+
+/*-------------------------------------------------------\
+| Fun15: mkAry_seqST
+|  - makes a seqST struct array
+| Input:
+|  - sizeSL:
+|    o size of seqST struct array
+| Output:
+|  - Returns:
+|    o pointer to seqST struct array
+|    o 0 for memory errors
+\-------------------------------------------------------*/
+struct seqST *
+mkAry_seqST(
+   signed long sizeSL         /*new length (size)*/
+){
+   struct seqST *retHeapAryST = 0;
+
+   retHeapAryST = malloc(sizeSL * sizeof(struct seqST));
+
+   if(! retHeapAryST)
+      goto memErr_fun15;
+
+   while(sizeSL > 0)
+   { /*Loop: initialize structs*/
+      --sizeSL;   /*start at index 1*/
+      init_seqST( &retHeapAryST[sizeSL] );
+   } /*Loop: initialize structs*/
+
+   return retHeapAryST;
+
+   memErr_fun15:;
+      return 0;
+} /*mkAry_seqST*/
+
+/*-------------------------------------------------------\
+| Fun16: realloc_seqST
+|  - add more memory to a seqST struct array
+| Input:
+|  - seqArySTPtr:
+|    o pionter to seqST stuct array to expand
+|  - lenSL:
+|    o number of items in array (index 1)
+|    o this marks the start of initialization
+|  - sizeSL:
+|    o new size of seqST struct array
+| Output:
+|  - Returns:
+|    o 0 for no errors
+|    o def_memErr_seqST for memory errors
+\-------------------------------------------------------*/
+signed char
+realloc_seqST(
+   struct seqST **seqArySTPtr,/*sequence array to expand*/
+   signed long lenSL,         /*number items in array*/
+   signed long sizeSL         /*new length (size)*/
+){
+   struct seqST *tmpSTPtr = 0;
+
+   tmpSTPtr =
+      realloc(
+         *seqArySTPtr,
+         sizeSL * sizeof(struct seqST)
+      );
+
+   if(! tmpSTPtr)
+      goto memErr_fun15;
+
+   *seqArySTPtr = tmpSTPtr;
+
+   while(lenSL < sizeSL)
+   { /*Loop: initialize unused arrays*/
+      init_seqST( &(*seqArySTPtr)[lenSL] );
+      ++lenSL;
+   } /*Loop: initialize unused arrays*/
+
+   return 0;
+
+   memErr_fun15:;
+      return def_memErr_seqST;
+} /*realloc_seqST*/
+
+/*-------------------------------------------------------\
+| Fun17: readFaFile_seqST
+|   - get all sequences from a fasta file
+| Input:
+|   - faFILE:
+|     o FILE pointer to file to get sequences from
+|   - lenSLPtr:
+|     o pointer to signed long to hold number sequences
+|       in returned array (also in faFILE)
+|   - sizeSLPtr:
+|     o pointer to signed long to hold returned array size
+|   - errSCPtr:
+|     o pointer to signed char to hold errors
+| Output:
+|   - Modifies:
+|     o faFILE to be at end of file
+|     o lenSLPtr to have number sequences in faFILE/array
+|     o sizeSLPtr to have size of returned array
+|     o errSCPtr to have errors
+|       * 0 for no errors
+|       * def_fileErr_seqST if had file error
+|       * def_badLine_seqST | def_fileErr_seqST for
+|         invalid fasta entry
+|       * def_memErr_seqST for memory errors
+|   - Returns:
+|     o seqST struct array with sequences
+|     o 0 for errors
+\-------------------------------------------------------*/
+struct seqST *
+readFaFile_seqST(
+   void *faFILE,           /*file to get reads from*/
+   signed long *lenSLPtr,  /*number items in array*/
+   signed long *sizeSLPtr, /*length of array*/
+   signed char *errSCPtr   /*holds error values*/
+){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+   ' Fun17 TOC:
+   '   - get all sequences from a fasta file
+   '   o fun17 sec01:
+   '     - variable declarations
+   '   o fun17 sec02:
+   '     - allocate memory and get first sequence
+   '   o fun17 sec03:
+   '     - read rest of fasta file
+   '   o fun17 sec04:
+   '     - return results
+   \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun17 Sec01:
+   ^   - variable declarations
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   struct seqST *retHeapAryST = 0;
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun17 Sec02:
+   ^   - allocate memory and get first sequence
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   retHeapAryST = mkAry_seqST(16);
+
+   if(! retHeapAryST)
+      goto memErr_fun17_sec04;
+
+   *sizeSLPtr = 16;
+
+   *errSCPtr =
+      getFaSeq_seqST(
+         (FILE *) faFILE,
+         &retHeapAryST[0]
+      );
+
+   if(*errSCPtr == def_EOF_seqST)
+      goto fileErr_fun17_sec04; /*no sequences in file*/
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun17 Sec03:
+   ^   - read rest of fasta file
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   *lenSLPtr = 1;
+   
+   while(! *errSCPtr)
+   { /*Loop: read in references*/
+
+      if(*lenSLPtr >= *sizeSLPtr)
+      { /*If: need more memory*/
+         *errSCPtr =
+            realloc_seqST(
+               &retHeapAryST,
+               *lenSLPtr,
+               (*sizeSLPtr << 1)
+            );
+
+         if(*errSCPtr)
+            goto memErr_fun17_sec04;
+
+         *sizeSLPtr <<= 1;
+      } /*If: need more memory*/
+
+      *errSCPtr =
+         getFaSeq_seqST(
+            (FILE *) faFILE,
+            &retHeapAryST[*lenSLPtr]
+         );
+
+      if(*errSCPtr == def_EOF_seqST)
+      { /*If: hit end of file*/
+         freeStack_seqST(&retHeapAryST[*lenSLPtr]);
+            /*make sure no loose ends*/
+         break; /*finished*/
+      } /*If: hit end of file*/
+
+      ++(*lenSLPtr);
+   } /*Loop: read in references*/
+
+
+   if(*errSCPtr != def_EOF_seqST)
+      goto errClean_fun17_sec04;
+      /*error reading file; already corect value*/
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun17 Sec04:
+   ^   - return results
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   *errSCPtr = 0;
+   goto ret_fun17_sec04;
+
+   memErr_fun17_sec04:;
+      *errSCPtr = def_memErr_seqST;
+      goto errClean_fun17_sec04;
+
+   fileErr_fun17_sec04:;
+      *errSCPtr = def_fileErr_seqST;
+      goto errClean_fun17_sec04;
+
+   errClean_fun17_sec04:;
+      if(retHeapAryST)
+         freeHeapAry_seqST(
+            retHeapAryST,
+            *sizeSLPtr
+         );
+      retHeapAryST = 0;
+      goto ret_fun17_sec04;
+
+   ret_fun17_sec04:;
+      return retHeapAryST;
+} /*readFaFile_seqST*/
+
   
 /*=======================================================\
 : License:
@@ -1259,7 +1775,7 @@ cp_seqST(
 : THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
 :   ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
 :   LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-:   FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO
+:   FOR A PARTICSLAR PURPOSE AND NONINFRINGEMENT.  IN NO
 :   EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM,
 :   DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 :   CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
@@ -1290,7 +1806,7 @@ cp_seqST(
 : THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
 :   ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
 :   LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-:   FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO
+:   FOR A PARTICSLAR PURPOSE AND NONINFRINGEMENT. IN NO
 :   EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
 :   FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
 :   AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING

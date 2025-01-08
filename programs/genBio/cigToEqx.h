@@ -18,8 +18,8 @@
 #ifndef CIGAR_TO_EQX_CIGAR_H
 #define CIGAR_TO_EQX_CIGAR_H
 
-typedef struct samEntry samEntry;
-typedef struct seqST seqST;
+struct samEntry;
+struct seqST;
 
 /*-------------------------------------------------------\
 | Fun01: samCigToEqxCig 

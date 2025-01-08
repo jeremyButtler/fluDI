@@ -46,7 +46,7 @@
 #ifndef KMER_COUNT_H
 #define KMER_COUNT_H
 
-typedef struct seqST seqST;
+struct seqST;
 
 #define def_noKmer_kmerCnt -1
 #define def_endKmers_kmerCnt -2

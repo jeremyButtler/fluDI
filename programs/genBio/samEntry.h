@@ -68,6 +68,10 @@
 '     - reallocates memory for a refs_samEntry struct
 '   o fun26: getRefLen_samEntry
 '     - gets reference ids & length from a sam file header
+'   o fun27: findRef_refs_samEntry
+'     - finds a reference id in a refs_samEntry struct
+'   o fun28: addRef_samEntry
+'     - adds reference information to array in refStack
 '   o .h note01:
 '      - Notes about the sam file format from the sam file
 '        pdf
@@ -89,6 +93,7 @@
 #define def_EOF_samEntry 1
 #define def_memErr_samEntry 2
 #define def_fileErr_samEntry 4
+#define def_expand_samEntry 8  /*expanded an array*/
 
 /*-------------------------------------------------------\
 | ST01: samEntry
@@ -743,7 +748,6 @@ realloc_refs_samEntry(
 |     o FILE pointer to print all headers to (0 no print)
 |   - headStrPtr:
 |     o pointer to c-string to hold non-reference headers
-|     o use null (0) to not save headers
 |   - lenHeadULPtr:
 |     o unsigned long with headStrPtr length
 | Output:
@@ -754,7 +758,7 @@ realloc_refs_samEntry(
 |     o lenBuffULPtr to have buffStrPtr size (if changed)
 |     o samFILE to point to first read after header
 |     o outFILE to have header (or not use if 0)
-|     o headStrPtr to have non-reference headers (if != 0)
+|     o headStrPtr to have non-reference headers
 |     o lenHeadULPtr have new headStrPtr size (if resized)
 |   - Returns:
 |     o 0 for no errors
@@ -775,21 +779,55 @@ getRefLen_samEntry(
 
 /*-------------------------------------------------------\
 | Fun27: findRef_refs_samEntry
-|   - find index of a reference id in a refs_samEntry
+|   - finds a reference id in a refs_samEntry struct
 | Input:
-|   - refStr:
-|     o c-string with reference name to search for
+|   - idStr:
+|     o c-string with reference id to find
 |   - refSTPtr:
-|     o pointer to refs_samEntry array with references
+|     o pointer to refs_samEntry struct with references
 | Output:
 |   - Returns:
-|     o index of reference in refSTPtr arrays
-|     o < 0 if could not find reference
+|     o index of reference id if found
+|     o < 0 if reference id not in list
 \-------------------------------------------------------*/
 signed long
 findRef_refs_samEntry(
-   signed char *refStr,
-   struct refs_samEntry *refSTPtr
+   signed char *idStr,            /*id to find*/
+   struct refs_samEntry *refSTPtr /*holds ref lengths*/
+);
+
+/*-------------------------------------------------------\
+| Fun28: addRef_samEntry
+|   - adds reference information to array in refStack
+| Input:
+|   - idStr:
+|     o c-string with id to add
+|   - lenUI:
+|     o length of reference sequence
+|   - refsPtr:
+|     o pointer to refs_samEntry struct to add ref to
+|   - errSCPtr:
+|     o pointer to signed char to hold errors
+| Output:
+|   - Modifies:
+|     o idAryStr in refsPtr to have idStr
+|     o lenAryUI in refsPtr to have lenUI
+|     o numRefUI in refsPtr to be resized if realloc used
+|     o arrySizeUI in refsPtr to be incurmented by 1
+|     o errSCPtr to be
+|       * 0 for no error
+|       * def_expand_samEntry if needed to realloc
+|       * def_memErr_samEntry for memory error
+|   - Returns
+|     o index of reference
+|     o -1 for errors
+\-------------------------------------------------------*/
+signed long
+addRef_samEntry(
+   signed char *idStr,
+   unsigned int lenUI,
+   struct refs_samEntry *refsPtr,
+   signed char *errSCPtr
 );
 
 #endif

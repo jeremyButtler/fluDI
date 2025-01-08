@@ -10,14 +10,16 @@
 '       the element (integer log base 2)
 '   o fun02: ab_genMath
 '     - Does a branchless absolute value
-'   o .h fun03: max_genMath
+'   o fun03: abSL_genMath
+'     - does a branchless absolute value for signed long
+'   o .h fun04: max_genMath
 '     - Find the maximum value (branchless)
-'   o .h fun04: ifmax_genMath
+'   o .h fun05: ifmax_genMath
 '     - Set a value (ret) to a value based on which value
 '       is greater.
-'   o .h fun05: min_genMath
+'   o .h fun06: min_genMath
 '     - Find the Minimum value (branchless)
-'   o .h fun06: ifMin_genMath
+'   o .h fun07: ifMin_genMath
 '     - Set a value (ret) to a value based on which value
 '       is less than.
 '   o license:
@@ -65,7 +67,22 @@ ab_genMath(
 );
 
 /*-------------------------------------------------------\
-| Fun03: max_genMath
+| Fun03: abSL_genMath
+|   - does a branchless absolute value for signed long
+| Input:
+|   - numSL:
+|     o singed long (non-long) to get absolute value of
+| Output:
+|   - Returns:
+|     o absolute value of numSL
+\-------------------------------------------------------*/
+signed long
+abSL_genMath(
+   signed long numSL
+);
+
+/*-------------------------------------------------------\
+| Fun04: max_genMath
 |  - Find the maximum value (branchless)
 | Input:
 |  o ret:
@@ -93,7 +110,7 @@ ab_genMath(
    */
 
 /*-------------------------------------------------------\
-| Fun04: ifmax_genMath
+| Fun05: ifmax_genMath
 |  - Set a value (ret) to a value based on which value
 |    is greater.
 | Input:
@@ -119,7 +136,7 @@ ab_genMath(
    */
 
 /*-------------------------------------------------------\
-| Fun05: min_genMath
+| Fun06: min_genMath
 |  - Find the Minimum value (branchless)
 | Input:
 |  o ret:
@@ -147,7 +164,7 @@ ab_genMath(
    */
 
 /*-------------------------------------------------------\
-| Fun06: ifMin_genMath
+| Fun07: ifMin_genMath
 |  - Set a value (ret) to a value based on which value
 |    is less than.
 | Input:

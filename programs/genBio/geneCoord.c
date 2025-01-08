@@ -824,7 +824,7 @@ getCoords_geneCoord(
 
       while(buffHeapStr[ulByte] != '\0')
       { /*Loop: Count the number of newlines in buffer*/
-         tmpUI = endLine_ulCp(&buffHeapStr[ulByte]);
+         tmpUI = endLineUnix_ulCp(&buffHeapStr[ulByte]);
          ulByte += tmpUI;
          newLineBl = buffHeapStr[ulByte] == '\n';
          numLinesSI += newLineBl;

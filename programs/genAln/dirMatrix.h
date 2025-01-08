@@ -34,9 +34,9 @@
 #ifndef DIRECTION_MATRIX_H
 #define DIRECTION_MATRIX_H
 
-typedef struct samEntry samEntry;
-typedef struct seqST seqST;
-typedef struct alnSet alnSet;
+struct samEntry;
+struct seqST;
+struct alnSet;
 
 /*-------------------------------------------------------\
 | St01: dirMatrix

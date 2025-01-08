@@ -12,19 +12,28 @@
 '     - adds a string to a string array
 '   o .h fun03: get_strAry
 '     - finds pointer of a string in a string array
+'   o fun04: add_strAry
+'     - adds a string to a string array
 '   o fun05: swap_strAry
 '     - swaps two strings in a string array
 '   o fun06: cmp_strAry
+'     - compares a string to a string array
+'   o fun07: cmpIndex_strAry
 '     - compares two strings in a string array
-'   o fun07: sort_strAry
+'   o fun08: findInsert_strAry
+'     - finds location to insert query in string array
+'       (must be sorted)
+'   o fun09: addSort_strAry
+'     - adds a string to string array in a sorted positon
+'   o fun10: sort_strAry
 '     - sorts a string array from least to greatest; is
 '       case sensitive
-'   o fun08: sortSync_strAry
+'   o fun11: sortSync_strAry
 '     - sorts a string array from least to greatest, but
 '       keeps the unsigned int array in sync with strings
-'   o fun09: find_strAry
+'   o fun12: find_strAry
 '     - search for query in string array (must be sorted)
-'   o fun10: findNoSort_strAry
+'   o fun13: findNoSort_strAry
 '     - search for query in string array (dumb search)
 '   o license:
 '     - licensing for this code (public domain / mit)
@@ -88,7 +97,7 @@ realloc_strAry(
 |   - Returns:
 |     o pointer to string at indexUL
 \-------------------------------------------------------*/
-#define get_strAry(strAry, indexUL) (strAry + (indexUL * def_lenStr_strAry))
+#define get_strAry(strAry, indexUL) ((strAry) + ((indexUL) * def_lenStr_strAry))
 
 /*-------------------------------------------------------\
 | Fun04: add_strAry
@@ -110,7 +119,6 @@ add_strAry(
    signed char *strAry,
    unsigned long indexUL
 );
-
 
 /*-------------------------------------------------------\
 | Fun05: swap_strAry
@@ -135,6 +143,29 @@ swap_strAry(
 
 /*-------------------------------------------------------\
 | Fun06: cmp_strAry
+|   - compares a string to a string array
+| Input:
+|   - qryStr:
+|     o c-string with query to compare
+|   - strAry:
+|     o c-string array with strings to compare
+|   - refUL:
+|     o index of reference to compare
+| Output:
+|   - Returns:
+|     o 0 if strings are equal
+|     o > 0 if query is greater
+|     o < 0 if reference is greater
+\-------------------------------------------------------*/
+signed long
+cmp_strAry(
+   signed char *qryStr,
+   signed char *strAry,
+   unsigned long refUL
+);
+
+/*-------------------------------------------------------\
+| Fun07: cmpIndex_strAry
 |   - compares two strings in a string array
 | Input:
 |   - strAry:
@@ -150,14 +181,60 @@ swap_strAry(
 |     o < 0 if reference is greater
 \-------------------------------------------------------*/
 signed long
-cmp_strAry(
+cmpIndex_strAry(
    signed char *strAry,
    unsigned long qryUL,
    unsigned long refUL
 );
 
 /*-------------------------------------------------------\
-| Fun07: sort_strAry
+| Fun08: findInsert_strAry
+|  - finds location to insert query in string array
+|    (must be sorted)
+| Input:
+|  - strAry:
+|    o string array
+|  - qryStr:
+|    o string to find insert location
+|  - lenUL:
+|    o length of strAry (index 1)
+| Output:
+|  - Returns:
+|    o index to insert qryStr at
+\-------------------------------------------------------*/
+signed long
+findClose_strAry(
+   signed char *strAry,
+   signed char *qryStr,
+   signed long lenSL
+);
+
+/*-------------------------------------------------------\
+| Fun09: addSort_strAry
+|   - adds a string to a string array in a sorted positon
+|   - assumes you do not manipulate array in other ways
+| Input:
+|   - newStr:
+|     o string to add to array; must be 63 char or shorter
+|   - strAry:
+|     o string array to add string to
+|   - lenUL:
+|     o has number of elements in array
+| Output:
+|   - Modifies:
+|     o strAry to have newStr at closest index
+|   - Returns:
+|     o index of added string
+\-------------------------------------------------------*/
+unsigned long
+addSort_strAry(
+   signed char *newStr, /*string to add to array*/
+   signed char *strAry, /*string array to add newStr to*/
+   unsigned long lenUL  /*number of elements in array*/
+);
+
+/*-------------------------------------------------------\
+| Fun10: sort_strAry
 |   - sorts a string array from least to greatest; is case
 |     sensitive
 | Input:
@@ -176,7 +253,7 @@ sort_strAry(
 );
 
 /*-------------------------------------------------------\
-| Fun08: sortSync_strAry
+| Fun11: sortSync_strAry
 |   - sorts a string array from least to greatest, but
 |     keeps the unsigned int array in sync with strings
 | Input:
@@ -198,7 +275,7 @@ sortSync_strAry(
 );
 
 /*-------------------------------------------------------\
-| Fun09: find_strAry
+| Fun12: find_strAry
 |  - search for query in string array (must be sorted)
 | Input:
 |  - strAry:
@@ -220,7 +297,7 @@ find_strAry(
 );
 
 /*-------------------------------------------------------\
-| Fun10: findNoSort_strAry
+| Fun13: findNoSort_strAry
 |  - search for query in string array (dumb search)
 | Input:
 |  - strAry:

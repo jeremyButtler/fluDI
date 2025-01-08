@@ -49,6 +49,8 @@
 /*.h only*/
 #include "../genLib/dataTypeShortHand.h"
 
+#include "../fluDI.h"
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
 ! Hidden libraries:
 !   - .c  #include "../genLib/genMath.h"
@@ -59,10 +61,6 @@
 !   - .h  #include "../geBio/ntTo5Bit.h"
 !   - .h  #include "../geAln/alnDefs.h"
 \%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-#define def_year_diFrag 2024
-#define def_month_diFrag 9
-#define def_day_diFrag 15
 
 #define def_lenKmer_diFrag 7 /*length of one kmer*/
 #define def_minPercScore_diFrag 0.5f /*90% min socre*/
@@ -90,10 +88,10 @@ pversion_diFrag(
 ){
    fprintf(
       (FILE *) outFILE,
-      "diFrag version: %i-%02i-%02i\n",
-      def_year_diFrag,
-      def_month_diFrag,
-      def_day_diFrag
+      "diFrag from fluDI version: %i-%02i-%02i\n",
+      def_year_fluDI,
+      def_month_fluDI,
+      def_day_fluDI
    );
 } /*pversion_diFrag*/
 
@@ -1326,11 +1324,11 @@ main(
 
       fprintf(
         samFILE,
-        "@PG\tID:%s\tVN:%i-%02i-%02i\t%s",
+        "@PG\tID:%s\tVN:fluDI_%i-%02i-%02i\t%s",
         "diFrag",
-        def_year_diFrag,
-        def_month_diFrag,
-        def_day_diFrag,
+        def_year_fluDI,
+        def_month_fluDI,
+        def_day_fluDI,
         "diFrag"
      ); /*print out first part of program id tag*/
 
@@ -1436,7 +1434,7 @@ main(
       samStackST.lenRefIdUC =
          cpDelim_charCp(
             samStackST.refIdStr,
-            kmerHeapAryST[segSI].forSeqST->idStr + 1,
+            kmerHeapAryST[segSI].forSeqST->idStr,
             '\0'
          ); /*copy the mapped segment id*/
 

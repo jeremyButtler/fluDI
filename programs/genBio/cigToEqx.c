@@ -35,7 +35,6 @@
 
 #include <stdio.h>
 
-#include "../genLib/ulCp.h"
 #include "samEntry.h"
 
 /*No .c files (.h only)*/
@@ -46,6 +45,7 @@
 ! Hidden libraries:
 !   o .c  #include "../generalLib/base10str.h"
 !   o .c  #include "../generalLib/numToStr.h"
+!   o .c  #include "../genLib/ulCp.h"
 !   o .c  #include "../generalLib/strAry.h"
 \%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 

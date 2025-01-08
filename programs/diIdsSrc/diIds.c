@@ -75,13 +75,6 @@
 
 #define def_fastSearch_diIDs 1 /*1 = fast search*/
 
-static signed char
-   *forPrimStr_inputGetIds =
-      (signed char *) "AGCGAAAGCAGG";
-static signed char
-   *revPrimStr_inputGetIds =
-      (signed char *) "AGTAGAAACAAGG";
-
 #define def_pDIRna_diIDs 1
 #define def_pMVRna_diIDs 1
 #define def_pVRna_diIDs 1
@@ -89,6 +82,13 @@ static signed char
 
 #define def_noAgree_diIDs 0
    /*primers in read not agreeing for segment*/
+
+static signed char
+   *forPrimStr_diIds =
+      (signed char *) "AGCGAAAGCAGG";
+static signed char
+   *revPrimStr_diIds =
+      (signed char *) "AGTAGAAACAAGG";
 
 /*-------------------------------------------------------\
 | Fun01: pversion_diIDs
@@ -335,8 +335,8 @@ phelp_diIDs(
     fprintf(
       (FILE *) outFILE,
        "  -prims %s,%s: [Optional]\n",
-       forPrimStr_inputGetIds,
-       revPrimStr_inputGetIds
+       forPrimStr_diIds,
+       revPrimStr_diIds
     );
 
     fprintf(
@@ -1571,8 +1571,8 @@ main(
    schar *seqFileStr = 0; /*fasta/q (x) with sequences*/
    schar fqBl = 1;       /*1 is a fastq file; 0 is fasta*/
 
-   schar *forSeqStr = forPrimStr_inputGetIds;
-   schar *revSeqStr = revPrimStr_inputGetIds;
+   schar *forSeqStr = forPrimStr_diIds;
+   schar *revSeqStr = revPrimStr_diIds;
 
    /*settings for printing out ids*/
    schar diRnaBl = def_pDIRna_diIDs;

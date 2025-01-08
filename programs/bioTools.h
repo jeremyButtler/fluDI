@@ -1,93 +1,10 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' numToStr SOF: Start Of File
-'   - function(s) to convert a number to a string
-'   o header:
-'     - guards
-'   o fun01: numToStr
-'     - converts a number to a c-string
-'   o fun02: backNumToStr
-'     - converts a number to a c-string backwards
-'   o license:
-'     - licensing for this code (public domain / mit)
+' Has verision numbers for bio tools
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-/*-------------------------------------------------------\
-| Header:
-|   - guards
-\-------------------------------------------------------*/
-
-#ifndef NUMBER_TO_CSTRING
-#define NUMBER_TO_CSTRING
-
-#define max_dblDecimal_numToStr 17
-   /*maximum percsion of double*/
-
-/*-------------------------------------------------------\
-| Fun01: numToStr
-|   - converts a number to a c-string
-| Input:
-|   - cstr:
-|     o c-string to hold the converted number
-|   - numUL:
-|     o number to convert
-| Output:
-|   - Modifies:
-|     o cstr to have the number (adds a '\0' at the end)
-|   - Returns:
-|     o number of characters copied to cstr
-\-------------------------------------------------------*/
-unsigned int
-numToStr(
-   signed char *cstr,
-   unsigned long numUL
-);
-
-/*-------------------------------------------------------\
-| Fun02: backNumToStr
-|   - converts a number to a c-string backwards
-| Input:
-|   - cstr:
-|     o c-string to hold the converted number
-|   - numUL:
-|     o number to convert
-| Output:
-|   - Modifies:
-|     o cstr to have the backwards number (adds a '\0' at
-|       the end)
-|   - Returns:
-|     o number of characters copied to cstr
-\-------------------------------------------------------*/
-unsigned int
-backwards_numToStr(
-   signed char *cstr,
-   unsigned long numUL
-);
-
-/*-------------------------------------------------------\
-| Fun03: double_numToStr
-|   - converts a double to a c-string
-| Input:
-|   - cstr:
-|     o c-string to hold the converted number
-|   - numDbl:
-|     o number to convert
-|   - decUC:
-|     o number decimal digits to keep
-|       (max_dblDecimal_numToStr)
-| Output:
-|   - Modifies:
-|     o cstr to have the number (adds a '\0' at the end)
-|   - Returns:
-|     o number of characters copied to cstr
-\-------------------------------------------------------*/
-unsigned int
-double_numToStr(
-   signed char *cstr,
-   double numDbl,
-   unsigned char decUC
-);
-
-#endif
+#define def_year_bioTools 2025
+#define def_month_bioTools 1
+#define def_day_bioTools 6
 
 /*=======================================================\
 : License:

@@ -15,8 +15,8 @@
 \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
 #define def_year_tbConDefs 2024
-#define def_month_tbConDefs 10
-#define def_day_tbConDefs 30
+#define def_month_tbConDefs 8
+#define def_day_tbConDefs 7
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
 ^ Sec02:
