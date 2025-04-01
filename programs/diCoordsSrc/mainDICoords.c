@@ -1,5 +1,5 @@
 /*#######################################################\
-# Name: mainDiCoords
+# Name: mainDICoords
 #   - driver function to get di coordinates
 \#######################################################*/
 
@@ -7,11 +7,11 @@
 ' SOF: Start Of File
 '   o header:
 '     - included libraries and definitions
-'   o fun01: pversion_mainDiCoords
+'   o fun01: pversion_mainDICoords
 '     - prints version number
-'   o fun02: phelp_mainDiCoords
+'   o fun02: phelp_mainDICoords
 '     - prints help message
-'   o fun03: input_mainDiCoords
+'   o fun03: input_mainDICoords
 '     - gets user input from an array of c-strings
 '   o main:
 '     - main driver function to get DI coordinates
@@ -51,23 +51,27 @@
 !   o .h  #include "../genBio/ntTo5Bit.h"
 \%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define def_year_mainDiCoords 2024
-#define def_month_mainDiCoords 8
-#define def_day_mainDiCoords 29
+#define def_year_mainDICoords 2025
+#define def_month_mainDICoords 1
+#define def_day_mainDICoords 23
 
-#define def_minDIDelLen_mainDiCoords 20
+#define def_minDIDelLen_mainDICoords 20
    /*minimum deletion size to count as a DI event*/
 
-#define def_minPadNt_mainDiCoords 12
+#define def_minPadNt_mainDICoords 12
    /*minimum bases at end/start needed to count a DI
    `   this is here to avoid large DI and then 4 matches
    */
 
-#define def_pNonDI_mainDiCoords 0
+#define def_pNonDI_mainDICoords 0
    /*print non-DI entries*/
 
+/*what type of indels to target*/
+#define def_pDel_mainDICoords 1
+#define def_pIns_mainDICoords 0
+
 /*-------------------------------------------------------\
-| Fun01: pversion_mainDiCoords
+| Fun01: pversion_mainDICoords
 |   - prints version number
 | Input:
 |   - outFILE:
@@ -77,20 +81,20 @@
 |     o version number to outFILE
 \-------------------------------------------------------*/
 void
-pversion_mainDiCoords(
+pversion_mainDICoords(
    void *outFILE
 ){
    fprintf(
       (FILE *) outFILE,
-      "mainDiCoords version: %i-%02i-%02i\n",
-      def_year_mainDiCoords,
-      def_month_mainDiCoords,
-      def_day_mainDiCoords
+      "mainDICoords version: %i-%02i-%02i\n",
+      def_year_mainDICoords,
+      def_month_mainDICoords,
+      def_day_mainDICoords
    );
-} /*pversion_mainDiCoords*/
+} /*pversion_mainDICoords*/
 
 /*-------------------------------------------------------\
-| Fun02: phelp_mainDiCoords
+| Fun02: phelp_mainDICoords
 |   - prints help message
 | Input:
 |   - outFILE:
@@ -100,7 +104,7 @@ pversion_mainDiCoords(
 |     o help message to outFILE
 \-------------------------------------------------------*/
 void
-phelp_mainDiCoords(
+phelp_mainDICoords(
    void *outFILE
 ){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
    ' Fun02 TOC:
@@ -120,7 +124,7 @@ phelp_mainDiCoords(
 
    fprintf(
       (FILE *) outFILE,
-      "mainDiCoords -sam reads.sam > out.tsv"
+      "mainDICoords -sam reads.sam > out.tsv"
    );
 
    fprintf(
@@ -195,12 +199,12 @@ phelp_mainDiCoords(
    *   - DI filter settings
    \*****************************************************/
 
-   /*print min del size*/
+    /*print min del size*/
    fprintf(
       (FILE *) outFILE,
       "  -min-del %u: [Optinal; %u]\n",
-      def_minDIDelLen_mainDiCoords,
-      def_minDIDelLen_mainDiCoords
+      def_minDIDelLen_mainDICoords,
+      def_minDIDelLen_mainDICoords
    );
 
    fprintf(
@@ -217,8 +221,8 @@ phelp_mainDiCoords(
    fprintf(
       (FILE *) outFILE,
       "  -min-nt-pad %u: [Optinal; %u]\n",
-      def_minPadNt_mainDiCoords,
-      def_minPadNt_mainDiCoords
+      def_minPadNt_mainDICoords,
+      def_minPadNt_mainDICoords
    );
 
    fprintf(
@@ -241,8 +245,53 @@ phelp_mainDiCoords(
    *   - print settings
    \*****************************************************/
 
+   if(def_pDel_mainDICoords)
+      fprintf(
+         (FILE *) outFILE,
+         "  -pdel: [Optional yes]\n"
+      );
+   else
+      fprintf(
+         (FILE *) outFILE,
+         "  -pdel: [Optional no]\n"
+      );
+
+
+   fprintf(
+      (FILE *) outFILE,
+      "    o search and print large deletions\n"
+   );
+
+   fprintf(
+      (FILE *) outFILE,
+      "    o disable with \"-no-pdel\"\n"
+   );
+
+   if(def_pIns_mainDICoords)
+      fprintf(
+         (FILE *) outFILE,
+         "  -pins: [Optional yes]\n"
+      );
+   else
+      fprintf(
+         (FILE *) outFILE,
+         "  -pins: [Optional no]\n"
+      );
+
+
+   fprintf(
+      (FILE *) outFILE,
+      "    o search and print large insertions\n"
+   );
+
+   fprintf(
+      (FILE *) outFILE,
+      "    o disable with \"-no-pins\"\n"
+   );
+
+
    /*print non-DI reads*/
-   if(def_pNonDI_mainDiCoords)
+   if(def_pNonDI_mainDICoords)
       fprintf(
          (FILE *) outFILE,
          "  -non-di: [Optinal; Yes]\n"
@@ -297,10 +346,10 @@ phelp_mainDiCoords(
       (FILE *) outFILE,
       "    DI start coordinate, and DI end coordinate\n"
    );
-} /*phelp_mainDiCoords*/
+} /*phelp_mainDICoords*/
 
 /*-------------------------------------------------------\
-| Fun03: input_mainDiCoords
+| Fun03: input_mainDICoords
 |   - gets user input from an array of c-strings
 | Input:
 |   - numArgsSI:
@@ -320,6 +369,11 @@ phelp_mainDiCoords(
 |       event
 |   - pNoDIBlPtr:
 |     o pointer to signed char (1: print non-DI read ids)
+|   - indelFlagSCPtr:
+|     o set to indel type to look for and print
+|       - 1: to keep deletions
+|       - 2: to keep insertions
+|       - 3: to keep both detetions and insertions
 | Output:
 |   - Modifies:
 |     o all variables except numArgsSI and argAryStr to
@@ -330,14 +384,15 @@ phelp_mainDiCoords(
 |     o 2 for invalid input
 \-------------------------------------------------------*/
 signed char
-input_mainDiCoords(
+input_mainDICoords(
    int numArgsSI,                /*number of arguments*/
    char *argAryStr[],            /*has input arguments*/
    signed char **samFileStrPtr,  /*will have sam file*/
    signed char **outFileStrPtr,  /*will have out file*/
    unsigned int *minDILenUIPtr,  /*will have min DI len*/
    unsigned int *minPadNtUIPtr,  /*ends non-del length*/
-   signed char *pNoDIBlPtr       /*1 if keeping non-DI*/
+   signed char *pNoDIBlPtr,      /*1 if keeping non-DI*/
+   signed char *indelFlagSCPtr/*keep:1 del; 2 ins; 3 all*/
 ){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
    '   o fun03 sec01:
    '     - variable declarations
@@ -363,9 +418,9 @@ input_mainDiCoords(
    ^   - check if user input something
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
-   if(numArgsSI == 0)
+   if(numArgsSI <= 1)
    { /*If: nothing input*/
-      phelp_mainDiCoords(stdout);
+      phelp_mainDICoords(stdout);
       goto phelp_fun03_sec04;
    } /*If: nothing input*/
 
@@ -410,6 +465,38 @@ input_mainDiCoords(
          ++siArg;
          *outFileStrPtr = (schar *) argAryStr[siArg];
       } /*Else If: is the output file name*/
+
+      else if(
+         ! eql_charCp(
+            (schar *) "-pdel",
+            (schar *) argAryStr[siArg],
+            (schar) '\0'
+         )
+      ) *indelFlagSCPtr |= 1;
+
+      else if(
+         ! eql_charCp(
+            (schar *) "-no-pdel",
+            (schar *) argAryStr[siArg],
+            (schar) '\0'
+         )
+      ) *indelFlagSCPtr &= ~1;
+
+      else if(
+         ! eql_charCp(
+            (schar *) "-pins",
+            (schar *) argAryStr[siArg],
+            (schar) '\0'
+         )
+      ) *indelFlagSCPtr |= 2;
+
+      else if(
+         ! eql_charCp(
+            (schar *) "-no-pins",
+            (schar *) argAryStr[siArg],
+            (schar) '\0'
+         )
+      ) *indelFlagSCPtr &= ~2;
 
       else if(
          ! eql_charCp(
@@ -498,7 +585,7 @@ input_mainDiCoords(
             (schar) '\0'
          )
       ){ /*Else If: help message requested*/
-         phelp_mainDiCoords(stdout);
+         phelp_mainDICoords(stdout);
          goto phelp_fun03_sec04;
       } /*Else If: help message requested*/
 
@@ -509,7 +596,7 @@ input_mainDiCoords(
             (schar) '\0'
          )
       ){ /*Else If: help message requested*/
-         phelp_mainDiCoords(stdout);
+         phelp_mainDICoords(stdout);
          goto phelp_fun03_sec04;
       } /*Else If: help message requested*/
 
@@ -520,7 +607,7 @@ input_mainDiCoords(
             (schar) '\0'
          )
       ){ /*Else If: help message requested*/
-         phelp_mainDiCoords(stdout);
+         phelp_mainDICoords(stdout);
          goto phelp_fun03_sec04;
       } /*Else If: help message requested*/
 
@@ -531,7 +618,7 @@ input_mainDiCoords(
             (schar) '\0'
          )
       ){ /*Else If: help message requested*/
-         phelp_mainDiCoords(stdout);
+         phelp_mainDICoords(stdout);
          goto phelp_fun03_sec04;
       } /*Else If: help message requested*/
 
@@ -542,7 +629,7 @@ input_mainDiCoords(
             (schar) '\0'
          )
       ){ /*Else If: help message requested*/
-         phelp_mainDiCoords(stdout);
+         phelp_mainDICoords(stdout);
          goto phelp_fun03_sec04;
       } /*Else If: help message requested*/
 
@@ -558,7 +645,7 @@ input_mainDiCoords(
             (schar) '\0'
          )
       ){ /*Else If: version number requested*/
-         pversion_mainDiCoords(stdout);
+         pversion_mainDICoords(stdout);
          goto pversion_fun03_sec04;
       } /*Else If: version number requested*/
 
@@ -569,7 +656,7 @@ input_mainDiCoords(
             (schar) '\0'
          )
       ){ /*Else If: version number requested*/
-         pversion_mainDiCoords(stdout);
+         pversion_mainDICoords(stdout);
          goto pversion_fun03_sec04;
       } /*Else If: version number requested*/
 
@@ -580,7 +667,7 @@ input_mainDiCoords(
             (schar) '\0'
          )
       ){ /*Else If: version number requested*/
-         pversion_mainDiCoords(stdout);
+         pversion_mainDICoords(stdout);
          goto pversion_fun03_sec04;
       } /*Else If: version number requested*/
 
@@ -591,7 +678,7 @@ input_mainDiCoords(
             (schar) '\0'
          )
       ){ /*Else If: version number requested*/
-         pversion_mainDiCoords(stdout);
+         pversion_mainDICoords(stdout);
          goto pversion_fun03_sec04;
       } /*Else If: version number requested*/
 
@@ -602,7 +689,7 @@ input_mainDiCoords(
             (schar) '\0'
          )
       ){ /*Else If: version number requested*/
-         pversion_mainDiCoords(stdout);
+         pversion_mainDICoords(stdout);
          goto pversion_fun03_sec04;
       } /*Else If: version number requested*/
 
@@ -634,9 +721,6 @@ input_mainDiCoords(
    goto cleanUp_fun03_sec04;
 
    phelp_fun03_sec04:;
-   errSC = 1;
-   goto cleanUp_fun03_sec04;
-
    pversion_fun03_sec04:;
    errSC = 1;
    goto cleanUp_fun03_sec04;
@@ -647,7 +731,7 @@ input_mainDiCoords(
 
    cleanUp_fun03_sec04:;
    return(errSC);
-} /*input_mainDiCoords*/
+} /*input_mainDICoords*/
 
 /*-------------------------------------------------------\
 | Main:
@@ -686,15 +770,21 @@ main(
    schar *samFileStr = 0;
    schar *outFileStr = 0;
 
-   uint minDILenUI = def_minDIDelLen_mainDiCoords;
-   uint minPadNtUI = def_minPadNt_mainDiCoords;
+   uint minDILenUI = def_minDIDelLen_mainDICoords;
+   uint minPadNtUI = def_minPadNt_mainDICoords;
 
-   schar pNoDIBl = def_pNonDI_mainDiCoords;
+   schar pNoDIBl = def_pNonDI_mainDICoords;
+
+   schar indelFlagSC =
+      def_pDel_mainDICoords | def_pIns_mainDICoords;
+      /*if printing deletions/indels*/
+
    schar errSC = 0;
 
    uint *startHeapAryUI = 0;
    uint *endHeapAryUI = 0;
    uint *delSizeHeapAryUI = 0;
+   schar *indelHeapArySC = 0;
    uint lenArysUI = 0;
    sint numDIsSI = 0;
 
@@ -733,16 +823,16 @@ main(
    *   - get input
    \*****************************************************/
 
-
    errSC =
-      input_mainDiCoords(
+      input_mainDICoords(
          numArgsSI,     /*number of arguments*/
          argAryStr,     /*has input arguments*/
          &samFileStr,   /*will have sam file*/
          &outFileStr,   /*will have out file*/
          &minDILenUI,   /*will have min DI len*/
          &minPadNtUI,   /*min pad length to count DI*/
-         &pNoDIBl       /*1 if keeping non-DI*/
+         &pNoDIBl,      /*1 if keeping non-DI*/
+         &indelFlagSC
      ); /*get user input*/
 
    if(errSC)
@@ -878,9 +968,11 @@ main(
             &samStackST,
             minDILenUI,
             minPadNtUI,
+            indelFlagSC,
             &startHeapAryUI,
             &endHeapAryUI,
             &delSizeHeapAryUI,
+            &indelHeapArySC,
             &lenArysUI
         ); /*find DI events and their coordinates*/
    
@@ -904,7 +996,10 @@ main(
             startHeapAryUI,
             endHeapAryUI,
             delSizeHeapAryUI,
+            indelHeapArySC,
             numDIsSI,
+            samStackST.refStartUI,
+            samStackST.refEndUI,
             outFILE
         );
       } /*If: printing out read*/
@@ -1017,22 +1112,22 @@ main(
 
    if(startHeapAryUI)
       free(startHeapAryUI);
-
    startHeapAryUI = 0;
 
    if(endHeapAryUI)
       free(endHeapAryUI);
-
    endHeapAryUI = 0;
 
    if(delSizeHeapAryUI)
       free(delSizeHeapAryUI);
-
    delSizeHeapAryUI = 0;
+
+   if(indelHeapArySC)
+      free(indelHeapArySC);
+   indelHeapArySC = 0;
 
    if(buffHeapStr)
       free(buffHeapStr);
-
    buffHeapStr = 0;
 
    freeStack_samEntry(&samStackST);

@@ -51,6 +51,7 @@
 
 #include "../genAln/alnDefs.h"
 
+#include "defsDiIds.h"
 #include "fluSeg.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
@@ -61,27 +62,12 @@
 !   - .h  #include "../genLib/genMath.h" (using .h macros)
 \%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define def_year_diIDs 2024
-#define def_month_diIDs 8
-#define def_day_diIDs 29
+#define def_year_diIDs 2025
+#define def_month_diIDs 3
+#define def_day_diIDs 03
 
 #define def_faPrimFile_diIDs 1
 #define def_tsvPrimFile_diIDs 2
-
-#define def_minLen_diIDs 40
-#define def_maxLen_diIDs 3000
-#define def_minPercLen_diIDs 0.85f
-#define def_maxPercLen_diIDs 1.1f /*110%*/
-
-#define def_fastSearch_diIDs 1 /*1 = fast search*/
-
-#define def_pDIRna_diIDs 1
-#define def_pMVRna_diIDs 1
-#define def_pVRna_diIDs 1
-#define def_partSeq_diIDs 1
-
-#define def_noAgree_diIDs 0
-   /*primers in read not agreeing for segment*/
 
 static signed char
    *forPrimStr_diIds =
@@ -237,7 +223,7 @@ phelp_diIDs(
    +   - print di reads
    \++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-    if(def_pDIRna_diIDs)
+    if(def_pDIRna_defsDiIds)
        fprintf(
          (FILE *) outFILE,
           "  -di: [Yes]\n"
@@ -264,7 +250,7 @@ phelp_diIDs(
    +   - print full length reads
    \++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-    if(def_pVRna_diIDs)
+    if(def_pVRna_defsDiIds)
        fprintf(
          (FILE *) outFILE,
           "  -vrna: [Yes]\n"
@@ -291,7 +277,7 @@ phelp_diIDs(
    +   - print genoems with on solid primer
    \++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-    if(def_partSeq_diIDs)
+    if(def_partSeq_defsDiIds)
        fprintf(
          (FILE *) outFILE,
           "  -part: [Yes]\n"
@@ -410,7 +396,7 @@ phelp_diIDs(
     fprintf(
       (FILE *) outFILE,
        "  -min-len %i: [Optional]\n",
-       def_minLen_diIDs
+       def_minLen_defsDiIds
     );
 
     fprintf(
@@ -421,7 +407,7 @@ phelp_diIDs(
     fprintf(
       (FILE *) outFILE,
        "  -max-len %i: [Optional]\n",
-       def_maxLen_diIDs
+       def_maxLen_defsDiIds
     );
 
     fprintf(
@@ -432,7 +418,7 @@ phelp_diIDs(
     fprintf(
       (FILE *) outFILE,
        "  -min-perc-len %0.2f: [Optional]\n",
-       def_minPercLen_diIDs
+       def_minPercLen_defsDiIds
     );
 
     fprintf(
@@ -448,7 +434,7 @@ phelp_diIDs(
     fprintf(
       (FILE *) outFILE,
        "  -max-perc-len %0.2f: [Optional]\n",
-       def_maxPercLen_diIDs
+       def_maxPercLen_defsDiIds
     );
 
     fprintf(
@@ -523,7 +509,7 @@ phelp_diIDs(
    fprintf(
      (FILE *) outFILE,
       "  -len-kmer %i: [Optional]\n",
-      def_lenKmer_kmerFind
+      def_lenKmer_defsDiIds
    );
 
    fprintf(
@@ -544,7 +530,7 @@ phelp_diIDs(
    fprintf(
      (FILE *) outFILE,
       "  -min-perc-kmer %0.2f: [Optional]\n",
-      def_minKmerPerc_kmerFind
+      def_kmerPerc_defsDiIds
    );
 
    fprintf(
@@ -801,12 +787,12 @@ getInput_diIDs(
 
    /*****************************************************\
    * Fun04 Sec01 Sub02:
-   *   - sert up flags for flu segments (pattern/length)
+   *   - set up flags for flu segments (pattern/length)
    \*****************************************************/
 
    for(
       siSeg = 0;
-      siSeg < def_NSNum_fluSeg + 1;
+      siSeg <= def_NSNum_fluSeg;
       siSeg += 2
    ){ /*Loop: build segment id flags*/
       /*set up sequence flag*/
@@ -815,7 +801,7 @@ getInput_diIDs(
       *tmpStr++ = '-';
 
       tmpStr +=
-         eql_charCp(
+         cpDelim_charCp(
             tmpStr,
             segIdAryStr_fluSeg[siSeg >> 1],
             '\0'
@@ -1575,9 +1561,9 @@ main(
    schar *revSeqStr = revPrimStr_diIds;
 
    /*settings for printing out ids*/
-   schar diRnaBl = def_pDIRna_diIDs;
-   schar vRnaBl = def_pVRna_diIDs;
-   schar partBl = def_partSeq_diIDs;
+   schar diRnaBl = def_pDIRna_defsDiIds;
+   schar vRnaBl = def_pVRna_defsDiIds;
+   schar partBl = def_partSeq_defsDiIds;
 
    schar keepBl = 0;  /*holds if keep di/v RNA read*/
    schar diFlagSC = 0;/*holds result from detectDI_fluST*/
@@ -1593,8 +1579,8 @@ main(
    \*****************************************************/
 
    /*variables for filtering*/
-   uint minLenUI = def_minLen_diIDs;
-   uint maxLenUI = def_maxLen_diIDs;
+   uint minLenUI = def_minLen_defsDiIds;
+   uint maxLenUI = def_maxLen_defsDiIds;
 
    /*variables for holding search output*/
    /*usign 3 to avoid overflow errors*/
@@ -1609,10 +1595,10 @@ main(
    ulong primStartAryUL[3];
    ulong primEndAryUL[3];
 
-   float minPercLenF = def_minPercLen_diIDs;
+   float minPercLenF = def_minPercLen_defsDiIds;
       /*minimum % of read length between primers*/
 
-   float maxPercLenF = def_maxPercLen_diIDs;
+   float maxPercLenF = def_maxPercLen_defsDiIds;
       /*length between primers / expected segment length*/
 
    /*variables holding return values*/
@@ -1633,12 +1619,12 @@ main(
    float minPercScoreF = def_minPercScore_kmerFind;
       /*min score to keep mapping*/
 
-   uchar lenKmerUC = def_lenKmer_kmerFind; /*kmer length*/
+   uchar lenKmerUC = def_lenKmer_defsDiIds; /*kmer length*/
 
-   float frameShiftF = def_percShift_kmerFind;
+   float frameShiftF = def_percShift_defsDiIds;
       /*percentage of bases to move when shifting a win*/
 
-   float minPercKmerF = def_minKmerPerc_kmerFind;
+   float minPercKmerF = def_kmerPerc_defsDiIds;
       /*minimum percentage of kmers to do a waterman*/
 
    float extraNtInWinF = def_extraNtInWin_kmerFind;
@@ -1687,6 +1673,35 @@ main(
 
    alnSetStackST.gapSS = -4 * def_scoreAdj_alnDefs;
    alnSetStackST.extendSS = -1 * def_scoreAdj_alnDefs;
+
+
+   codeAryUI[0] = 0;
+   codeAryUI[1] = 0;
+   codeAryUI[2] = 0;
+
+   scoreArySL[0] = 0;
+   scoreArySL[1] = 0;
+   scoreArySL[2] = 0;
+
+   dirArySC[0] = 0;
+   dirArySC[1] = 0;
+   dirArySC[2] = 0;
+
+   seqStartAryUL[0] = 0;
+   seqStartAryUL[1] = 0;
+   seqStartAryUL[2] = 0;
+
+   seqEndAryUL[0] = 0;
+   seqEndAryUL[1] = 0;
+   seqEndAryUL[2] = 0;
+
+   primStartAryUL[0] = 0;
+   primStartAryUL[1] = 0;
+   primStartAryUL[2] = 0;
+
+   primEndAryUL[0] = 0;
+   primEndAryUL[1] = 0;
+   primEndAryUL[2] = 0;
 
    /*****************************************************\
    * Main Sec02 Sub02:

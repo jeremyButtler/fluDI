@@ -608,17 +608,31 @@ findNumMap_edClust(
          continue;
       } /*Else: already assigned or discarded*/
 
+
       if(
             indexSTPtr->refAryUI[bestIndexSL]
          != indexSTPtr->refAryUI[lineSL]
-      ) goto noMatch_fun03_sec03_sub01;
-        /*different references*/
+      ){ /*If: reads mapped to different references*/
+
+         if(indexSTPtr->clustArySI[lineSL] != 0)
+            goto noMatch_fun03_sec03_sub01;
+            /*were assigned to same cluster*/
+
+         else
+         { /*Else: no cluster assigned to*/
+            offsetUL += indexSTPtr->lenLineAryUI[lineSL];
+            continue;
+         } /*Else: no cluster assigned to*/
+
+      } /*If: reads mapped to different references*/
+
 
       if(
            indexSTPtr->startAryUI[lineSL]
          < firstBaseUI
       ) goto noMatch_fun03_sec03_sub01;
         /*starts before the best read*/
+
 
       if(
            indexSTPtr->endAryUI[lineSL]
@@ -733,8 +747,11 @@ findNumMap_edClust(
             conSetSTPtr
          ); /*build the conensus*/
 
-      if(errSC)
+      if(errSC == def_memErr_tbConDefs)
          goto memErr_fun03_sec04;
+      else if(errSC)
+         goto noMatch_fun03_sec03_sub01;
+        /*read did not meet tbCons specs*/
    } /*Loop: find number of matches*/
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
@@ -1133,9 +1150,8 @@ cluster_edClust(
             ); /*update on how many reads left*/
 
             lastReadsSL = numReadsSL;
+            fflush(stderr);
          } /*If: logging interval*/
-
-         fflush(stderr);
       } /*If: reporting status*/
 
       /**************************************************\

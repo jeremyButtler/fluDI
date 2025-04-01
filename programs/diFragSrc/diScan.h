@@ -14,11 +14,14 @@
 '   o fun02: waterScan_diScan
 '     - scan for DI fragments using kmer profiling and
 '       Watermen alignment
-'   o fun03: phead_diScan
+'   o fun03: needleScan_diScan
+'     - scan for DI fragments using kmer profiling and
+'       Needleman alignment
+'   o fun04: phead_diScan
 '     - print out header for fragment tsv
-'   o fun04: pfrag_diScan
+'   o fun05: pfrag_diScan
 '     - print out the fragment
-'   o fun05: rmEndDels_diScan
+'   o fun06: rmEndDels_diScan
 '     - removes deletions at the ends of reads
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
@@ -165,7 +168,81 @@ waterScan_diScan(
 );
 
 /*-------------------------------------------------------\
-| Fun03: phead_diScan
+| Fun03: needleScan_diScan
+|   - scan for DI fragments using kmer profiling and
+|     Needleman alignment
+| Input:
+|    - seqSTPtr:
+|      o pointer to seqST with sequence to scan
+|   - refAryST:
+|     o pointer to kmerCnt structure array with segments
+|       to compare againts
+|   - lenRefUI:
+|     o number of kmerCnt structures to scan in refAryST
+|   - kmerArySI:
+|     o signed int array to hold the kmers in seqSTPtr
+|   - cntArySI:
+|     o signed int array to hold kmer counts for seqSTPtr
+|   - minPercMatchF:
+|     o minimum percent number matches from needleman
+|       alingment to count read as mapped
+|   - minKmerPercF:
+|     o min percent of shared kmers to keep a read
+|   - lenKmerUC:
+|     o length of one kmer
+|   - samSTPtr:
+|     o pointer to samEntry structure to hold aligned
+|       sequence
+|   - segSIPtr:
+|     o pointer to signed int ot hold the segment mapped
+|       to or a negative number
+|   - minDIDelUI:
+|     o minimum deletion size to flag as a DI sequence
+|   - minEndNtUI:
+|     o how many bases in a DI event must be to be a DI
+|       event
+|   - numKmersSIPtr:
+|     o pointer to signed int to hold the number of kmers
+|       shared with the reference
+|   - alnSetSTPtr:
+|     o pointer to alnSet struct with alignment settings
+|   - matrixSTPtr:
+|     o pointer to dirMatrix struct to use in alignment
+| Output:
+|   - Modifies:
+|     o samSTPtr to hold the new alignment
+|     o matrixSTPtr to have the direction matrix, score,
+|       and index from alignment
+|     o kmerArySI to have the sequences kmers list
+|     o cntArySI to have the sequences kmer counts
+|     o segSIPtr to have the segment mapped to or -1
+|   - Returns:
+|     o 0 if there were no DI events
+|     o > 0 if found DI events (number of events returned)
+|     o def_noMatch_diScan (-1) if not a DI sequence
+|     o def_memErr_diScan (-2) if memory error
+\-------------------------------------------------------*/
+signed int
+needleScan_diScan(
+   struct seqST *seqSTPtr,/*sequence to check*/
+   struct kmerCnt *refAryST,  /*array of references*/
+   unsigned int lenRefUI,     /*# of references*/
+   signed int *kmerArySI,     /*holds sequence kmers*/
+   signed int *cntArySI,      /*holds kmer counts*/
+   float minPercMatch,      /*min % matches to be mapped*/
+   float minKmerPercF,         /*min perc kmers to keep*/
+   unsigned char lenKmerUC,    /*length of one kmer*/
+   unsigned int minDIDelUI,   /*min del size in DI*/
+   unsigned int minPadNtUI,   /*min start/end length*/
+   struct samEntry *samSTPtr, /*holds alignment*/
+   signed int *segSIPtr,      /*segment mapped to*/
+   signed int *numKmersSIPtr, /*number kmers shared*/
+   struct alnSet *alnSetSTPtr,/*alignment settings*/
+   struct dirMatrix *matrixSTPtr /*matrix for alignment*/
+);
+
+/*-------------------------------------------------------\
+| Fun04: phead_diScan
 |   - print out header for fragment tsv
 | Input:
 |   - outFILE:
@@ -183,7 +260,7 @@ phead_diScan(
 );
 
 /*-------------------------------------------------------\
-| Fun04: pfrag_diScan
+| Fun05: pfrag_diScan
 |   - print out the fragment
 | Input:
 |   - samSTPtr:
@@ -215,7 +292,7 @@ pfrag_diScan(
 );
 
 /*-------------------------------------------------------\
-| Fun05: rmEndDels_diScan
+| Fun06: rmEndDels_diScan
 |   - removes deletions at the ends of reads
 | Input:
 |   - samSTPtr:

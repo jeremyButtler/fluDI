@@ -23,7 +23,7 @@ objFiles=\
 all: diIds.$O
 	$LD -o $NAME $CFLAGS $objFiles
 
-diIds.$O: diIds.c fluST.$O $genLib/charCp.$O $genAln/kmerFind.$O
+diIds.$O: diIds.c fluST.$O $genLib/charCp.$O $genAln/kmerFind.$O defsDiIds.h
 	$CC g$CFLAGS diIds.c
 
 fluST.$O: fluST.c fluST.h fluSeg.h $genLib/shellSort.$O $genAln/alnDefs.h $genLib/dataTypeShortHand.h

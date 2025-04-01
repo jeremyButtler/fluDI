@@ -66,9 +66,6 @@
 
 #include "../genLib/ulCp.h"
 
-/*no .c files*/
-#include "../genLib/dataTypeShortHand.h"
-
 /*-------------------------------------------------------\
 | Fun01: addLine_seqST
 |  - read line of characters into the buffer.If needed
@@ -127,7 +124,7 @@ addLine_seqST(
     ^  - variable declerations
     \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
-    schar *tmpStr = 0;
+    signed char *tmpStr = 0;
     unsigned long spareBuffUL = 0;
     unsigned long tmpUL = 0;
 
@@ -144,13 +141,14 @@ addLine_seqST(
         *lenBuffUL += resBuffUL;
 
         if(*lenBuffUL == 0)
-          tmpStr =malloc(sizeof(schar) * (*lenBuffUL+9));
+          tmpStr =
+             malloc(sizeof(signed char) * (*lenBuffUL+9));
         else
         { /*Else I need to resize the buffer*/
             tmpStr =
               realloc(
                 *buffStr,
-                sizeof(schar) * (*lenBuffUL + 9)
+                sizeof(signed char) * (*lenBuffUL + 9)
             ); /*Resize hte buffer*/
         } /*Else I need to resize the buffer*/
        
@@ -264,7 +262,7 @@ getFqSeq_seqST(
     ^  - variable declarations
     \>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 
-    schar tmpSC = 'C';         /*initilize sequence loop*/
+    signed char tmpSC = 'C';  /*initilize sequence loop*/
 
     unsigned short extraBuffUS = 1024;
     unsigned long tmpBuffUL = 0;
@@ -274,7 +272,7 @@ getFqSeq_seqST(
     unsigned char numLinesUC = 0;
 
     unsigned char errUC = 0;
-    schar *oldIterStr = 0;
+    signed char *oldIterStr = 0;
 
     /*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\
     ^ Fun02 Sec02:
@@ -475,13 +473,13 @@ getFaSeq_seqST(
     \>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 
     /*Used To initilize the sequence loop*/
-    schar tmpSC = 'C';
+    signed char tmpSC = 'C';
     unsigned long tmpUL = 0;
     unsigned long filePosUL = 0; /*reset file lengths*/
 
     unsigned short extraBuffUS = 1024;
     signed char errSC = 0;
-    schar *tmpStr= 0;
+    signed char *tmpStr= 0;
 
     /*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\
     ^ Fun03 Sec02:
@@ -553,7 +551,7 @@ getFaSeq_seqST(
     else
     { /*Else: allocate memory*/
        seqSTPtr->seqStr =
-          malloc((extraBuffUS + 9) * sizeof(schar));
+          malloc((extraBuffUS + 9) * sizeof(signed char));
 
        seqSTPtr->seqStr[extraBuffUS] = '\0';
        seqSTPtr->seqStr[extraBuffUS + 1] = '\0';
@@ -571,7 +569,7 @@ getFaSeq_seqST(
     while(1 == 1)
     { /*Loop: read in sequence*/
         tmpStr =
-           (schar *)
+           (signed char *)
            fgets(
               (char *)
                  seqSTPtr->seqStr + seqSTPtr->lenSeqUL,
@@ -623,7 +621,7 @@ getFaSeq_seqST(
                       + 9
                       + extraBuffUS
                    )
-                 * sizeof(schar)
+                 * sizeof(signed char)
               );
 
            if(! tmpStr)
@@ -761,13 +759,13 @@ revComp_seqST(
     ^   - variable declarations
     \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
-    schar *seqStr = seqSTPtr->seqStr;
+    signed char *seqStr = seqSTPtr->seqStr;
 
-    schar *endStr =
+    signed char *endStr =
        seqSTPtr->seqStr + seqSTPtr->lenSeqUL - 1;
 
-    schar *qStr = 0;
-    schar *qEndStr = 0;
+    signed char *qStr = 0;
+    signed char *qEndStr = 0;
 
     /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
     ^ Fun04 Sec02:
@@ -1030,7 +1028,7 @@ freeHeapAry_seqST(
    struct seqST *seqAryST,
    signed long numSeqSL
 ){
-   slong slFree = 0;
+   signed long slFree = 0;
 
    for(
       slFree = 0;
@@ -1075,8 +1073,8 @@ cpIdEndPad_seqST(
    signed char endIdC,   /*padding; id end (0 to skip)*/
    signed int padRI      /*padding; id start*/
 ){
-   sint idCntI = 0;
-   schar *tmpStr = seqSTPtr->idStr;
+   signed int idCntI = 0;
+   signed char *tmpStr = seqSTPtr->idStr;
 
    if(*tmpStr == '>') ++tmpStr; /*Get of header*/
 
@@ -1170,7 +1168,8 @@ cp_seqST(
 
          dupSeqST->qStr =
             malloc(
-               (dupSeqST->lenQBuffUL + 1) * sizeof(schar)
+                 (dupSeqST->lenQBuffUL + 1)
+               * sizeof(signed char)
             );
 
          if(! dupSeqST)
@@ -1206,7 +1205,8 @@ cp_seqST(
 
       dupSeqST->seqStr =
          malloc(
-            (dupSeqST->lenSeqBuffUL + 1) * sizeof(schar)
+              (dupSeqST->lenSeqBuffUL + 1)
+            * sizeof(signed char)
          );
 
       if(! dupSeqST)
@@ -1241,7 +1241,8 @@ cp_seqST(
 
       dupSeqST->idStr =
          malloc(
-            (dupSeqST->lenIdBuffUL + 1) * sizeof(schar)
+              (dupSeqST->lenIdBuffUL + 1)
+            * sizeof(signed char)
          );
 
       if(! dupSeqST)

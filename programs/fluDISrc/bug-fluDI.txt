@@ -1,10 +1,16 @@
 b fluDI.c:1475
+b fluDI.c:3153
+b fluDI.c:2632 if seqStackST.idStr[12] == '1' && seqStackST.idStr[13] == '4' && seqStackST.idStr[13] == '2'
+  # current issues is in findNumMap_edClust (1184 edClust)
 
 # memroy error tracking
-b edClust.c:1182
-b edClust.c:729
+#b edClust.c:1182
+#b edClust.c:729
 
 # current problem is -1 (memory error) returned by 
 #   findNumMap_edClust one line 1182 of edClust.c
 
-r -fq $HOME/files/testing/diflu/SRR29165088.fastq -ref ../diFragSrc/fluGenbankRef.fa -prefix delete
+#r -fq $HOME/files/testing/diflu/SRR29165088.fastq -ref ../diFragSrc/fluGenbankRef.fa -prefix delete
+
+r -fq ~/files/testing/diflu/SRR29165088.fastq -ref fluRef-blast.fa -prefix 2024-mooflu-SRR29165088-map-filt-tbCon-blast-fluDI
+

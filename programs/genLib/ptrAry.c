@@ -6,7 +6,7 @@
 '     - included libraries
 '   o .h st01: strPtrAry
 '     - struct holding string pointer array & string sizes
-'   o st01: strPtrAry
+'   o st01: str_ptrAry
 '     - struct holding string pointer array and string sizes
 '   o fun01: blank_str_ptrAry
 '     - blanks a str_ptrAry struct
@@ -16,24 +16,30 @@
 '     - frees c-string array in a str_ptrAry struct
 '   o fun04: freeHeap_str_ptrAry
 '     - frees a str_ptrAry struct
-'   o fun05: mk_str_ptrAry
-'     - make initialized heap allocated str_ptrAry struct
-'   o fun06: resize_str_ptrAry
+'   o fun05: resize_str_ptrAry
 '     - resizes arrays in a str_ptrAry struct
+'   o fun06: mk_str_ptrAry
+'     - make initialized heap allocated str_ptrAry struct
 '   o fun07: add_str_ptrAry
 '     - adds a string to a str_ptrAry struct
-'   o fun08: cmp_str_ptrAry
-'     - compares two strings in a str_ptrAry struct
+'   o fun08: findClose_str_ptrAry
+'    - finds location to insert query in string ptr array
+'      (must be sorted)
 '   o fun09: swap_str_ptrAry
 '     - swaps two strings in a str_ptrAry struct
-'   o fun10: sort_str_ptrAry
+'   o fun10: addSort_str_ptrAry
+'     - adds a string to a str_ptrAry in sorted positon
+'     - assumes you do not manipulate struct in other ways
+'   o fun11: cmp_str_ptrAry
+'     - compares two strings in a str_ptrAry struct
+'   o fun12: sort_str_ptrAry
 '     - sorts string pointer array in str_ptrAry struct
-'   o fun11: sort_str_ptrAry
+'   o fun13: sortSync_str_ptrAry
 '     - sorts string pointer array in str_ptrAry struct
 '       while keeping an unsigned int array in sync
-'   o fun12: find_str_ptrAry
+'   o fun14: find_str_ptrAry
 '     - search for query in str_ptrAry (must be sorted)
-'   o fun13: findNoSort_str_ptrAry
+'   o fun15: findNoSort_str_ptrAry
 '     - search for query in str_ptrAry (dumb search)
 '   o license:
 '     - licensing for this code (public domain / mit)
@@ -163,49 +169,7 @@ freeHeap_str_ptrAry(
 } /*freeHeap_str_ptrAry*/
 
 /*-------------------------------------------------------\
-| Fun05: mk_str_ptrAry
-|   - make an initialized heap allocated str_ptrAry struct
-| Input:
-|   - numElmSL:
-|     o number elements to have
-| Output:
-|   - Returns:
-|     o pointer to str_ptrAry struct
-|     o 0 for memory error
-\-------------------------------------------------------*/
-struct str_ptrAry *
-mk_str_ptrAry(
-   signed long numElmSL
-){
-   struct str_ptrAry *retHeapST = 0;
-   retHeapST = malloc(sizeof(struct str_ptrAry));
-
-   if(! retHeapST)
-      goto memErr_fun05;
-
-   init_str_ptrAry(retHeapST);
-
-   if(
-      resize_str_ptrAry(
-         retHeapST,
-         numElmSL
-      )
-   ) goto memErr_fun05;
-
-   goto ret_fun05;
-
-   memErr_fun05:;
-      if(retHeapST)
-         freeHeap_str_ptrAry(retHeapST);
-      retHeapST = 0;
-      goto ret_fun05;
-
-   ret_fun05:;
-      return retHeapST;
-} /*mk_str_ptrAry*/
-
-/*-------------------------------------------------------\
-| Fun06: resize_str_ptrAry
+| Fun05: resize_str_ptrAry
 |   - resizes arrays in a str_ptrAry struct
 | Input:
 |   - strAryPtr:
@@ -227,6 +191,7 @@ resize_str_ptrAry(
 ){
    unsigned int *tmpUIPtr = 0;
    signed char **tmpAryStr = 0;
+   signed long oldSizeSL = strAryPtr->sizeSL;
 
    if(strAryPtr->strAry)
       tmpAryStr =
@@ -275,7 +240,7 @@ resize_str_ptrAry(
    strAryPtr->sizeAryUI = tmpUIPtr;
 
    for(
-      numElmSL = strAryPtr->lenSL;
+      numElmSL = oldSizeSL;
       numElmSL < strAryPtr->sizeSL;
       ++numElmSL
    ){ /*Loop: blank sizes*/
@@ -286,6 +251,49 @@ resize_str_ptrAry(
 
    return 0;
 } /*resize_str_ptrAry*/
+
+/*-------------------------------------------------------\
+| Fun06: mk_str_ptrAry
+|   - make an initialized heap allocated str_ptrAry struct
+| Input:
+|   - numElmSL:
+|     o number elements to have
+| Output:
+|   - Returns:
+|     o pointer to str_ptrAry struct
+|     o 0 for memory error
+\-------------------------------------------------------*/
+struct str_ptrAry *
+mk_str_ptrAry(
+   signed long numElmSL
+){
+   struct str_ptrAry *retHeapST = 0;
+   retHeapST = malloc(sizeof(struct str_ptrAry));
+
+   if(! retHeapST)
+      goto memErr_fun05;
+
+   init_str_ptrAry(retHeapST);
+
+   if(
+      resize_str_ptrAry(
+         retHeapST,
+         numElmSL
+      )
+   ) goto memErr_fun05;
+
+   goto ret_fun05;
+
+   memErr_fun05:;
+      if(retHeapST)
+         freeHeap_str_ptrAry(retHeapST);
+      retHeapST = 0;
+      goto ret_fun05;
+
+   ret_fun05:;
+      return retHeapST;
+} /*mk_str_ptrAry*/
+
 
 /*-------------------------------------------------------\
 | Fun07: add_str_ptrAry
@@ -369,33 +377,69 @@ add_str_ptrAry(
 } /*add_str_ptrAry*/
 
 /*-------------------------------------------------------\
-| Fun08: cmp_str_ptrAry
-|   - compares two strings in a str_ptrAry struct
+| Fun08: findClose_str_ptraRy
+|  - finds location to insert query in string ptr array
+|    (must be sorted)
 | Input:
-|   - strAryPtr:
-|     o str_ptrAry stuct with strings to compare
-|   - qrySL:
-|     o index of query to compare
-|   - refSL:
-|     o index of reference to compare
+|  - strAryPtr:
+|    o pointer to str_ptrAry to find query in
+|  - qryStr:
+|    o string to find insert location
 | Output:
-|   - Returns:
-|     o 0 if strings are equal
-|     o > 0 if query is greater
-|     o < 0 if reference is greater
+|  - Returns:
+|    o index to insert qryStr at
 \-------------------------------------------------------*/
 signed long
-cmp_str_ptrAry(
-   str_ptrAry *strAryPtr,
-   signed long qrySL,
-   signed long refSL
+findClose_str_ptrAry(
+   struct str_ptrAry *strAryPtr,
+   signed char *qryStr
 ){
-   return
-      eqlNull_ulCp(
-         strAryPtr->strAry[qrySL],
-         strAryPtr->strAry[refSL]
-      ); /*compare strings*/
-} /*cmp_str_ptrAry*/
+   signed long midSL = 0;
+   signed long rightSL = strAryPtr->lenSL - 1;
+   signed long leftSL = 0;
+   signed long cmpSL = 0;
+
+   while(leftSL <= rightSL)
+   { /*Loop: Search for the querys index*/
+      midSL = (leftSL + rightSL) >> 1;
+
+      cmpSL =
+         eqlNull_ulCp(
+            qryStr,
+            strAryPtr->strAry[midSL]
+         ); /*compare query to array value*/
+
+      if(cmpSL > 0)
+          leftSL = midSL + 1;
+
+      else if(cmpSL < 0)
+          rightSL = midSL - 1;
+
+      else
+      { /*Else: found matching string*/
+         if(midSL + 1 >= rightSL)
+            return midSL;
+
+         cmpSL =
+            eqlNull_ulCp(
+               qryStr,
+               strAryPtr->strAry[midSL + 1]
+            ); /*compare query to array value*/
+
+         if(! cmpSL)
+            leftSL = midSL + 1; /*find end of duplicates*/
+         else
+            return midSL;
+      } /*Else: found matching string*/
+   } /*Loop: Search for the querys index*/
+
+   if(midSL == strAryPtr->lenSL)
+      return midSL;     /*at end of array, insert here*/
+   if(cmpSL > 0)
+      return midSL + 1; /*query still greater*/
+   else
+      return midSL;     /*query less than, insert here*/
+} /*findClose_strAry*/
 
 /*-------------------------------------------------------\
 | Fun09: swap_str_ptrAry
@@ -439,7 +483,117 @@ swap_str_ptrAry(
 } /*swap_str_ptrAry*/
 
 /*-------------------------------------------------------\
-| Fun10: sort_str_ptrAry
+| Fun10: addSort_str_ptrAry
+|   - adds a string to a str_ptrAry in sorted positon
+|   - assumes you do not manipulate struct in other ways
+| Input:
+|   - newStr:
+|     o string to add to array
+|   - strAryPtr:
+|     o pointer to str_ptrAry struct to add string to
+| Output:
+|   - Modifies:
+|     o strAryPtr to have newStr at closest index
+|   - Returns:
+|     o index of added string
+|     o -1 for memory errors
+\-------------------------------------------------------*/
+unsigned long
+addSort_str_ptrAry(
+   signed char *newStr,          /*string to add*/
+   struct str_ptrAry *strAryPtr /*add newStr to*/
+){
+   signed long indexSL = 0;
+   signed long diffSL = 0;
+
+   if(! strAryPtr->lenSL)
+   { /*If: first string in array*/
+      if(
+         add_str_ptrAry(
+            newStr,
+            strAryPtr,
+            0
+         ) /*add new string in*/
+      ) return -1; /*memory error*/
+
+      indexSL = 0;
+      ++strAryPtr->lenSL;
+      goto ret_fun10;
+   } /*If: first string in array*/
+
+
+   indexSL =
+      findClose_str_ptrAry(
+         strAryPtr,
+         newStr
+      ); /*find insert location*/
+
+   diffSL = strAryPtr->lenSL;
+
+   if(diffSL > indexSL)
+   { /*If: can copy last value*/
+      strAryPtr->strAry[diffSL] = 0;
+      strAryPtr->lenAryUI[diffSL] = 0;
+      strAryPtr->sizeAryUI[diffSL] = 0;
+
+      /*prevents copying unitialized last value*/
+   } /*If: can copy last value*/
+
+   while(diffSL > indexSL)
+   { /*Loop: move strings up (clear position)*/
+      swap_str_ptrAry(
+         strAryPtr,
+         diffSL,
+         diffSL - 1
+      );
+
+      --diffSL;
+   } /*Loop: move strings up (clear position)*/
+   
+
+   if(
+      add_str_ptrAry(
+         newStr,
+         strAryPtr,
+         (unsigned long) indexSL
+      ) /*add new string in*/
+   ) return -1; /*memory error*/
+
+   ret_fun10:;
+      return (unsigned long) indexSL;
+} /*addSort_strAry*/
+
+/*-------------------------------------------------------\
+| Fun11: cmp_str_ptrAry
+|   - compares two strings in a str_ptrAry struct
+| Input:
+|   - strAryPtr:
+|     o str_ptrAry stuct with strings to compare
+|   - qrySL:
+|     o index of query to compare
+|   - refSL:
+|     o index of reference to compare
+| Output:
+|   - Returns:
+|     o 0 if strings are equal
+|     o > 0 if query is greater
+|     o < 0 if reference is greater
+\-------------------------------------------------------*/
+signed long
+cmp_str_ptrAry(
+   str_ptrAry *strAryPtr,
+   signed long qrySL,
+   signed long refSL
+){
+   return
+      eqlNull_ulCp(
+         strAryPtr->strAry[qrySL],
+         strAryPtr->strAry[refSL]
+      ); /*compare strings*/
+} /*cmp_str_ptrAry*/
+
+/*-------------------------------------------------------\
+| Fun12: sort_str_ptrAry
 |   - sorts string pointer array in str_ptrAry struct
 | Input:
 |   - strPtrAry:
@@ -453,18 +607,18 @@ void
 sort_str_ptrAry(
    struct str_ptrAry *strPtrAry
 ){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-   ' Fun10 TOC:
+   ' Fun12 TOC:
    '   - sorts string pointer array in str_ptrAry struct
-   '   o fun10 sec01:
+   '   o fun12 sec01:
    '     - variable declerations
-   '   o fun10 sec02:
+   '   o fun12 sec02:
    '     - find the number of rounds to sort for
-   '   o fun10 sec03:
+   '   o fun12 sec03:
    '     - sort the arrays
    \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun10 Sec01:
+   ^ Fun12 Sec01:
    ^   - variable declerations
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -480,7 +634,7 @@ sort_str_ptrAry(
    signed long slElm = 0;
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun10 Sec02:
+   ^ Fun12 Sec02:
    ^   - find the max search value (number rounds to sort)
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -494,7 +648,7 @@ sort_str_ptrAry(
       subSL = (3 * subSL) + 1;
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun10 Sec03:
+   ^ Fun12 Sec03:
    ^   - sort arrays
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -559,7 +713,7 @@ sort_str_ptrAry(
 } /*sort_str_ptrAry*/
 
 /*-------------------------------------------------------\
-| Fun11: sort_str_ptrAry
+| Fun13: sortSync_str_ptrAry
 |   - sorts string pointer array in str_ptrAry struct
 |     while keeping an unsigned int array in sync
 | Input:
@@ -578,19 +732,19 @@ sortSync_str_ptrAry(
    struct str_ptrAry *strPtrAry,
    unsigned int *uiAry
 ){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-   ' Fun11 TOC:
+   ' Fun13 TOC:
    '   - sorts string pointer array in str_ptrAry struct
    '     while keeping an unsigned int array in sync
-   '   o fun11 sec01:
+   '   o fun13 sec01:
    '     - variable declerations
-   '   o fun11 sec02:
+   '   o fun13 sec02:
    '     - find the number of rounds to sort for
-   '   o fun11 sec03:
+   '   o fun13 sec03:
    '     - sort the arrays
    \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun11 Sec01:
+   ^ Fun13 Sec01:
    ^   - variable declerations
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -607,7 +761,7 @@ sortSync_str_ptrAry(
    signed long slElm = 0;
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun11 Sec02:
+   ^ Fun13 Sec02:
    ^   - find the max search value (number rounds to sort)
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -621,7 +775,7 @@ sortSync_str_ptrAry(
       subSL = (3 * subSL) + 1;
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun11 Sec03:
+   ^ Fun13 Sec03:
    ^   - sort arrays
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -694,7 +848,7 @@ sortSync_str_ptrAry(
 } /*sortSync_str_ptrAry*/
 
 /*-------------------------------------------------------\
-| Fun12: find_str_ptrAry
+| Fun14: find_str_ptrAry
 |  - search for query in str_ptrAry (must be sorted)
 | Input:
 |  - strPtrAry:
@@ -740,7 +894,7 @@ find_str_ptrAry(
 } /*find_str_ptrAry*/
 
 /*-------------------------------------------------------\
-| Fun13: findNoSort_str_ptrAry
+| Fun15: findNoSort_str_ptrAry
 |  - search for query in str_ptrAry (dumb search)
 | Input:
 |  - strPtrAry:

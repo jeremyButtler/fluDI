@@ -21,6 +21,8 @@
 '   o fun06: aaTripToChar_codonTbl
 '     - converts a three letter amino acid idenity to its
 '       single letter amino acid identity
+'   o fun07: seqToAA_codonTbl
+'     - converts nucleotide sequence to amino acids
 '   o license:
 '     - licensing for this code (public domain / mit)
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -32,6 +34,10 @@
 
 #ifndef CODON_TABLE_H
 #define CODON_TABLE_H
+
+/*keep these as negative*/
+#define def_unkownNt_codonTbl -1
+#define def_incomplete_codonTbl -2
 
 /*--------------------------------------------------------\
 | Tbl01 codonTbl:
@@ -213,6 +219,39 @@ bactRevStart_codonTbl(
 signed char
 aaTripToChar_codonTbl(
    signed char *codonStr
+);
+
+/*--------------------------------------------------------\
+| Fun07: seqToAA_codonTbl
+|  - converts a nucleotide sequence to amino acid sequence
+| Input:
+|  - seqStr: 
+|    o c-string with the sequence to convert
+|  - aaStr:
+|    o c-string to hold the converted sequence, must be
+|      at least sequence / 3 bases long
+|  - startSL:
+|    o position to start translation at
+|    o use 0 for all sequence
+|  - endSL:
+|    o position to end translation at
+|    o use 0 for all sequence
+| Output:
+|  - Modifies:
+|    o aaStr to hold the amino acid sequence
+|      * on nucleotide errors, a '\0' is added after last
+|        correct call
+|  - Returns:
+|    o length (> 0) of returned ammino acid sequence
+|    o def_unkownNt_codonTbl (< 0) for sequence errors
+|    o def_incomplete_codonTbl (< 0) if had partial end
+\--------------------------------------------------------*/
+signed long
+seqToAA_codonTbl(
+   signed char *seqStr,
+   signed char *aaStr,
+   signed long startSL,
+   signed long stopSL
 );
 
 #endif

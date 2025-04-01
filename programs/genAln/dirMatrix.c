@@ -51,8 +51,6 @@
 #include "indexToCoord.h"
 
 /*.h files only*/
-#include "../genLib/dataTypeShortHand.h"
-
 #include "alnDefs.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
@@ -230,18 +228,20 @@ getAln_dirMatrix(
    ^   - variable declerations
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
-   uint qryPosUI = 0;
-   uint refPosUI = 0;
-   uint lenRefUI = matrixSTPtr->lenRefUL;
+   unsigned int qryPosUI = 0;
+   unsigned int refPosUI = 0;
+   unsigned int lenRefUI = matrixSTPtr->lenRefUL;
 
-   schar *qrySeqStr = (schar *) qrySTPtr->seqStr;
-   schar *refSeqStr = (schar *) refSTPtr->seqStr;
+   signed char *qrySeqStr =
+               (signed char *) qrySTPtr->seqStr;
+   signed char *refSeqStr =
+               (signed char *) refSTPtr->seqStr;
  
-   schar *tmpStr = 0;
-   uchar tmpUC = 0;
-   schar matchBl = 0; /*check if had match or snp*/
+   signed char *tmpStr = 0;
+   unsigned char tmpUC = 0;
+   signed char matchBl = 0; /*check if had match or snp*/
 
-   schar *dirMatrixSC = matrixSTPtr->dirMatrixSC;
+   signed char *dirMatrixSC = matrixSTPtr->dirMatrixSC;
 
    struct seqST seqDoNotFreeST;
 
@@ -256,16 +256,16 @@ getAln_dirMatrix(
       indexUL = matrixSTPtr->indexUL; /*no index input*/
 
    qryPosUI =
-      (uint)
+      (unsigned int)
       qryCoord_indexToCoord(
-         (ulong) lenRefUI,
+         (unsigned long) lenRefUI,
          indexUL
       );
 
    refPosUI =
-      (uint)
+      (unsigned int)
       refCoord_indexToCoord(
-         (ulong) lenRefUI,
+         (unsigned long) lenRefUI,
          indexUL
       );
 
@@ -305,8 +305,11 @@ getAln_dirMatrix(
 
       /*cigar entry types*/
       samSTPtr->cigTypeStr =
-         (schar *)
-         malloc((qrySTPtr->lenSeqUL + 1) * sizeof(schar));
+         (signed char *)
+         malloc(
+              (qrySTPtr->lenSeqUL + 1)
+            * sizeof(signed char)
+         );
 
       if(! samSTPtr->cigTypeStr)
          goto memErr_fun05_sec07;
@@ -316,8 +319,11 @@ getAln_dirMatrix(
       samSTPtr->cigArySI = 0;
 
       samSTPtr->cigArySI =
-         (sint *)
-         malloc((qrySTPtr->lenSeqUL + 1) * sizeof(sint));
+         (signed int *)
+         malloc(
+              (qrySTPtr->lenSeqUL + 1)
+            * sizeof(signed int)
+         );
 
       if(! samSTPtr->cigArySI)
          goto memErr_fun05_sec07;
@@ -356,7 +362,7 @@ getAln_dirMatrix(
    tmpUC = (qrySTPtr->idStr[0] == '>');
    tmpUC += (qrySTPtr->idStr[0] == '@');
 
-   tmpStr = (schar *) qrySTPtr->idStr + tmpUC;
+   tmpStr = (signed char *) qrySTPtr->idStr + tmpUC;
 
    while(*tmpStr++ > 32) ;
 
@@ -366,8 +372,8 @@ getAln_dirMatrix(
 
    samSTPtr->lenQryIdUC = 
       cpDelim_ulCp(
-         (schar *) samSTPtr->qryIdStr, 
-         (schar *) qrySTPtr->idStr + tmpUC,
+         (signed char *) samSTPtr->qryIdStr, 
+         (signed char *) qrySTPtr->idStr + tmpUC,
          0,
          0
       ); /*copy read id*/
@@ -383,7 +389,7 @@ getAln_dirMatrix(
    tmpUC = (refSTPtr->idStr[0] == '>');
    tmpUC += (refSTPtr->idStr[0] == '@');
 
-   tmpStr = (schar *) refSTPtr->idStr;
+   tmpStr = (signed char *) refSTPtr->idStr;
 
    while(*tmpStr++ > 32) ;
 
@@ -393,8 +399,8 @@ getAln_dirMatrix(
 
    samSTPtr->lenRefIdUC = 
       cpDelim_ulCp(
-         (schar *) samSTPtr->refIdStr, 
-         (schar *) refSTPtr->idStr + tmpUC,
+         (signed char *) samSTPtr->refIdStr, 
+         (signed char *) refSTPtr->idStr + tmpUC,
          0,
          0
       ); /*copy read id*/
@@ -412,8 +418,11 @@ getAln_dirMatrix(
       samSTPtr->seqStr = 0;
 
       samSTPtr->seqStr =
-         (schar *)
-         malloc((qrySTPtr->lenSeqUL+1024)* sizeof(schar));
+         (signed char *)
+         malloc(
+              (qrySTPtr->lenSeqUL+1024)
+            * sizeof(signed char)
+         );
 
       if(! samSTPtr->seqStr)
          goto memErr_fun05_sec07;
@@ -446,8 +455,11 @@ getAln_dirMatrix(
          samSTPtr->qStr = 0;
 
          samSTPtr->qStr =
-            (schar *)
-            malloc((qrySTPtr->lenQUL+1024)*sizeof(schar));
+            (signed char *)
+            malloc(
+                 (qrySTPtr->lenQUL + 1024)
+               * sizeof(signed char)
+            );
 
          if(! samSTPtr->qStr)
             goto memErr_fun05_sec07;
@@ -457,7 +469,7 @@ getAln_dirMatrix(
 
       cpQEntry_samEntry(
          samSTPtr,
-         (schar *) qrySTPtr->qStr,
+         (signed char *) qrySTPtr->qStr,
          1 /*need to make sure histogram is blanked*/
       );
 
@@ -795,18 +807,18 @@ getAln_dirMatrix(
    *   - add NM (edit distance/number differences) flag
    \*****************************************************/
 
-   tmpStr = (schar *) samSTPtr->extraStr;
+   tmpStr = (signed char *) samSTPtr->extraStr;
 
    samSTPtr->lenExtraUI +=
       cpDelim_charCp(
-         (schar *) &tmpStr[samSTPtr->lenExtraUI],
-         (schar *) "NM:i:",
+         (signed char *) &tmpStr[samSTPtr->lenExtraUI],
+         (signed char *) "NM:i:",
          '\0'
       ); /*copy edit distance*/
 
    samSTPtr->lenExtraUI +=
       numToStr(
-         (schar *) &tmpStr[samSTPtr->lenExtraUI],
+         (signed char *) &tmpStr[samSTPtr->lenExtraUI],
          samSTPtr->numSnpUI
             + samSTPtr->numDelUI
             + samSTPtr->numInsUI
@@ -821,14 +833,14 @@ getAln_dirMatrix(
 
    samSTPtr->lenExtraUI +=
       cpDelim_charCp(
-         (schar *) &tmpStr[samSTPtr->lenExtraUI],
-         (schar *) "AS:i:",
+         (signed char *) &tmpStr[samSTPtr->lenExtraUI],
+         (signed char *) "AS:i:",
           '\0'
       ); /*copy assembler score*/
 
    samSTPtr->lenExtraUI +=
       numToStr(
-         (schar *) &tmpStr[samSTPtr->lenExtraUI],
+         (signed char *) &tmpStr[samSTPtr->lenExtraUI],
          matrixSTPtr->scoreSL /  def_scoreAdj_alnDefs
       ); /*get alignment score*/
 
@@ -841,14 +853,14 @@ getAln_dirMatrix(
 
    samSTPtr->lenExtraUI +=
       cpDelim_charCp(
-         (schar *) &tmpStr[samSTPtr->lenExtraUI],
-         (schar *) "nn:i:",
+         (signed char *) &tmpStr[samSTPtr->lenExtraUI],
+         (signed char *) "nn:i:",
          '\0'
       ); /*copy number anonymous bases*/
 
    samSTPtr->lenExtraUI +=
       numToStr(
-         (schar *) &tmpStr[samSTPtr->lenExtraUI],
+         (signed char *) &tmpStr[samSTPtr->lenExtraUI],
          *numAnonUI
       ); /*get number anonymous bases*/
 
@@ -887,7 +899,7 @@ getAln_dirMatrix(
 |     o pointer to c-string with cigar entry type array
 |   - cigArySI:
 |     o pointer to signed int array with the length of
-|       each cibar entry
+|       each cigar entry
 |   - cigPosUI:
 |     o position at in cigar
 |   - lenCigUI:
@@ -961,18 +973,20 @@ getCig_dirMatrix(
    ^   - variable declerations
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
-   uint qryPosUI = 0;
-   uint refPosUI = 0;
-   uint lenRefUI = matrixSTPtr->lenRefUL;
-   uint startUI = cigPosUI;
+   unsigned int qryPosUI = 0;
+   unsigned int refPosUI = 0;
+   unsigned int lenRefUI = matrixSTPtr->lenRefUL;
+   unsigned int startUI = cigPosUI;
 
-   schar *qrySeqStr = (schar *) qrySTPtr->seqStr;
-   schar *refSeqStr = (schar *) refSTPtr->seqStr;
+   signed char *qrySeqStr =
+      (signed char *) qrySTPtr->seqStr;
+   signed char *refSeqStr =
+      (signed char *) refSTPtr->seqStr;
  
-   schar *tmpStr = 0;
-   schar matchBl = 0; /*check if had match or snp*/
+   signed char *tmpStr = 0;
+   signed char matchBl = 0; /*check if had match or snp*/
 
-   schar *dirMatrixSC = matrixSTPtr->dirMatrixSC;
+   signed char *dirMatrixSC = matrixSTPtr->dirMatrixSC;
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
    ^ Fun06 Sec02:
@@ -985,16 +999,16 @@ getCig_dirMatrix(
       indexUL = matrixSTPtr->indexUL; /*no index input*/
 
    qryPosUI =
-      (uint)
+      (unsigned int)
       qryCoord_indexToCoord(
-         (ulong) lenRefUI,
+         (unsigned long) lenRefUI,
          indexUL
       );
 
    refPosUI =
-      (uint)
+      (unsigned int)
       refCoord_indexToCoord(
-         (ulong) lenRefUI,
+         (unsigned long) lenRefUI,
          indexUL
       );
 
@@ -1022,7 +1036,8 @@ getCig_dirMatrix(
       tmpStr =
          realloc(
             *cigTypeStr,
-             (matrixSTPtr->qryEndUL + 1) * sizeof(schar)
+               (matrixSTPtr->qryEndUL + 1)
+             * sizeof(signed char)
          );
 
       if(! tmpStr)
@@ -1031,16 +1046,16 @@ getCig_dirMatrix(
       *cigTypeStr = tmpStr;
 
       tmpStr =
-         (schar *)
+         (signed char *)
          realloc(
             *cigArySI,
-            matrixSTPtr->qryEndUL * sizeof(sint)
+            matrixSTPtr->qryEndUL * sizeof(signed int)
          );
 
       if(! tmpStr)
          goto memErr_fun06_sec07;
 
-      *cigArySI = (sint *) tmpStr;
+      *cigArySI = (signed int *) tmpStr;
 
       *lenCigUI = matrixSTPtr->qryEndUL;
    } /*If: want more cigar memory*/
@@ -1392,8 +1407,7 @@ getCig_dirMatrix(
    return cigPosUI;
 
    memErr_fun06_sec07:;
-
-   return -1;
+      return -1;
 } /*getCig_dirMatrix*/
 
 /*=======================================================\

@@ -31,9 +31,12 @@
 '   o fun11: sortSync_strAry
 '     - sorts a string array from least to greatest, but
 '       keeps the unsigned int array in sync with strings
-'   o fun12: find_strAry
+'   o fun12: sortSyncUS_strAry
+'     - sorts a string array from least to greatest, but
+'       keeps unsigned short array in sync with strings
+'   o fun13: find_strAry
 '     - search for query in string array (must be sorted)
-'   o fun13: findNoSort_strAry
+'   o fun14: findNoSort_strAry
 '     - search for query in string array (dumb search)
 '   o license:
 '     - licensing for this code (public domain / mit)
@@ -275,7 +278,29 @@ sortSync_strAry(
 );
 
 /*-------------------------------------------------------\
-| Fun12: find_strAry
+| Fun12: sortSyncUS_strAry
+|   - sorts a string array from least to greatest, but
+|     keeps the unsigned short array in sync with strings
+| Input:
+|   - strAry:
+|     o string array to sort
+|   - uiAry:
+|     o unsigned int array to keep in sync with strAry
+|   - lenUL:
+|     o length of strAry (index 1)
+| Output:
+|   - Modifies:
+|     o strAry to be sorted
+\-------------------------------------------------------*/
+void
+sortSyncUS_strAry(
+   signed char *strAry,
+   unsigned short *usAry,
+   unsigned long lenUL
+);
+
+/*-------------------------------------------------------\
+| Fun13: find_strAry
 |  - search for query in string array (must be sorted)
 | Input:
 |  - strAry:
@@ -297,7 +322,7 @@ find_strAry(
 );
 
 /*-------------------------------------------------------\
-| Fun13: findNoSort_strAry
+| Fun14: findNoSort_strAry
 |  - search for query in string array (dumb search)
 | Input:
 |  - strAry:

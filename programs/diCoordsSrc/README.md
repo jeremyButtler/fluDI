@@ -1,6 +1,11 @@
 # Use:
 
-Detects lare deletions events in each entry in a sam file
+Detects lare deletions events in each entry in a sam file.
+
+When readding the output tsv file, start_di is the position
+  of the first deletion (on reference). end_di is the
+  position of the last deletion. For insertions, start_di
+  and end_di are the two bases around the insertion.
 
 # General unix
 

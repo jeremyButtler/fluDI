@@ -110,6 +110,14 @@ Inorder to use this you first must create a str_ptrAry
   is reallocated as needed). Finally, when finished, you
   can free the array with freeHeap_str_ptrAry (fun04).
 
+Another way to add strings is to use addSort_str_ptrAry.
+  This is inefficent, but inserts string into a sorted
+  position. This does not auto realloc memory, so make
+  sure you have enough memory to add one more string. If
+  you need more memory call resize_str_ptrAry (fun10). The
+  returned value is the index of the inserted string or -1
+  for memory errors.
+
 ## shellSort
 
 Has shell sorting functions. There are a lot (one for

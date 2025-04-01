@@ -67,6 +67,8 @@
 '   String swap:
 '      o fun25: swapDelim_ulCp
 '        - swaps two strings until deliminator is found
+'      o fun26: swapNull_ulCp
+'        - swaps two strings until null
 '   o license:
 '     - licensing for this code (public domain / mit)
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -751,20 +753,20 @@ swapDelim_ulCp(
    ulong_ulCp delimUL,
    signed char delimSC
 ){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-   ' Fun15: swapDelim_ulCp
+   ' Fun25: swapDelim_ulCp
    '   - swaps two strings until deliminator is found
-   '   o fun15 sec01:
+   '   o fun25 sec01:
    '     - variable declarations
-   '   o fun15 sec02:
+   '   o fun25 sec02:
    '     - swap until first deliminator
-   '   o fun15 sec03:
+   '   o fun25 sec03:
    '     - if 1st string ends early, finsh swapping second
-   '   o fun15 sec04:
+   '   o fun25 sec04:
    '     - else 2nd string ends early, finsh swapping 1st
    \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun15 Sec01:
+   ^ Fun25 Sec01:
    ^   - variable declarations
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -772,7 +774,7 @@ swapDelim_ulCp(
    ulong_ulCp *secUL = (ulong_ulCp *) secStr;
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun15 Sec02:
+   ^ Fun25 Sec02:
    ^   - swap until first deliminator
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -791,7 +793,7 @@ swapDelim_ulCp(
    secStr = (signed char *) secUL;
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun15 Sec03:
+   ^ Fun25 Sec03:
    ^   - if first string ends early, finsh swapping second
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -800,7 +802,7 @@ swapDelim_ulCp(
 
       while(*firstStr != delimSC)
       { /*Loop: copy first string*/
-         if(*secStr == '\0')
+         if(*secStr == delimSC)
             break;
 
          *firstStr ^= *secStr;
@@ -808,7 +810,7 @@ swapDelim_ulCp(
          *firstStr++ ^= *secStr++;
       } /*Loop: copy first string*/
 
-      if(*secStr != '\0')
+      if(*secStr != delimSC)
       { /*If: second string has more values*/
          *firstStr++ = *secStr;
          *secStr++ = '\0';
@@ -830,7 +832,7 @@ swapDelim_ulCp(
    } /*If: first string ended*/
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun15 Sec04:
+   ^ Fun25 Sec04:
    ^   - else 2nd string ends early, finsh swapping 1st
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -839,7 +841,7 @@ swapDelim_ulCp(
 
       while(*secStr != delimSC)
       { /*Loop: copy first string*/
-         if(*firstStr == '\0')
+         if(*firstStr == delimSC)
             break;
 
          *firstStr ^= *secStr;
@@ -847,7 +849,7 @@ swapDelim_ulCp(
          *firstStr++ ^= *secStr++;
       } /*Loop: copy first string*/
 
-      if(*firstStr != '\0')
+      if(*firstStr != delimSC)
       { /*If: first string has more values*/
          *secStr++ = *firstStr;
          *firstStr++ = '\0';
@@ -868,6 +870,145 @@ swapDelim_ulCp(
       *secStr = '\0';
    } /*Else: second string ended*/
 } /*swapDelim_ulCp*/
+
+/*-------------------------------------------------------\
+| Fun26: swapNull_ulCp
+|   - swaps two strings until null
+| Input:
+|   - firstStr:
+|     o Pointer to string to first string to swap
+|   - secStr:
+|     o Pointer to second string to swap
+| Output:
+|   - Modifies:
+|     o firstStr to have secStr string
+|     o secStr to have firstStr string
+| Note:
+|   - This will likely not be very good at swapping short
+|     strings.
+\-------------------------------------------------------*/
+void
+swapNull_ulCp(
+   signed char *firstStr,
+   signed char *secStr
+){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+   ' Fun26: swapNull_ulCp
+   '   - swaps two strings until deliminator is found
+   '   o fun26 sec01:
+   '     - variable declarations
+   '   o fun26 sec02:
+   '     - swap until first deliminator
+   '   o fun26 sec03:
+   '     - if 1st string ends early, finsh swapping second
+   '   o fun26 sec04:
+   '     - else 2nd string ends early, finsh swapping 1st
+   \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun26 Sec01:
+   ^   - variable declarations
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   ulong_ulCp *firstUL = (ulong_ulCp *) firstStr;
+   ulong_ulCp *secUL = (ulong_ulCp *) secStr;
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun26 Sec02:
+   ^   - swap until first deliminator
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   while(
+      ! (
+             ifNull_ulCp(*firstUL)
+           & ifNull_ulCp(*secUL)
+        )
+   ){ /*Loop: Copy cpStr to dupStr*/
+      *firstUL ^= *secUL;
+      *secUL ^= *firstUL;
+      *firstUL++ ^= *secUL++;
+   } /*Loop: Copy cpStr to dupStr*/
+
+   firstStr = (signed char *) firstUL;
+   secStr = (signed char *) secUL;
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun26 Sec03:
+   ^   - if first string ends early, finsh swapping second
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   if( ifNull_ulCp(*firstUL) )
+   { /*If: first string ended*/
+
+      while(*firstStr != '\0')
+      { /*Loop: copy first string*/
+         if(*secStr == '\0')
+            break;
+
+         *firstStr ^= *secStr;
+         *secStr ^= *firstStr;
+         *firstStr++ ^= *secStr++;
+      } /*Loop: copy first string*/
+
+      if(*secStr != '\0')
+      { /*If: second string has more values*/
+         *firstStr++ = *secStr;
+         *secStr++ = '\0';
+      } /*If: second string has more values*/
+
+      firstUL = (ulong_ulCp *) firstStr;
+      secUL = (ulong_ulCp *) secStr;
+
+      while( ! ifNull_ulCp(*secUL) )
+         *firstUL++ = *secUL++;
+
+      firstStr = (signed char *) firstUL;
+      secStr = (signed char *) secUL;
+
+      while(*secStr != '\0')
+         *firstStr++ = *secStr++;
+
+      *firstStr = '\0';
+   } /*If: first string ended*/
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun26 Sec04:
+   ^   - else 2nd string ends early, finsh swapping 1st
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   else
+   { /*Else: second string ended*/
+
+      while(*secStr != '\0')
+      { /*Loop: copy first string*/
+         if(*firstStr == '\0')
+            break;
+
+         *firstStr ^= *secStr;
+         *secStr ^= *firstStr;
+         *firstStr++ ^= *secStr++;
+      } /*Loop: copy first string*/
+
+      if(*firstStr != '\0')
+      { /*If: first string has more values*/
+         *secStr++ = *firstStr;
+         *firstStr++ = '\0';
+      } /*If: first string has more values*/
+
+      firstUL = (ulong_ulCp *) firstStr;
+      secUL = (ulong_ulCp *) secStr;
+
+      while( ! ifNull_ulCp(*firstUL) )
+         *secUL++ = *firstUL++;
+
+      firstStr = (signed char *) firstUL;
+      secStr = (signed char *) secUL;
+
+      while(*firstStr != '\0')
+         *secStr++ = *firstStr++;
+
+      *secStr = '\0';
+   } /*Else: second string ended*/
+} /*swapNull_ulCp*/
 
 /*=======================================================\
 : License:

@@ -19,6 +19,8 @@
 '     - converts base 10 c-string to a signed short
 '   o fun08: strToSC_base10str
 '     - converts base 10 c-string to a signed char
+'   o fun09: strToF_base10str
+'     - converts base 10 c-string to float
 '   o license:
 '     - Licensing for this code (public domain / mit)
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -46,6 +48,13 @@
 ^ Header Sec-02:
 ^  - maximum digits and values for unsigned data types
 \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+#define def_floatPercision_base10str 6
+   /*think 6 decimal digits of percision*/
+#define def_maxF_base10str (24 / 3.3333)
+   /*floats are always 24 bit for integer, but 8 bit
+   `   for mentesa
+   */
 
 /*Some tricks I use that will be optimized out at
 ` compiler time:
@@ -292,6 +301,28 @@ unsigned char
 strToSC_base10str(
    signed char *inStr,
    signed char *retSC
+);
+
+/*-------------------------------------------------------\
+| Fun09: strToF_base10str
+|   - converts base 10 c-string to float
+| Input:
+|   - inStr:
+|     o c-string with base 10 number to convert
+|   - retF:
+|     o pointer to float to hold converted number
+| Output:
+|   - Returns:
+|     o number of characters converted
+|   - Modifies:
+|     o retF to hold the float
+| Note:
+|   - only converts until retF overflows
+\-------------------------------------------------------*/
+unsigned char
+strToF_base10str(
+   signed char *inStr,
+   float *retF
 );
 
 #endif

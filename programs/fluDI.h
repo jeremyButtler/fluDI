@@ -5,9 +5,9 @@
 #ifndef FLU_DEFECTIVE_INTERFERING_GENOMES_VERSION_H
 #define FLU_DEFECTIVE_INTERFERING_GENOMES_VERSION_H
 
-#define def_year_fluDI 2024
-#define def_month_fluDI 31
-#define def_day_fluDI 31
+#define def_year_fluDI 2025
+#define def_month_fluDI 1
+#define def_day_fluDI 23
 
 #endif
 

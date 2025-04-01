@@ -22,18 +22,23 @@ objFiles=\
    $genAln/indexToCoord.$O \
    $genAln/alnSet.$O \
    $genAln/dirMatrix.$O \
+   $genAln/needle.$O \
    $genAln/water.$O \
    diScan.$O \
+   diScore.$O \
    diFrag.$O
 
 all: diFrag.$O
 	$LD -o $NAME $CFLAGS $objFiles
 
-diFrag.$O: diFrag.c diScan.$O
+diFrag.$O: diFrag.c diScan.$O diScore.$O
 	$CC -o diFrag.$O $CFLAGS diFrag.c
 
-diScan.$O: diScan.c diScan.h  $genBio/kmerCnt.$O $genLib/genMath.$O $diCoords/diCoords.$O $genAln/water.$O $genAln/dirMatrix.$O 
+diScan.$O: diScan.c diScan.h  $genBio/kmerCnt.$O $genLib/genMath.$O $diCoords/diCoords.$O $genAln/needle.$O $genAln/water.$O $genAln/dirMatrix.$O diScore.h
 	$CC -o diScan.$O $CFLAGS diScan.c
+
+diScore.$O: diScore.c diScore.h  $genAln/alnSet.$O
+	$CC -o diScore.$O $CFLAGS diScore.c
 
 $genLib/base10str.$O: $genLib/base10str.c $genLib/base10str.h
 	$CC -o $genLib/base10str.$O $CFLAGS $genLib/base10str.c
@@ -73,6 +78,9 @@ $genAln/alnSet.$O: $genAln/alnSet.c $genAln/alnSet.h $genAln/alnDefs.h $genLib/b
 
 $genAln/dirMatrix.$O: $genAln/dirMatrix.c $genAln/dirMatrix.h $genAln/indexToCoord.$O $genAln/alnSet.$O $genBio/samEntry.$O $genBio/seqST.$O $genLib/charCp.$O
 	$CC -o $genAln/dirMatrix.$O $CFLAGS $genAln/dirMatrix.c
+
+$genAln/needle.$O: $genAln/needle.c $genAln/needle.h $genAln/dirMatrix.$O $genLib/genMath.h
+	$CC -o $genAln/needle.$O $CFLAGS $genAln/needle.c
 
 $genAln/water.$O: $genAln/water.c $genAln/water.h $genAln/dirMatrix.$O $genLib/genMath.h
 	$CC -o $genAln/water.$O $CFLAGS $genAln/water.c

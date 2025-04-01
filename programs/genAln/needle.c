@@ -32,7 +32,6 @@
 #include "indexToCoord.h"
 
 /*.h files only*/
-#include "../genLib/dataTypeShortHand.h"
 #include "../genLib/genMath.h" /*only using .h commands*/
 #include "alnDefs.h"
 
@@ -74,6 +73,7 @@
 |      or scoreAryUL are resized
 |  - Returns:
 |    o score for alignment
+|    o def_memErr_needle for memory errors
 \-------------------------------------------------------*/
 signed long
 needle(
@@ -114,25 +114,26 @@ needle(
    \*****************************************************/
 
    /*Get start & end of query and reference sequences*/
-   schar *refSeqStr =
+   signed char *refSeqStr =
       refSTPtr->seqStr + refSTPtr->offsetUL;
 
-   schar *qrySeqStr =
+   signed char *qrySeqStr =
       qrySTPtr->seqStr + qrySTPtr->offsetUL;
 
    /*Find the length of the reference and query*/
-   ulong lenQryUL =
+   unsigned long lenQryUL =
       qrySTPtr->endAlnUL - qrySTPtr->offsetUL + 1;
 
-   ulong lenRefUL =
+   unsigned long lenRefUL =
       refSTPtr->endAlnUL - refSTPtr->offsetUL + 1;
      /*The + 1 is to account for index 0 of endAlnUL*/
 
-   ulong lenMatrixUL = (lenRefUL + 1) * (lenQryUL + 1);
+   unsigned long lenMatrixUL =
+      (lenRefUL + 1) * (lenQryUL + 1);
      /*+1 for the gap column and row*/
 
-   ulong ulRef = 0;
-   ulong ulQry = 0;
+   unsigned long ulRef = 0;
+   unsigned long ulQry = 0;
 
    /*Set up counters for the query and reference base
    `  index
@@ -142,14 +143,15 @@ needle(
    *  - variables holding the scores (only two rows)
    \*****************************************************/
 
-   slong snpScoreSL = 0;    /*Score for deletion*/
-   slong nextSnpScoreSL = 0;/*Score for match/snp*/
+   signed long snpScoreSL = 0;    /*Score for deletion*/
+   signed long nextSnpScoreSL = 0;/*Score for match/snp*/
 
-   slong insScoreSL = 0;    /*Score for deletion*/
-   slong delScoreSL = 0;    /*Score for deletion*/
+   signed long insScoreSL = 0;    /*Score for deletion*/
+   signed long delScoreSL = 0;    /*Score for deletion*/
 
    /*Marks when to reset score buffer (every second row)*/
-   slong *scoreArySL = 0;/*scoring row for alignment*/
+   signed long *scoreArySL = 0;
+      /*scoring row for alignment*/
 
    /*****************************************************\
    * Fun01 Sec01 Sub03:
@@ -157,9 +159,9 @@ needle(
    \*****************************************************/
 
    /*Direction matrix (one cell holds one direction)*/
-   schar *dirMatrixSC = 0;/*Direction matrix*/
-   schar *insDir = 0;    /*Direction above cell*/
-   ulong indexUL = 0;
+   signed char *dirMatrixSC = 0;/*Direction matrix*/
+   signed char *insDir = 0;    /*Direction above cell*/
+   unsigned long indexUL = 0;
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
    ^ Fun01 Sec02:
@@ -230,10 +232,12 @@ needle(
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
    dirMatrixSC[0] = def_mvStop_alnDefs; /*stop to start*/
-   scoreArySL[0] = settings->gapSS;
+   scoreArySL[0] = 0;
+   scoreArySL[1] = settings->gapSS;
+   dirMatrixSC[1] = def_mvDel_alnDefs; /*stop to start*/
 
    for(
-      indexUL = 1;
+      indexUL = 2;
       indexUL <= lenRefUL;
       ++indexUL
    ){ /*Loop: initialize the first row*/
@@ -276,12 +280,10 @@ needle(
 
    nextSnpScoreSL = scoreArySL[0];
 
-   /*set up scores*/
-   #ifdef NOEXTEND
-      delScoreSL = scoreArySL[0] + settings->gapSS;
-   #else
-      delScoreSL = scoreArySL[0] + settings->extendSS;
-   #endif
+   /*set up scores and add next gap extend*/
+   scoreArySL[0] += settings->gapSS;
+   delScoreSL = scoreArySL[0];
+   delScoreSL += settings->delArySS[def_mvIns_alnDefs];
 
    dirMatrixSC[indexUL] = def_mvIns_alnDefs;
 
@@ -398,8 +400,10 @@ needle(
 
       /*set up scores*/
       #ifdef NOEXTEND
+         scoreArySL[0] += settings->gapSS;
          delScoreSL = scoreArySL[0] + settings->gapSS;
       #else
+         scoreArySL[0] += settings->extendSS;
          delScoreSL = scoreArySL[0] + settings->extendSS;
       #endif
 
@@ -441,12 +445,11 @@ needle(
    \*****************************************************/
 
    memErr_fun01_sec05:;
-   matrixSTPtr->errSC = def_memErr_needle;
-   goto errCleanUp_fun01_sec05;
+      matrixSTPtr->errSC = def_memErr_needle;
+      goto errCleanUp_fun01_sec05;
 
    errCleanUp_fun01_sec05:;
-
-   return 0;
+      return 0;
 } /*needle*/
 
 /*=======================================================\

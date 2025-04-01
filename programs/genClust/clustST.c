@@ -756,7 +756,7 @@ realloc_index_clustST(
       tmpUIPtr =
          realloc(
             indexSTPtr->refNumAryUI,
-            numRefUI
+            numRefUI * sizeof(unsigned int)
          );
 
       if(! tmpUIPtr)
@@ -1429,7 +1429,7 @@ mk_index_clustST(
 
                /*need to account for inserted index*/
                for(
-                  slCnt =(slong) retHeapST->numRefUI;
+                  slCnt = (slong) retHeapST->numRefUI;
                   slCnt > indexSL;
                   --slCnt
                ) retHeapST->refNumAryUI[slCnt] =
@@ -1956,6 +1956,13 @@ cmpCons_clustST(
    /*disable depth profiling for consensuses*/
    tmpUIPtr = edDistResSTPtr->depthAryUI;
    edDistResSTPtr->depthAryUI = 0;
+
+   if(
+      eqlNull_ulCp(
+         firstConSTPtr->samSTPtr->refIdStr,
+         secConSTPtr->samSTPtr->refIdStr
+      )
+   ) return 0; /*different references used*/
 
    if(! noBoundCheckBl)
    { /*If: not doing bounds check*/

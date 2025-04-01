@@ -29,9 +29,12 @@
 '   o fun11: sortSync_strAry
 '     - sorts a string array from least to greatest, but
 '       keeps the unsigned int array in sync with strings
-'   o fun12: find_strAry
+'   o fun12: sortSyncUS_strAry
+'     - sorts a string array from least to greatest, but
+'       keeps unsigned short array in sync with strings
+'   o fun13: find_strAry
 '     - search for query in string array (must be sorted)
-'   o fun13: findNoSort_strAry
+'   o fun14: findNoSort_strAry
 '     - search for query in string array (dumb search)
 '   o license:
 '     - licensing for this code (public domain / mit)
@@ -247,11 +250,9 @@ findClose_strAry(
       midSL = (leftSL + rightSL) >> 1;
 
       cmpSL =
-         eql_ulCp(
+         eqlNull_ulCp(
             qryStr,
-            get_strAry(strAry, midSL),
-            0,
-            '\0'
+            get_strAry(strAry, midSL)
          ); /*compare query to array value*/
 
       if(cmpSL > 0)
@@ -266,11 +267,9 @@ findClose_strAry(
             return midSL;
 
          cmpSL =
-            eql_ulCp(
+            eqlNull_ulCp(
                qryStr,
-               get_strAry(strAry, midSL + 1),
-               0,
-               '\0'
+               get_strAry(strAry, midSL + 1)
             ); /*compare query to array value*/
 
          if(! cmpSL)
@@ -624,7 +623,141 @@ sortSync_strAry(
 } /*sortSync_strAry*/
 
 /*-------------------------------------------------------\
-| Fun12: find_strAry
+| Fun12: sortSyncUS_strAry
+|   - sorts a string array from least to greatest, but
+|     keeps the unsigned short array in sync with strings
+| Input:
+|   - strAry:
+|     o string array to sort
+|   - uiAry:
+|     o unsigned int array to keep in sync with strAry
+|   - lenUL:
+|     o length of strAry (index 1)
+| Output:
+|   - Modifies:
+|     o strAry to be sorted
+\-------------------------------------------------------*/
+void
+sortSyncUS_strAry(
+   signed char *strAry,
+   unsigned short *usAry,
+   unsigned long lenUL
+){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+   ' Fun12 TOC:
+   '   - sorts a string array from least to greatest, but
+   '     keeps the unsigned int array in sync with strings
+   '   o fun12 sec01:
+   '     - variable declerations
+   '   o fun12 sec02:
+   '     - find the number of rounds to sort for
+   '   o fun12 sec03:
+   '     - sort the arrays
+   \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun12 Sec01:
+   ^   - variable declerations
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   /*Number of sorting rounds*/
+   unsigned long subUL = 0;
+   unsigned long nextUL = 0;
+   unsigned long lastUL = 0;
+   unsigned long onUL = 0;
+
+   /*Variables to incurment loops*/
+   unsigned long ulIndex = 0;
+   unsigned long ulElm = 0;
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun12 Sec02:
+   ^   - find the max search value (number rounds to sort)
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   if(lenUL <= 1)
+      return; /*nothing to do*/
+
+   /*Recursion formuia: h[0] = 1, h[n] = 3 * h[n - 1] +1*/
+   subUL = 1; /*Initialzie first array*/
+
+   while(subUL < lenUL - 1)
+      subUL = (3 * subUL) + 1;
+
+   /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+   ^ Fun12 Sec03:
+   ^   - sort arrays
+   \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   while(subUL > 0)
+   { /*Loop: all rounds*/
+      for(
+         ulIndex = 0;
+         ulIndex <= subUL;
+         ++ulIndex
+      ){ /*Loop: though sub array*/
+         ulElm = ulIndex;
+
+         for(
+            ulElm = ulIndex;
+            ulElm + subUL < lenUL;
+            ulElm += subUL
+         ){ /*Loop: swap elements in subarray*/
+            nextUL = ulElm + subUL;
+
+            if(
+               cmpIndex_strAry(
+                  strAry,
+                  ulElm,
+                  nextUL
+               ) > 0
+            ){ /*If I need to swap an element*/
+               swap_strAry(
+                  strAry,
+                  ulElm,
+                  nextUL
+               );
+
+               usAry[ulElm] ^= usAry[nextUL];
+               usAry[nextUL] ^= usAry[ulElm];
+               usAry[ulElm] ^= usAry[nextUL];
+
+               lastUL = ulElm;
+               onUL = ulElm;
+
+               while(lastUL >= subUL)
+               { /*loop: move swapped element back*/
+                  lastUL -= subUL;
+
+                  if(
+                     cmpIndex_strAry(
+                        strAry,
+                        onUL,
+                        lastUL
+                     ) > 0
+                  ) break; /*moved onUL to its position*/
+
+                  swap_strAry(
+                     strAry,
+                     onUL,
+                     lastUL
+                  );
+
+                  usAry[onUL] ^= usAry[lastUL];
+                  usAry[lastUL] ^= usAry[onUL];
+                  usAry[onUL] ^= usAry[lastUL];
+
+                  onUL = lastUL;
+               } /*Loop: move swapped element back*/
+            } /*If I need to swap elements*/
+         } /*Loop: swap elements in subarray*/
+      } /*Loop: though sub array*/
+
+      subUL = (subUL - 1) / 3; /*Move to next round*/
+   } /*Loop: all rounds*/
+} /*sortSync_strAry*/
+
+/*-------------------------------------------------------\
+| Fun13: find_strAry
 |  - search for query in string array (must be sorted)
 | Input:
 |  - strAry:
@@ -675,7 +808,7 @@ find_strAry(
 } /*find_strAry*/
 
 /*-------------------------------------------------------\
-| Fun13: findNoSort_strAry
+| Fun14: findNoSort_strAry
 |  - search for query in string array (dumb search)
 | Input:
 |  - strAry:

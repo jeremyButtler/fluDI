@@ -68,6 +68,8 @@
 '   String swap:
 '      o fun25: swapDelim_ulCp
 '        - swaps two strings until deliminator is found
+'      o fun26: swapNull_ulCp
+'        - swaps two strings until null
 '   o license:
 '     - licensing for this code (public domain / mit)
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -758,6 +760,28 @@ swapDelim_ulCp(
    signed char *secStr,
    ulong_ulCp delimUL,
    signed char delimSC
+);
+
+/*-------------------------------------------------------\
+| Fun26: swapNull_ulCp
+|   - swaps two strings until null
+| Input:
+|   - firstStr:
+|     o Pointer to string to first string to swap
+|   - secStr:
+|     o Pointer to second string to swap
+| Output:
+|   - Modifies:
+|     o firstStr to have secStr string
+|     o secStr to have firstStr string
+| Note:
+|   - This will likely not be very good at swapping short
+|     strings.
+\-------------------------------------------------------*/
+void
+swapNull_ulCp(
+   signed char *firstStr,
+   signed char *secStr
 );
 
 #endif

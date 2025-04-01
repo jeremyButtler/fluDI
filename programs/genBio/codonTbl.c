@@ -21,6 +21,8 @@
 '   o fun06: aaTripToChar_codonTbl
 '     - converts a three letter amino acid idenity to its
 '       single letter amino acid identity
+'   o fun07: seqToAA_codonTbl
+'     - converts nucleotide sequence to amino acids
 '   o license:
 '     - licensing for this code (public domain / mit)
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -38,7 +40,6 @@
 #include "codonTbl.h"
 
 /*no .c files*/
-#include "../genLib/dataTypeShortHand.h"
 #include "ntTo2Bit.h"
 #include "revNtTo2Bit.h"
 
@@ -64,11 +65,11 @@ codonToAA_codonTbl(
 ){
    return
       codonTbl[
-            ntTo2Bit[(uchar) firstNtSC]
+            ntTo2Bit[(unsigned char) firstNtSC]
          ][
-            ntTo2Bit[(uchar) secNtSC]
+            ntTo2Bit[(unsigned char) secNtSC]
          ][
-            ntTo2Bit[(uchar) thirdNtSC]
+            ntTo2Bit[(unsigned char) thirdNtSC]
          ];
 } /*codonToAA_codonTbl*/
 
@@ -98,11 +99,11 @@ revCodonToAA_codonTbl(
 ){
    return
       codonTbl[
-            revNtTo2Bit[(uchar) thirdNtSC]
+            revNtTo2Bit[(unsigned char) thirdNtSC]
          ][
-            revNtTo2Bit[(uchar) secNtSC]
+            revNtTo2Bit[(unsigned char) secNtSC]
          ][
-            revNtTo2Bit[(uchar) firstNtSC]
+            revNtTo2Bit[(unsigned char) firstNtSC]
          ];
 } /*revCodonToAA_codonTbl*/
 
@@ -316,6 +317,93 @@ aaTripToChar_codonTbl(
 
    return retSC;
 } /*aaTripToChar_codonTbl*/
+
+/*--------------------------------------------------------\
+| Fun07: seqToAA_codonTbl
+|  - converts a nucleotide sequence to amino acid sequence
+| Input:
+|  - seqStr: 
+|    o c-string with the sequence to convert
+|  - aaStr:
+|    o c-string to hold the converted sequence, must be
+|      at least sequence / 3 bases long
+|  - startSL:
+|    o position to start translation at
+|    o use 0 for all sequence
+|  - endSL:
+|    o position to end translation at
+|    o use 0 for all sequence
+| Output:
+|  - Modifies:
+|    o aaStr to hold the amino acid sequence
+|      * on nucleotide errors, a '\0' is added after last
+|        correct call
+|  - Returns:
+|    o length (> 0) of returned ammino acid sequence
+|    o def_unkownNt_codonTbl (< 0) for sequence errors
+|    o def_incomplete_codonTbl (< 0) if had partial end
+\--------------------------------------------------------*/
+signed long
+seqToAA_codonTbl(
+   signed char *seqStr,
+   signed char *aaStr,
+   signed long startSL,
+   signed long stopSL
+){
+   signed long aaLenSL = 0;
+
+   unsigned char firstNtUC = 0;
+   unsigned char secNtUC = 0;
+   unsigned char thirdNtUC = 0;
+
+   if(! stopSL)
+      stopSL = -1;
+      /*using -1 so that I can use (unsigned long) -1 to
+      `  get the maximum long value
+      */
+
+   while((unsigned long) startSL < (unsigned long) stopSL)
+   { /*Loop: Translate sequence*/
+      if(seqStr[startSL] == '\0')
+         break;
+
+      firstNtUC =
+         ntTo2Bit[(unsigned char) seqStr[startSL++]];
+
+      if(seqStr[startSL] == '\0')
+         goto incomplete_fun07;
+
+      secNtUC =
+         ntTo2Bit[(unsigned char) seqStr[startSL++]];
+
+      if(seqStr[startSL] == '\0')
+         goto incomplete_fun07;
+
+      thirdNtUC =
+         ntTo2Bit[(unsigned char) seqStr[startSL++]];
+
+      if(
+         (   firstNtUC
+           | secNtUC
+           | thirdNtUC
+         ) & 8
+      ) goto unkownNt_fun07;
+         /*unkown base*/
+
+      aaStr[aaLenSL++] =
+         codonTbl[firstNtUC][secNtUC][thirdNtUC];
+   } /*Loop: Translate sequence*/\
+
+   aaStr[aaLenSL] = '\0';
+   return aaLenSL;
+
+   unkownNt_fun07:;
+      aaStr[aaLenSL] = '\0';
+      return def_unkownNt_codonTbl;
+   incomplete_fun07:;
+      aaStr[aaLenSL] = '\0';
+      return def_incomplete_codonTbl;
+} /*seqToAA*/
 
 /*=======================================================\
 : License:

@@ -7,6 +7,24 @@ diIds (segment length reads only) and diFrag both
   use different methods to identify DI reads. So, they
   will likely not agree.
 
+diIds detects if both omni primer sequences are in a read.
+  If the forward and reverse primers are present, diIds
+  then finds the mapped segement and compares actual
+  length to the expected length. If the length is shorter
+  then expected, then the read is assumed to be a DI read.
+  
+DiFrag, uses a Waterman alignment to map reads to a
+  set of reference genomes. To avoid sub-alignments, we
+  use a low gap extension score (-0.1) and low snp score
+  (-0.4), while using a high match score (5). The gap
+  opening score is also kept high (-10) to avoid starting
+  gaps early. After mapping, the alignments are scaned
+  for larger (>=20) deletions.
+
+Neither of these methods are perfect and the results
+  should be taken as an exploratory step not a final
+  answer.
+
 # License:
 
 This coded is dual licensed under public domain and MIT
@@ -18,68 +36,6 @@ This coded is dual licensed under public domain and MIT
 # Install:
 
 # General unix
-
-## Local install
-
-The disavatange of a local install is that it is only
-  available to you. However, it does not need any extra
-  permissions.
-
-First make sure your local enviroment is set up.
-
-```
-# make sure have local install and Downloads directory
-
-if [[ ! -d "$HOME/Downloads" ]]; then
-   mkdir "$HOME/Downloads";
-fi
-
-if [[ ! -d "$HOME/local/bin" ]]; then
-   mkdir -p "$HOME/local/bin";
-fi
-
-# check if have path setup to local (add to path if not)
-
-localBl="$(grep "$HOME/local/bin" <<< "$PATH")"
-
-if [[ "$localBl" == "" ]]; then
-   printf "export \"PATH=$HOME/local/bin:$PATH\"\n" >> $HOME/.bashrc;
-fi
-
-export "PATH=$HOME/local/bin:$PATH"
-
-# you can remove $HOME/local/bin from your path by
-# deleting the "export PATH=/home/<user name>/local/bin:"
-# from your .bashrc file
-```
-
-```
-cd $HOME/Downloads
-git clone https://github.com/jeremybuttler/fluDI
-cd fluDI/programs/diCoordsSrc
-make -f mkfile.unix
-make -f mkfile.unix install PREFIX="$HOME/local/bin"
-
-cd ../diFragSrc
-make -f mkfile.unix
-make -f mkfile.unix install PREFIX="$HOME/local/bin"
-
-cd ../diIdsSrc
-make -f mkfile.unix
-make -f mkfile.unix install PREFIX="$HOME/local/bin"
-```
-
-## global install
-
-Everyone has access, but you need to install as root.
-
-Initial setup
-
-```
-if [[ ! -d "$HOME/Downloads" ]]; then
-   mkdir "$HOME/Downloads";
-fi
-```
 
 build and install programs
 

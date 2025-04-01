@@ -1,13 +1,16 @@
 LD=cc
 CC=cc
-CFLAGS= -O0 -std=c89 -Wall -Wextra -ggdb -g -Werror
-NAME=diFrag
+CFLAGS= -O3 -static -std=c89 -Wall -Wextra
+NAME=fluDI
 PREFIX=/usr/local/bin
 genLib=../genLib
 genBio=../genBio
 genAln=../genAln
+genClust=../genClust
+diFrag=../diFragSrc
 diCoords=../diCoordsSrc
-O=o.bug
+diIds=../diIdsSrc
+O=o.static
 
 objFiles=\
    $(genLib)/base10str.$O \
@@ -15,31 +18,48 @@ objFiles=\
    $(genLib)/ulCp.$O \
    $(genLib)/charCp.$O \
    $(genLib)/genMath.$O \
+   $(genLib)/shellSort.$O \
    $(genLib)/strAry.$O \
    $(genBio)/seqST.$O \
    $(genBio)/kmerCnt.$O \
    $(genBio)/samEntry.$O \
+   $(genBio)/tbCon.$O \
+   $(genBio)/edDist.$O \
    $(diCoords)/diCoords.$O \
    $(genAln)/indexToCoord.$O \
    $(genAln)/alnSet.$O \
    $(genAln)/dirMatrix.$O \
    $(genAln)/needle.$O \
    $(genAln)/water.$O \
-   diScan.$O \
-   diScore.$O \
-   diFrag.$O
+   $(genAln)/memwater.$O \
+   $(genAln)/kmerFind.$O \
+   $(genClust)/edClust.$O \
+   $(genClust)/clustST.$O \
+   $(diFrag)/diScan.$O \
+   $(diFrag)/diScore.$O \
+   $(diIds)/fluST.$O \
+   fluDI.$O
 
-all: diFrag.$O
+all: fluDI.$O
 	$(LD) -o $(NAME) $(CFLAGS) $(objFiles)
 
-diFrag.$O: diFrag.c diScan.$O diScore.$O
-	$(CC) -o diFrag.$O -c $(CFLAGS) diFrag.c
+fluDI.$O: fluDI.c ../fluDI.h $(diFrag)/diScan.$O $(diFrag)/diScore.$O $(diIds)/fluST.$O $(genClust)/edClust.$O $(genAln)/kmerFind.$O $(diIds)/defsDiIds.h
+	$(CC) -o fluDI.$O -c $(CFLAGS) fluDI.c
 
-diScan.$O: diScan.c diScan.h  $(genBio)/kmerCnt.$O $(genLib)/genMath.$O $(diCoords)/diCoords.$O $(genAln)/needle.$O $(genAln)/water.$O $(genAln)/dirMatrix.$O diScore.h
-	$(CC) -o diScan.$O -c $(CFLAGS) diScan.c
+$(diFrag)/diScan.$O: $(diFrag)/diScan.c $(diFrag)/diScan.h  $(genBio)/kmerCnt.$O $(genLib)/genMath.$O $(diCoords)/diCoords.$O $(genAln)/needle.$O $(genAln)/water.$O $(genAln)/dirMatrix.$O $(diFrag)/diScore.h
+	$(CC) -o $(diFrag)/diScan.$O -c $(CFLAGS) $(diFrag)/diScan.c
 
-diScore.$O: diScore.c diScore.h  $(genAln)/alnSet.$O
-	$(CC) -o diScore.$O -c $(CFLAGS) diScore.c
+$(diFrag)/diScore.$O: $(diFrag)/diScore.c $(diFrag)/diScore.h  $(genAln)/alnSet.$O
+	$(CC) -o $(diFrag)/diScore.$O -c $(CFLAGS) $(diFrag)/diScore.c
+
+$(diIds)/fluST.$O: $(diIds)/fluST.c $(diIds)/fluST.h $(diIds)/fluSeg.h $(genLib)/shellSort.$O $(genAln)/alnDefs.h $(genLib)/dataTypeShortHand.h
+	$(CC) -o $(diIds)/fluST.$O -c $(CFLAGS) $(diIds)/fluST.c
+
+$(genClust)/edClust.$O: $(genClust)/edClust.c $(genClust)/edClust.h $(genClust)/clustST.$O
+	$(CC) -o $(genClust)/edClust.$O -c $(CFLAGS) $(genClust)/edClust.c
+
+$(genClust)/clustST.$O: $(genClust)/clustST.c $(genClust)/clustST.h $(genBio)/samEntry.$O $(genBio)/tbCon.$O $(genBio)/edDist.$O $(genLib)/genMath.h
+	$(CC) -o $(genClust)/clustST.$O -c $(CFLAGS) $(genClust)/clustST.c
 
 $(genLib)/base10str.$O: $(genLib)/base10str.c $(genLib)/base10str.h
 	$(CC) -o $(genLib)/base10str.$O -c $(CFLAGS) $(genLib)/base10str.c
@@ -56,6 +76,9 @@ $(genLib)/charCp.$O: $(genLib)/charCp.c $(genLib)/charCp.h
 $(genLib)/genMath.$O: $(genLib)/genMath.c $(genLib)/genMath.h
 	$(CC) -o $(genLib)/genMath.$O -c $(CFLAGS) $(genLib)/genMath.c
 
+$(genLib)/shellSort.$O: $(genLib)/shellSort.c $(genLib)/shellSort.h
+	$(CC) -o $(genLib)/shellSort.$O -c $(CFLAGS) $(genLib)/shellSort.c
+
 $(genLib)/strAry.$O: $(genLib)/strAry.c $(genLib)/strAry.h $(genLib)/ulCp.$O
 	$(CC) -o $(genLib)/strAry.$O -c $(CFLAGS) $(genLib)/strAry.c
 
@@ -67,6 +90,12 @@ $(genBio)/kmerCnt.$O: $(genBio)/kmerCnt.c $(genBio)/kmerCnt.h $(genBio)/seqST.$O
 
 $(genBio)/samEntry.$O: $(genBio)/samEntry.c $(genBio)/samEntry.h $(genLib)/strAry.$O $(genLib)/base10str.$O $(genLib)/numToStr.$O $(genBio)/ntTo5Bit.h $(genLib)/dataTypeShortHand.h
 	$(CC) -o $(genBio)/samEntry.$O -c $(CFLAGS) $(genBio)/samEntry.c
+
+$(genBio)/tbCon.$O: $(genBio)/tbCon.c $(genBio)/tbCon.h $(genBio)/samEntry.$O $(genBio)/tbConDefs.h $(genLib)/genMath.h
+	$(CC) -o $(genBio)/tbCon.$O -c $(CFLAGS) $(genBio)/tbCon.c
+
+$(genBio)/edDist.$O: $(genBio)/edDist.c $(genBio)/edDist.h $(genBio)/samEntry.$O $(genBio)/seqST.$O $(genLib)/genMath.h
+	$(CC) -o $(genBio)/edDist.$O -c $(CFLAGS) $(genBio)/edDist.c
 
 $(diCoords)/diCoords.$O: $(diCoords)/diCoords.c $(diCoords)/diCoords.h $(genBio)/samEntry.$O
 	$(CC) -o $(diCoords)/diCoords.$O -c $(CFLAGS) $(diCoords)/diCoords.c
@@ -86,7 +115,15 @@ $(genAln)/needle.$O: $(genAln)/needle.c $(genAln)/needle.h $(genAln)/dirMatrix.$
 $(genAln)/water.$O: $(genAln)/water.c $(genAln)/water.h $(genAln)/dirMatrix.$O $(genLib)/genMath.h
 	$(CC) -o $(genAln)/water.$O -c $(CFLAGS) $(genAln)/water.c
 
+$(genAln)/memwater.$O: $(genAln)/memwater.c $(genAln)/memwater.h $(genAln)/alnSet.$O $(genAln)/indexToCoord.$O $(genBio)/seqST.$O $(genLib)/genMath.h
+	$(CC) -o $(genAln)/memwater.$O -c $(CFLAGS) $(genAln)/memwater.c
 
+$(genAln)/kmerFind.$O: $(genAln)/kmerFind.c $(genAln)/kmerFind.h $(genAln)/memwater.$O $(genLib)/shellSort.$O 
+	$(CC) -o $(genAln)/kmerFind.$O -c $(CFLAGS) $(genAln)/kmerFind.c
+
+install:
+	mv $(NAME) $(PREFIX)
+	chome a+x $(PREFIX)/$(NAME)
 
 clean:
 	rm $(objFiles)

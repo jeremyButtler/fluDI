@@ -52,6 +52,7 @@ struct dirMatrix;
 |      or scoreAryUL are resized
 |  - Returns:
 |    o score for alignment
+|    o def_memErr_needle for memory errors
 \-------------------------------------------------------*/
 signed long
 needle(

@@ -61,16 +61,14 @@
 \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
 /*Scoring variables*/
-#define def_gapOpen_alnDefs -1000
+#define def_gapOpen_alnDefs -10
    /*Penalty for starting indel*/
 
-#define def_gapExtend_alnDefs -100
+#define def_gapExtend_alnDefs -1
    /*Penalty for extading an indel*/
 
-#define def_scoreAdj_alnDefs 100
-   /*adjust score for eDNA matrix. 100 allows -1 to be
-   `   0.01
-   */
+#define def_scoreAdj_alnDefs 1
+   /*adjust score for eDNA matrix (if wanted 100)*/
 
 /*-------------------------------------------------------\
 | Fun01: maxScore_alnDefs
@@ -140,312 +138,312 @@
 *   - a as first base
 \********************************************************/
 
-#define def_AToA_alnDefs 500    /*score: A and A*/
-#define def_AToT_alnDefs -400   /*score: A and T*/
-#define def_AToU_alnDefs -400   /*score: A and T*/
-#define def_AToG_alnDefs -400   /*score: A and G*/
-#define def_AToC_alnDefs -400   /*score: A and C*/
+#define def_AToA_alnDefs 5    /*score: A and A*/
+#define def_AToT_alnDefs -4   /*score: A and T*/
+#define def_AToU_alnDefs -4   /*score: A and T*/
+#define def_AToG_alnDefs -4   /*score: A and G*/
+#define def_AToC_alnDefs -4   /*score: A and C*/
 
-#define def_AToW_alnDefs 100    /*score: A and W (AT)*/
-#define def_AToS_alnDefs -400   /*score: A and S (CG)*/
-#define def_AToM_alnDefs 100    /*score: A and M (AC)*/
-#define def_AToK_alnDefs -400   /*score: A and K (GT)*/
-#define def_AToR_alnDefs 100    /*score: A and R (AG)*/
-#define def_AToY_alnDefs -400   /*score: A and Y (CT)*/
-#define def_AToB_alnDefs -400   /*score: A and B (CGT)*/
-#define def_AToD_alnDefs -100   /*score: A and D (AGT)*/
-#define def_AToH_alnDefs -100   /*score: A and H (ACT)*/
-#define def_AToV_alnDefs -100   /*score: A and V (ACG)*/
-#define def_AToN_alnDefs -200   /*score: A and N (ACGT)*/
-#define def_AToX_alnDefs -200   /*score: A and X (ACGT)*/
+#define def_AToW_alnDefs 1    /*score: A and W (AT)*/
+#define def_AToS_alnDefs -4   /*score: A and S (CG)*/
+#define def_AToM_alnDefs 1    /*score: A and M (AC)*/
+#define def_AToK_alnDefs -4   /*score: A and K (GT)*/
+#define def_AToR_alnDefs 1    /*score: A and R (AG)*/
+#define def_AToY_alnDefs -4   /*score: A and Y (CT)*/
+#define def_AToB_alnDefs -4   /*score: A and B (CGT)*/
+#define def_AToD_alnDefs -1   /*score: A and D (AGT)*/
+#define def_AToH_alnDefs -1   /*score: A and H (ACT)*/
+#define def_AToV_alnDefs -1   /*score: A and V (ACG)*/
+#define def_AToN_alnDefs -2   /*score: A and N (ACGT)*/
+#define def_AToX_alnDefs -2   /*score: A and X (ACGT)*/
 
 /********************************************************\
 * Sec04 Sub02:
 *   - t as first base
 \********************************************************/
 
-#define def_TToA_alnDefs -400   /*score: T and A*/
-#define def_TToT_alnDefs 500    /*score: T and T*/
-#define def_TToU_alnDefs 500    /*score: T and T*/
-#define def_TToG_alnDefs -400   /*score: T and G*/
-#define def_TToC_alnDefs -400   /*score: T and C*/
+#define def_TToA_alnDefs -4   /*score: T and A*/
+#define def_TToT_alnDefs 5    /*score: T and T*/
+#define def_TToU_alnDefs 5    /*score: T and T*/
+#define def_TToG_alnDefs -4   /*score: T and G*/
+#define def_TToC_alnDefs -4   /*score: T and C*/
 
-#define def_TToW_alnDefs 100    /*score: T and W (AT)*/
-#define def_TToS_alnDefs -400   /*score: T and S (CG)*/
-#define def_TToM_alnDefs -400   /*score: T and M (AC)*/
-#define def_TToK_alnDefs 100    /*score: T and K (GT)*/
-#define def_TToR_alnDefs -400   /*score: T and R (AG)*/
-#define def_TToY_alnDefs 100    /*score: T and Y (CT)*/
-#define def_TToB_alnDefs -100   /*score: T and B (CGT)*/
-#define def_TToD_alnDefs -100   /*score: T and D (AGT)*/
-#define def_TToH_alnDefs -100   /*score: T and H (ACT)*/
-#define def_TToV_alnDefs -400   /*score: T and V (ACG)*/
-#define def_TToN_alnDefs -200   /*score: T and N (ACGT)*/
-#define def_TToX_alnDefs -200   /*score: T and X (ACGT)*/
+#define def_TToW_alnDefs 1    /*score: T and W (AT)*/
+#define def_TToS_alnDefs -4   /*score: T and S (CG)*/
+#define def_TToM_alnDefs -4   /*score: T and M (AC)*/
+#define def_TToK_alnDefs 1    /*score: T and K (GT)*/
+#define def_TToR_alnDefs -4   /*score: T and R (AG)*/
+#define def_TToY_alnDefs 1    /*score: T and Y (CT)*/
+#define def_TToB_alnDefs -1   /*score: T and B (CGT)*/
+#define def_TToD_alnDefs -1   /*score: T and D (AGT)*/
+#define def_TToH_alnDefs -1   /*score: T and H (ACT)*/
+#define def_TToV_alnDefs -4   /*score: T and V (ACG)*/
+#define def_TToN_alnDefs -2   /*score: T and N (ACGT)*/
+#define def_TToX_alnDefs -2   /*score: T and X (ACGT)*/
 
 /********************************************************\
 * Sec04 Sub03:
 *   - u as first base
 \********************************************************/
 
-#define def_UToA_alnDefs -400   /*score: U and A*/
-#define def_UToT_alnDefs 500    /*score: U and T*/
-#define def_UToU_alnDefs 500    /*score: U and U*/
-#define def_UToG_alnDefs -400   /*score: U and G*/
-#define def_UToC_alnDefs -400   /*score: U and C*/
+#define def_UToA_alnDefs -4   /*score: U and A*/
+#define def_UToT_alnDefs 5    /*score: U and T*/
+#define def_UToU_alnDefs 5    /*score: U and U*/
+#define def_UToG_alnDefs -4   /*score: U and G*/
+#define def_UToC_alnDefs -4   /*score: U and C*/
 
-#define def_UToW_alnDefs 100    /*score: T and W (AT)*/
-#define def_UToS_alnDefs -400   /*score: T and S (CG)*/
-#define def_UToM_alnDefs -400   /*score: T and M (AC)*/
-#define def_UToK_alnDefs 100    /*score: T and K (GT)*/
-#define def_UToR_alnDefs -400   /*score: T and R (AG)*/
-#define def_UToY_alnDefs 100    /*score: T and Y (CT)*/
-#define def_UToB_alnDefs -100   /*score: T and B (CGT)*/
-#define def_UToD_alnDefs -100   /*score: T and D (AGT)*/
-#define def_UToH_alnDefs -100   /*score: T and H (ACT)*/
-#define def_UToV_alnDefs -400   /*score: T and V (ACG)*/
-#define def_UToN_alnDefs -200   /*score: T and N (ACGT)*/
-#define def_UToX_alnDefs -200   /*score: T and X (ACGT)*/
+#define def_UToW_alnDefs 1    /*score: T and W (AT)*/
+#define def_UToS_alnDefs -4   /*score: T and S (CG)*/
+#define def_UToM_alnDefs -4   /*score: T and M (AC)*/
+#define def_UToK_alnDefs 1    /*score: T and K (GT)*/
+#define def_UToR_alnDefs -4   /*score: T and R (AG)*/
+#define def_UToY_alnDefs 1    /*score: T and Y (CT)*/
+#define def_UToB_alnDefs -1   /*score: T and B (CGT)*/
+#define def_UToD_alnDefs -1   /*score: T and D (AGT)*/
+#define def_UToH_alnDefs -1   /*score: T and H (ACT)*/
+#define def_UToV_alnDefs -4   /*score: T and V (ACG)*/
+#define def_UToN_alnDefs -2   /*score: T and N (ACGT)*/
+#define def_UToX_alnDefs -2   /*score: T and X (ACGT)*/
 
 /********************************************************\
 * Sec04 Sub04:
 *   - g as first base
 \********************************************************/
 
-#define def_GToA_alnDefs -400   /*score: G and A*/
-#define def_GToT_alnDefs -400   /*score: G and T*/
-#define def_GToU_alnDefs -400   /*score: G and T*/
-#define def_GToG_alnDefs 500    /*score: G and G*/
-#define def_GToC_alnDefs -400   /*score: G and C*/
+#define def_GToA_alnDefs -4   /*score: G and A*/
+#define def_GToT_alnDefs -4   /*score: G and T*/
+#define def_GToU_alnDefs -4   /*score: G and T*/
+#define def_GToG_alnDefs 5    /*score: G and G*/
+#define def_GToC_alnDefs -4   /*score: G and C*/
 
-#define def_GToW_alnDefs -400   /*score: G and W (AT)*/
-#define def_GToS_alnDefs 100    /*score: G and S (CG)*/
-#define def_GToM_alnDefs -400   /*score: G and M (AC)*/
-#define def_GToK_alnDefs 100    /*score: G and K (GT)*/
-#define def_GToR_alnDefs 100    /*score: G and R (AG)*/
-#define def_GToY_alnDefs -400   /*score: G and Y (CT)*/
-#define def_GToB_alnDefs -100   /*score: G and B (CGT)*/
-#define def_GToD_alnDefs -100   /*score: G and D (AGT)*/
-#define def_GToH_alnDefs -400   /*score: G and H (ACT)*/
-#define def_GToV_alnDefs -100   /*score: G and V (ACG)*/
-#define def_GToN_alnDefs -200   /*score: G and N (ACGT)*/
-#define def_GToX_alnDefs -200   /*score: G and X (ACGT)*/
+#define def_GToW_alnDefs -4   /*score: G and W (AT)*/
+#define def_GToS_alnDefs 1    /*score: G and S (CG)*/
+#define def_GToM_alnDefs -4   /*score: G and M (AC)*/
+#define def_GToK_alnDefs 1    /*score: G and K (GT)*/
+#define def_GToR_alnDefs 1    /*score: G and R (AG)*/
+#define def_GToY_alnDefs -4   /*score: G and Y (CT)*/
+#define def_GToB_alnDefs -1   /*score: G and B (CGT)*/
+#define def_GToD_alnDefs -1   /*score: G and D (AGT)*/
+#define def_GToH_alnDefs -4   /*score: G and H (ACT)*/
+#define def_GToV_alnDefs -1   /*score: G and V (ACG)*/
+#define def_GToN_alnDefs -2   /*score: G and N (ACGT)*/
+#define def_GToX_alnDefs -2   /*score: G and X (ACGT)*/
 
 /********************************************************\
 * Sec04 Sub05:
 *   - c as first base
 \********************************************************/
 
-#define def_CToA_alnDefs -400   /*score: C and A*/
-#define def_CToT_alnDefs -400   /*score: C and T*/
-#define def_CToU_alnDefs -400   /*score: C and T*/
-#define def_CToG_alnDefs -400   /*score: C and G*/
-#define def_CToC_alnDefs 500    /*score: C and C*/
+#define def_CToA_alnDefs -4   /*score: C and A*/
+#define def_CToT_alnDefs -4   /*score: C and T*/
+#define def_CToU_alnDefs -4   /*score: C and T*/
+#define def_CToG_alnDefs -4   /*score: C and G*/
+#define def_CToC_alnDefs 5    /*score: C and C*/
 
-#define def_CToW_alnDefs -400   /*score: C and W (AT)*/
-#define def_CToS_alnDefs 100    /*score: C and S (CG)*/
-#define def_CToM_alnDefs 100    /*score: C and M (AC)*/
-#define def_CToK_alnDefs -400   /*score: C and K (GT)*/
-#define def_CToR_alnDefs -400   /*score: C and R (AG)*/
-#define def_CToY_alnDefs 100    /*score: C and Y (CT)*/
-#define def_CToB_alnDefs -100   /*score: C and B (CGT)*/
-#define def_CToD_alnDefs -400   /*score: C and D (AGT)*/
-#define def_CToH_alnDefs -100   /*score: C and H (ACT)*/
-#define def_CToV_alnDefs -100   /*score: C and V (ACG)*/
-#define def_CToN_alnDefs -200   /*score: C and N (ACGT)*/
-#define def_CToX_alnDefs -200   /*score: C and X (ACGT)*/
+#define def_CToW_alnDefs -4   /*score: C and W (AT)*/
+#define def_CToS_alnDefs 1    /*score: C and S (CG)*/
+#define def_CToM_alnDefs 1    /*score: C and M (AC)*/
+#define def_CToK_alnDefs -4   /*score: C and K (GT)*/
+#define def_CToR_alnDefs -4   /*score: C and R (AG)*/
+#define def_CToY_alnDefs 1    /*score: C and Y (CT)*/
+#define def_CToB_alnDefs -1   /*score: C and B (CGT)*/
+#define def_CToD_alnDefs -4   /*score: C and D (AGT)*/
+#define def_CToH_alnDefs -1   /*score: C and H (ACT)*/
+#define def_CToV_alnDefs -1   /*score: C and V (ACG)*/
+#define def_CToN_alnDefs -2   /*score: C and N (ACGT)*/
+#define def_CToX_alnDefs -2   /*score: C and X (ACGT)*/
 
 /********************************************************\
 * Sec04 Sub06:
 *   - w as first base
 \********************************************************/
 
-#define def_WToA_alnDefs 100    /*score: W and A (AT)*/
-#define def_WToT_alnDefs 100    /*score: T and W (AT)*/
-#define def_WToU_alnDefs 100    /*score: T and W (AT)*/
-#define def_WToG_alnDefs -400   /*score: G and W (AT)*/
-#define def_WToC_alnDefs -400   /*score: W and C (AT)*/
+#define def_WToA_alnDefs 1    /*score: W and A (AT)*/
+#define def_WToT_alnDefs 1    /*score: T and W (AT)*/
+#define def_WToU_alnDefs 1    /*score: T and W (AT)*/
+#define def_WToG_alnDefs -4   /*score: G and W (AT)*/
+#define def_WToC_alnDefs -4   /*score: W and C (AT)*/
 
-#define def_WToW_alnDefs -100   /*score: W and W (AT)*/
-#define def_WToS_alnDefs -400   /*score: W and S (CG)*/
-#define def_WToM_alnDefs -100   /*score: W and M (AC)*/
-#define def_WToK_alnDefs -100   /*score: W and K (GT)*/
-#define def_WToR_alnDefs -100   /*score: W and R (AG)*/
-#define def_WToY_alnDefs -100   /*score: W and Y (CT)*/
-#define def_WToB_alnDefs -100   /*score: W and B (CGT)*/
-#define def_WToD_alnDefs -100   /*score: W and D (AGT)*/
-#define def_WToH_alnDefs -100   /*score: W and H (ACT)*/
-#define def_WToV_alnDefs -100   /*score: W and V (ACG)*/
-#define def_WToN_alnDefs -100   /*score: W and N (ACGT)*/
-#define def_WToX_alnDefs -100   /*score: W and X (ACGT)*/
+#define def_WToW_alnDefs -1   /*score: W and W (AT)*/
+#define def_WToS_alnDefs -4   /*score: W and S (CG)*/
+#define def_WToM_alnDefs -1   /*score: W and M (AC)*/
+#define def_WToK_alnDefs -1   /*score: W and K (GT)*/
+#define def_WToR_alnDefs -1   /*score: W and R (AG)*/
+#define def_WToY_alnDefs -1   /*score: W and Y (CT)*/
+#define def_WToB_alnDefs -1   /*score: W and B (CGT)*/
+#define def_WToD_alnDefs -1   /*score: W and D (AGT)*/
+#define def_WToH_alnDefs -1   /*score: W and H (ACT)*/
+#define def_WToV_alnDefs -1   /*score: W and V (ACG)*/
+#define def_WToN_alnDefs -1   /*score: W and N (ACGT)*/
+#define def_WToX_alnDefs -1   /*score: W and X (ACGT)*/
 
 /********************************************************\
 * Sec04 Sub07:
 *   - s as first base
 \********************************************************/
 
-#define def_SToA_alnDefs -400   /*score: S and A (CG)*/
-#define def_SToT_alnDefs -400   /*score: T and S (CG)*/
-#define def_SToU_alnDefs -400   /*score: T and S (CG)*/
-#define def_SToG_alnDefs 100    /*score: G and S (CG)*/
-#define def_SToC_alnDefs 100    /*score: S and C (CG)*/
+#define def_SToA_alnDefs -4   /*score: S and A (CG)*/
+#define def_SToT_alnDefs -4   /*score: T and S (CG)*/
+#define def_SToU_alnDefs -4   /*score: T and S (CG)*/
+#define def_SToG_alnDefs 1    /*score: G and S (CG)*/
+#define def_SToC_alnDefs 1    /*score: S and C (CG)*/
 
-#define def_SToW_alnDefs -400   /*score: S and W (AT)*/
-#define def_SToS_alnDefs -100   /*score: S and S (CG)*/
-#define def_SToM_alnDefs -200   /*score: S and M (AC)*/
-#define def_SToK_alnDefs -200   /*score: S and K (GT)*/
-#define def_SToR_alnDefs -200   /*score: S and R (AG)*/
-#define def_SToY_alnDefs -200   /*score: S and Y (CT)*/
-#define def_SToB_alnDefs -100   /*score: S and B (CGT)*/
-#define def_SToD_alnDefs -300   /*score: S and D (AGT)*/
-#define def_SToH_alnDefs -300   /*score: S and H (ACT)*/
-#define def_SToV_alnDefs -100   /*score: S and V (ACG)*/
-#define def_SToN_alnDefs -100   /*score: S and N (ACGT)*/
-#define def_SToX_alnDefs -100   /*score: S and X (ACGT)*/
+#define def_SToW_alnDefs -4   /*score: S and W (AT)*/
+#define def_SToS_alnDefs -1   /*score: S and S (CG)*/
+#define def_SToM_alnDefs -2   /*score: S and M (AC)*/
+#define def_SToK_alnDefs -2   /*score: S and K (GT)*/
+#define def_SToR_alnDefs -2   /*score: S and R (AG)*/
+#define def_SToY_alnDefs -2   /*score: S and Y (CT)*/
+#define def_SToB_alnDefs -1   /*score: S and B (CGT)*/
+#define def_SToD_alnDefs -3   /*score: S and D (AGT)*/
+#define def_SToH_alnDefs -3   /*score: S and H (ACT)*/
+#define def_SToV_alnDefs -1   /*score: S and V (ACG)*/
+#define def_SToN_alnDefs -1   /*score: S and N (ACGT)*/
+#define def_SToX_alnDefs -1   /*score: S and X (ACGT)*/
 
 /********************************************************\
 * Sec04 Sub08:
 *   - m as first base
 \********************************************************/
 
-#define def_MToA_alnDefs 100    /*score: M and A (AC)*/
-#define def_MToT_alnDefs -400   /*score: T and M (AC)*/
-#define def_MToU_alnDefs -400   /*score: T and M (AC)*/
-#define def_MToG_alnDefs -400   /*score: G and M (AC)*/
-#define def_MToC_alnDefs 100    /*score: M and C (AC)*/
+#define def_MToA_alnDefs 1    /*score: M and A (AC)*/
+#define def_MToT_alnDefs -4   /*score: T and M (AC)*/
+#define def_MToU_alnDefs -4   /*score: T and M (AC)*/
+#define def_MToG_alnDefs -4   /*score: G and M (AC)*/
+#define def_MToC_alnDefs 1    /*score: M and C (AC)*/
 
-#define def_MToW_alnDefs -200   /*score: M and W (AT)*/
-#define def_MToS_alnDefs -200   /*score: M and S (CG)*/
-#define def_MToM_alnDefs -100   /*score: M and M (AC)*/
-#define def_MToK_alnDefs -400   /*score: M and K (GT)*/
-#define def_MToR_alnDefs -200   /*score: M and R (AG)*/
-#define def_MToY_alnDefs -200   /*score: M and Y (CT)*/
-#define def_MToB_alnDefs -300   /*score: M and B (CGT)*/
-#define def_MToD_alnDefs -300   /*score: M and D (AGT)*/
-#define def_MToH_alnDefs -100   /*score: M and H (ACT)*/
-#define def_MToV_alnDefs -100   /*score: M and V (ACG)*/
-#define def_MToN_alnDefs -100   /*score: M and N (ACGT)*/
-#define def_MToX_alnDefs -100   /*score: M and X (ACGT)*/
+#define def_MToW_alnDefs -2   /*score: M and W (AT)*/
+#define def_MToS_alnDefs -2   /*score: M and S (CG)*/
+#define def_MToM_alnDefs -1   /*score: M and M (AC)*/
+#define def_MToK_alnDefs -4   /*score: M and K (GT)*/
+#define def_MToR_alnDefs -2   /*score: M and R (AG)*/
+#define def_MToY_alnDefs -2   /*score: M and Y (CT)*/
+#define def_MToB_alnDefs -3   /*score: M and B (CGT)*/
+#define def_MToD_alnDefs -3   /*score: M and D (AGT)*/
+#define def_MToH_alnDefs -1   /*score: M and H (ACT)*/
+#define def_MToV_alnDefs -1   /*score: M and V (ACG)*/
+#define def_MToN_alnDefs -1   /*score: M and N (ACGT)*/
+#define def_MToX_alnDefs -1   /*score: M and X (ACGT)*/
 
 /********************************************************\
 * Sec04 Sub09:
 *   - k as first base
 \********************************************************/
 
-#define def_KToA_alnDefs -400   /*score: K and A (GT)*/
-#define def_KToT_alnDefs 100    /*score: T and K (GT)*/
-#define def_KToU_alnDefs 100    /*score: T and K (GT)*/
-#define def_KToG_alnDefs 100    /*score: G and K (GT)*/
-#define def_KToC_alnDefs -400   /*score: K and C (GT)*/
+#define def_KToA_alnDefs -4   /*score: K and A (GT)*/
+#define def_KToT_alnDefs 1    /*score: T and K (GT)*/
+#define def_KToU_alnDefs 1    /*score: T and K (GT)*/
+#define def_KToG_alnDefs 1    /*score: G and K (GT)*/
+#define def_KToC_alnDefs -4   /*score: K and C (GT)*/
 
-#define def_KToW_alnDefs -200   /*score: K and W (AT)*/
-#define def_KToS_alnDefs -200   /*score: K and S (CG)*/
-#define def_KToM_alnDefs -400   /*score: K and M (AC)*/
-#define def_KToK_alnDefs -100   /*score: K and K (GT)*/
-#define def_KToR_alnDefs -200   /*score: K and R (AG)*/
-#define def_KToY_alnDefs -200   /*score: K and Y (CT)*/
-#define def_KToB_alnDefs -100   /*score: K and B (CGT)*/
-#define def_KToD_alnDefs -100   /*score: K and D (AGT)*/
-#define def_KToH_alnDefs -300   /*score: K and H (ACT)*/
-#define def_KToV_alnDefs -300   /*score: K and V (ACG)*/
-#define def_KToN_alnDefs -100   /*score: K and N (ACGT)*/
-#define def_KToX_alnDefs -100   /*score: K and X (ACGT)*/
+#define def_KToW_alnDefs -2   /*score: K and W (AT)*/
+#define def_KToS_alnDefs -2   /*score: K and S (CG)*/
+#define def_KToM_alnDefs -4   /*score: K and M (AC)*/
+#define def_KToK_alnDefs -1   /*score: K and K (GT)*/
+#define def_KToR_alnDefs -2   /*score: K and R (AG)*/
+#define def_KToY_alnDefs -2   /*score: K and Y (CT)*/
+#define def_KToB_alnDefs -1   /*score: K and B (CGT)*/
+#define def_KToD_alnDefs -1   /*score: K and D (AGT)*/
+#define def_KToH_alnDefs -3   /*score: K and H (ACT)*/
+#define def_KToV_alnDefs -3   /*score: K and V (ACG)*/
+#define def_KToN_alnDefs -1   /*score: K and N (ACGT)*/
+#define def_KToX_alnDefs -1   /*score: K and X (ACGT)*/
 
 /********************************************************\
 * Sec04 Sub10:
 *   - r as first base
 \********************************************************/
 
-#define def_RToA_alnDefs 100    /*score: R and A (AG)*/
-#define def_RToT_alnDefs -400   /*score: T and R (AG)*/
-#define def_RToU_alnDefs -400   /*score: T and R (AG)*/
-#define def_RToG_alnDefs 100    /*score: G and R (AG)*/
-#define def_RToC_alnDefs -400   /*score: R and C (AG)*/
+#define def_RToA_alnDefs 1    /*score: R and A (AG)*/
+#define def_RToT_alnDefs -4   /*score: T and R (AG)*/
+#define def_RToU_alnDefs -4   /*score: T and R (AG)*/
+#define def_RToG_alnDefs 1    /*score: G and R (AG)*/
+#define def_RToC_alnDefs -4   /*score: R and C (AG)*/
 
-#define def_RToW_alnDefs -100   /*score: R and W (AT)*/
-#define def_RToS_alnDefs -100   /*score: R and S (CG)*/
-#define def_RToM_alnDefs -100   /*score: R and M (AC)*/
-#define def_RToK_alnDefs -200   /*score: R and K (GT)*/
-#define def_RToR_alnDefs -100   /*score: R and R (AG)*/
-#define def_RToY_alnDefs -400   /*score: R and Y (CT)*/
-#define def_RToB_alnDefs -300   /*score: R and B (CGT)*/
-#define def_RToD_alnDefs -100   /*score: R and D (AGT)*/
-#define def_RToH_alnDefs -100   /*score: R and H (ACT)*/
-#define def_RToV_alnDefs -300   /*score: R and V (ACG)*/
-#define def_RToN_alnDefs -100   /*score: R and N (ACGT)*/
-#define def_RToX_alnDefs -100   /*score: R and X (ACGT)*/
+#define def_RToW_alnDefs -1   /*score: R and W (AT)*/
+#define def_RToS_alnDefs -1   /*score: R and S (CG)*/
+#define def_RToM_alnDefs -1   /*score: R and M (AC)*/
+#define def_RToK_alnDefs -2   /*score: R and K (GT)*/
+#define def_RToR_alnDefs -1   /*score: R and R (AG)*/
+#define def_RToY_alnDefs -4   /*score: R and Y (CT)*/
+#define def_RToB_alnDefs -3   /*score: R and B (CGT)*/
+#define def_RToD_alnDefs -1   /*score: R and D (AGT)*/
+#define def_RToH_alnDefs -1   /*score: R and H (ACT)*/
+#define def_RToV_alnDefs -3   /*score: R and V (ACG)*/
+#define def_RToN_alnDefs -1   /*score: R and N (ACGT)*/
+#define def_RToX_alnDefs -1   /*score: R and X (ACGT)*/
 
 /********************************************************\
 * Sec04 Sub11:
 *   - y as first base
 \********************************************************/
 
-#define def_YToA_alnDefs -400   /*score: Y and A (CT)*/
-#define def_YToT_alnDefs -400   /*score: T and Y (CT)*/
-#define def_YToU_alnDefs -400   /*score: T and Y (CT)*/
-#define def_YToG_alnDefs -400   /*score: G and Y (CT)*/
-#define def_YToC_alnDefs 100    /*score: Y and C (CT)*/
+#define def_YToA_alnDefs -4   /*score: Y and A (CT)*/
+#define def_YToT_alnDefs -4   /*score: T and Y (CT)*/
+#define def_YToU_alnDefs -4   /*score: T and Y (CT)*/
+#define def_YToG_alnDefs -4   /*score: G and Y (CT)*/
+#define def_YToC_alnDefs 1    /*score: Y and C (CT)*/
 
-#define def_YToW_alnDefs -200   /*score: Y and W (AT)*/
-#define def_YToS_alnDefs -200   /*score: Y and S (CG)*/
-#define def_YToM_alnDefs -200   /*score: Y and M (AC)*/
-#define def_YToK_alnDefs -200   /*score: Y and K (GT)*/
-#define def_YToR_alnDefs -400   /*score: Y and R (AG)*/
-#define def_YToY_alnDefs -100   /*score: Y and Y (CT)*/
-#define def_YToB_alnDefs -200   /*score: Y and B (CGT)*/
-#define def_YToD_alnDefs -300   /*score: Y and D (AGT)*/
-#define def_YToH_alnDefs -100   /*score: Y and H (ACT)*/
-#define def_YToV_alnDefs -300   /*score: Y and V (ACG)*/
-#define def_YToN_alnDefs -100   /*score: Y and N (ACGT)*/
-#define def_YToX_alnDefs -100   /*score: Y and X (ACGT)*/
+#define def_YToW_alnDefs -2   /*score: Y and W (AT)*/
+#define def_YToS_alnDefs -2   /*score: Y and S (CG)*/
+#define def_YToM_alnDefs -2   /*score: Y and M (AC)*/
+#define def_YToK_alnDefs -2   /*score: Y and K (GT)*/
+#define def_YToR_alnDefs -4   /*score: Y and R (AG)*/
+#define def_YToY_alnDefs -1   /*score: Y and Y (CT)*/
+#define def_YToB_alnDefs -2   /*score: Y and B (CGT)*/
+#define def_YToD_alnDefs -3   /*score: Y and D (AGT)*/
+#define def_YToH_alnDefs -1   /*score: Y and H (ACT)*/
+#define def_YToV_alnDefs -3   /*score: Y and V (ACG)*/
+#define def_YToN_alnDefs -1   /*score: Y and N (ACGT)*/
+#define def_YToX_alnDefs -1   /*score: Y and X (ACGT)*/
 
 /********************************************************\
 * Sec04 Sub12:
 *   - b as first base
 \********************************************************/
 
-#define def_BToA_alnDefs -400   /*score: B and A (CGT)*/
-#define def_BToT_alnDefs -100   /*score: T and B (CGT)*/
-#define def_BToU_alnDefs -100   /*score: T and B (CGT)*/
-#define def_BToG_alnDefs -100   /*score: G and B (CGT)*/
-#define def_BToC_alnDefs -100   /*score: B and C (CGT)*/
+#define def_BToA_alnDefs -4   /*score: B and A (CGT)*/
+#define def_BToT_alnDefs -1   /*score: T and B (CGT)*/
+#define def_BToU_alnDefs -1   /*score: T and B (CGT)*/
+#define def_BToG_alnDefs -1   /*score: G and B (CGT)*/
+#define def_BToC_alnDefs -1   /*score: B and C (CGT)*/
 
-#define def_BToW_alnDefs -300   /*score: B and W (AT)*/
-#define def_BToS_alnDefs -100   /*score: B and S (CG)*/
-#define def_BToM_alnDefs -300   /*score: B and M (AC)*/
-#define def_BToK_alnDefs -100   /*score: B and K (GT)*/
-#define def_BToR_alnDefs -300   /*score: B and R (AG)*/
-#define def_BToY_alnDefs -100   /*score: B and Y (CT)*/
-#define def_BToB_alnDefs -100   /*score: B and B (CGT)*/
-#define def_BToD_alnDefs -200   /*score: B and D (AGT)*/
-#define def_BToH_alnDefs -200   /*score: B and H (ACT)*/
-#define def_BToV_alnDefs -200   /*score: B and V (ACG)*/
-#define def_BToN_alnDefs -100   /*score: B and N (ACGT)*/
-#define def_BToX_alnDefs -100   /*score: B and X (ACGT)*/
+#define def_BToW_alnDefs -3   /*score: B and W (AT)*/
+#define def_BToS_alnDefs -1   /*score: B and S (CG)*/
+#define def_BToM_alnDefs -3   /*score: B and M (AC)*/
+#define def_BToK_alnDefs -1   /*score: B and K (GT)*/
+#define def_BToR_alnDefs -3   /*score: B and R (AG)*/
+#define def_BToY_alnDefs -1   /*score: B and Y (CT)*/
+#define def_BToB_alnDefs -1   /*score: B and B (CGT)*/
+#define def_BToD_alnDefs -2   /*score: B and D (AGT)*/
+#define def_BToH_alnDefs -2   /*score: B and H (ACT)*/
+#define def_BToV_alnDefs -2   /*score: B and V (ACG)*/
+#define def_BToN_alnDefs -1   /*score: B and N (ACGT)*/
+#define def_BToX_alnDefs -1   /*score: B and X (ACGT)*/
 
 /********************************************************\
 * Sec04 Sub13:
 *   - d as first base
 \********************************************************/
 
-#define def_DToA_alnDefs -100   /*score: D and A (AGT)*/
-#define def_DToT_alnDefs -100   /*score: T and D (AGT)*/
-#define def_DToU_alnDefs -100   /*score: T and D (AGT)*/
-#define def_DToG_alnDefs -100   /*score: G and D (AGT)*/
-#define def_DToC_alnDefs -400   /*score: D and C (AGT)*/
+#define def_DToA_alnDefs -1   /*score: D and A (AGT)*/
+#define def_DToT_alnDefs -1   /*score: T and D (AGT)*/
+#define def_DToU_alnDefs -1   /*score: T and D (AGT)*/
+#define def_DToG_alnDefs -1   /*score: G and D (AGT)*/
+#define def_DToC_alnDefs -4   /*score: D and C (AGT)*/
 
-#define def_DToW_alnDefs -100   /*score: D and W (AT)*/
-#define def_DToS_alnDefs -300   /*score: D and S (CG)*/
-#define def_DToM_alnDefs -300   /*score: D and M (AC)*/
-#define def_DToK_alnDefs -100   /*score: D and K (GT)*/
-#define def_DToR_alnDefs -100   /*score: D and R (AG)*/
-#define def_DToY_alnDefs -300   /*score: D and Y (CT)*/
-#define def_DToB_alnDefs -200   /*score: D and B (CGT)*/
-#define def_DToD_alnDefs -100   /*score: D and D (AGT)*/
-#define def_DToH_alnDefs -200   /*score: D and H (ACT)*/
-#define def_DToV_alnDefs -200   /*score: D and V (ACG)*/
-#define def_DToN_alnDefs -100   /*score: D and N (ACGT)*/
-#define def_DToX_alnDefs -100   /*score: D and X (ACGT)*/
+#define def_DToW_alnDefs -1   /*score: D and W (AT)*/
+#define def_DToS_alnDefs -3   /*score: D and S (CG)*/
+#define def_DToM_alnDefs -3   /*score: D and M (AC)*/
+#define def_DToK_alnDefs -1   /*score: D and K (GT)*/
+#define def_DToR_alnDefs -1   /*score: D and R (AG)*/
+#define def_DToY_alnDefs -3   /*score: D and Y (CT)*/
+#define def_DToB_alnDefs -2   /*score: D and B (CGT)*/
+#define def_DToD_alnDefs -1   /*score: D and D (AGT)*/
+#define def_DToH_alnDefs -2   /*score: D and H (ACT)*/
+#define def_DToV_alnDefs -2   /*score: D and V (ACG)*/
+#define def_DToN_alnDefs -1   /*score: D and N (ACGT)*/
+#define def_DToX_alnDefs -1   /*score: D and X (ACGT)*/
 
 
 /********************************************************\
@@ -453,96 +451,96 @@
 *   - h as first base
 \********************************************************/
 
-#define def_HToA_alnDefs -100   /*score: H and A (ACT)*/
-#define def_HToT_alnDefs -100   /*score: T and H (ACT)*/
-#define def_HToU_alnDefs -100   /*score: T and H (ACT)*/
-#define def_HToG_alnDefs -400   /*score: G and H (ACT)*/
-#define def_HToC_alnDefs -100   /*score: H and C (ACT)*/
+#define def_HToA_alnDefs -1   /*score: H and A (ACT)*/
+#define def_HToT_alnDefs -1   /*score: T and H (ACT)*/
+#define def_HToU_alnDefs -1   /*score: T and H (ACT)*/
+#define def_HToG_alnDefs -4   /*score: G and H (ACT)*/
+#define def_HToC_alnDefs -1   /*score: H and C (ACT)*/
 
-#define def_HToW_alnDefs -100   /*score: H and W (AT)*/
-#define def_HToS_alnDefs -300   /*score: H and S (CG)*/
-#define def_HToM_alnDefs -100   /*score: H and M (AC)*/
-#define def_HToK_alnDefs -300   /*score: H and K (GT)*/
-#define def_HToR_alnDefs -300   /*score: H and R (AG)*/
-#define def_HToY_alnDefs -100   /*score: H and Y (CT)*/
-#define def_HToB_alnDefs -200   /*score: H and B (CGT)*/
-#define def_HToD_alnDefs -200   /*score: H and D (AGT)*/
-#define def_HToH_alnDefs -100   /*score: H and H (ACT)*/
-#define def_HToV_alnDefs -200   /*score: H and V (ACG)*/
-#define def_HToN_alnDefs -100   /*score: H and N (ACGT)*/
-#define def_HToX_alnDefs -100   /*score: H and X (ACGT)*/
+#define def_HToW_alnDefs -1   /*score: H and W (AT)*/
+#define def_HToS_alnDefs -3   /*score: H and S (CG)*/
+#define def_HToM_alnDefs -1   /*score: H and M (AC)*/
+#define def_HToK_alnDefs -3   /*score: H and K (GT)*/
+#define def_HToR_alnDefs -3   /*score: H and R (AG)*/
+#define def_HToY_alnDefs -1   /*score: H and Y (CT)*/
+#define def_HToB_alnDefs -2   /*score: H and B (CGT)*/
+#define def_HToD_alnDefs -2   /*score: H and D (AGT)*/
+#define def_HToH_alnDefs -1   /*score: H and H (ACT)*/
+#define def_HToV_alnDefs -2   /*score: H and V (ACG)*/
+#define def_HToN_alnDefs -1   /*score: H and N (ACGT)*/
+#define def_HToX_alnDefs -1   /*score: H and X (ACGT)*/
 
 /********************************************************\
 * Sec04 Sub15:
 *   - v as first base
 \********************************************************/
 
-#define def_VToA_alnDefs -100   /*score: V and A (ACG)*/
-#define def_VToT_alnDefs -400   /*score: T and V (ACG)*/
-#define def_VToU_alnDefs -400   /*score: T and V (ACG)*/
-#define def_VToG_alnDefs -100   /*score: G and V (ACG)*/
-#define def_VToC_alnDefs -100   /*score: V and C (ACG)*/
+#define def_VToA_alnDefs -1   /*score: V and A (ACG)*/
+#define def_VToT_alnDefs -4   /*score: T and V (ACG)*/
+#define def_VToU_alnDefs -4   /*score: T and V (ACG)*/
+#define def_VToG_alnDefs -1   /*score: G and V (ACG)*/
+#define def_VToC_alnDefs -1   /*score: V and C (ACG)*/
 
-#define def_VToW_alnDefs -300   /*score: V and W (AT)*/
-#define def_VToS_alnDefs -100   /*score: V and S (CG)*/
-#define def_VToM_alnDefs -100   /*score: V and M (AC)*/
-#define def_VToK_alnDefs -300   /*score: V and K (GT)*/
-#define def_VToR_alnDefs -100   /*score: V and R (AG)*/
-#define def_VToY_alnDefs -300   /*score: V and Y (CT)*/
-#define def_VToB_alnDefs -200   /*score: V and B (CGT)*/
-#define def_VToD_alnDefs -200   /*score: V and D (AGT)*/
-#define def_VToH_alnDefs -200   /*score: V and H (ACT)*/
-#define def_VToV_alnDefs -100   /*score: V and V (ACG)*/
-#define def_VToN_alnDefs -100   /*score: V and N (ACGT)*/
-#define def_VToX_alnDefs -100   /*score: V and X (ACGT)*/
+#define def_VToW_alnDefs -3   /*score: V and W (AT)*/
+#define def_VToS_alnDefs -1   /*score: V and S (CG)*/
+#define def_VToM_alnDefs -1   /*score: V and M (AC)*/
+#define def_VToK_alnDefs -3   /*score: V and K (GT)*/
+#define def_VToR_alnDefs -1   /*score: V and R (AG)*/
+#define def_VToY_alnDefs -3   /*score: V and Y (CT)*/
+#define def_VToB_alnDefs -2   /*score: V and B (CGT)*/
+#define def_VToD_alnDefs -2   /*score: V and D (AGT)*/
+#define def_VToH_alnDefs -2   /*score: V and H (ACT)*/
+#define def_VToV_alnDefs -1   /*score: V and V (ACG)*/
+#define def_VToN_alnDefs -1   /*score: V and N (ACGT)*/
+#define def_VToX_alnDefs -1   /*score: V and X (ACGT)*/
 
 /********************************************************\
 * Sec04 Sub16:
 *   - n as first base
 \********************************************************/
 
-#define def_NToA_alnDefs -200   /*score: N and A (ACGT)*/
-#define def_NToT_alnDefs -200   /*score: T and N (ACGT)*/
-#define def_NToU_alnDefs -200   /*score: T and N (ACGT)*/
-#define def_NToG_alnDefs -200   /*score: G and N (ACGT)*/
-#define def_NToC_alnDefs -200   /*score: N and C (ACGT)*/
+#define def_NToA_alnDefs -2   /*score: N and A (ACGT)*/
+#define def_NToT_alnDefs -2   /*score: T and N (ACGT)*/
+#define def_NToU_alnDefs -2   /*score: T and N (ACGT)*/
+#define def_NToG_alnDefs -2   /*score: G and N (ACGT)*/
+#define def_NToC_alnDefs -2   /*score: N and C (ACGT)*/
 
-#define def_NToW_alnDefs -200   /*score: N and W (AT)*/
-#define def_NToS_alnDefs -200   /*score: N and S (CG)*/
-#define def_NToM_alnDefs -200   /*score: N and M (AC)*/
-#define def_NToK_alnDefs -200   /*score: N and K (GT)*/
-#define def_NToR_alnDefs -200   /*score: N and R (AG)*/
-#define def_NToY_alnDefs -200   /*score: N and Y (CT)*/
-#define def_NToB_alnDefs -200   /*score: N and B (CGT)*/
-#define def_NToD_alnDefs -200   /*score: N and D (AGT)*/
-#define def_NToH_alnDefs -200   /*score: N and H (ACT)*/
-#define def_NToV_alnDefs -200   /*score: N and V (ACG)*/
-#define def_NToN_alnDefs -100   /*score: N and N (ACGT)*/
-#define def_NToX_alnDefs -100   /*score: N and X (ACGT)*/
+#define def_NToW_alnDefs -2   /*score: N and W (AT)*/
+#define def_NToS_alnDefs -2   /*score: N and S (CG)*/
+#define def_NToM_alnDefs -2   /*score: N and M (AC)*/
+#define def_NToK_alnDefs -2   /*score: N and K (GT)*/
+#define def_NToR_alnDefs -2   /*score: N and R (AG)*/
+#define def_NToY_alnDefs -2   /*score: N and Y (CT)*/
+#define def_NToB_alnDefs -2   /*score: N and B (CGT)*/
+#define def_NToD_alnDefs -2   /*score: N and D (AGT)*/
+#define def_NToH_alnDefs -2   /*score: N and H (ACT)*/
+#define def_NToV_alnDefs -2   /*score: N and V (ACG)*/
+#define def_NToN_alnDefs -1   /*score: N and N (ACGT)*/
+#define def_NToX_alnDefs -1   /*score: N and X (ACGT)*/
 
 /********************************************************\
 * Sec04 Sub17:
 *   - x as first base
 \********************************************************/
 
-#define def_XToA_alnDefs -200   /*score: X and A (ACGT)*/
-#define def_XToT_alnDefs -200   /*score: T and X (ACGT)*/
-#define def_XToU_alnDefs -200   /*score: T and X (ACGT)*/
-#define def_XToG_alnDefs -200   /*score: G and X (ACGT)*/
-#define def_XToC_alnDefs -200   /*score: X and C (ACGT)*/
+#define def_XToA_alnDefs -2   /*score: X and A (ACGT)*/
+#define def_XToT_alnDefs -2   /*score: T and X (ACGT)*/
+#define def_XToU_alnDefs -2   /*score: T and X (ACGT)*/
+#define def_XToG_alnDefs -2   /*score: G and X (ACGT)*/
+#define def_XToC_alnDefs -2   /*score: X and C (ACGT)*/
 
-#define def_XToW_alnDefs -100   /*score: X and W (AT)*/
-#define def_XToS_alnDefs -100   /*score: X and S (CG)*/
-#define def_XToM_alnDefs -100   /*score: X and M (AC)*/
-#define def_XToK_alnDefs -100   /*score: X and K (GT)*/
-#define def_XToR_alnDefs -100   /*score: X and R (AG)*/
-#define def_XToY_alnDefs -100   /*score: X and Y (CT)*/
-#define def_XToB_alnDefs -100   /*score: X and B (CGT)*/
-#define def_XToD_alnDefs -100   /*score: X and D (AGT)*/
-#define def_XToH_alnDefs -100   /*score: X and H (ACT)*/
-#define def_XToV_alnDefs -100   /*score: X and V (ACG)*/
-#define def_XToN_alnDefs -100   /*score: X and N (ACGT)*/
-#define def_XToX_alnDefs -100   /*score: X and X (ACGT)*/
+#define def_XToW_alnDefs -1   /*score: X and W (AT)*/
+#define def_XToS_alnDefs -1   /*score: X and S (CG)*/
+#define def_XToM_alnDefs -1   /*score: X and M (AC)*/
+#define def_XToK_alnDefs -1   /*score: X and K (GT)*/
+#define def_XToR_alnDefs -1   /*score: X and R (AG)*/
+#define def_XToY_alnDefs -1   /*score: X and Y (CT)*/
+#define def_XToB_alnDefs -1   /*score: X and B (CGT)*/
+#define def_XToD_alnDefs -1   /*score: X and D (AGT)*/
+#define def_XToH_alnDefs -1   /*score: X and H (ACT)*/
+#define def_XToV_alnDefs -1   /*score: X and V (ACG)*/
+#define def_XToN_alnDefs -1   /*score: X and N (ACGT)*/
+#define def_XToX_alnDefs -1   /*score: X and X (ACGT)*/
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
 ^ Sec05:

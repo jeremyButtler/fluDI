@@ -44,6 +44,7 @@
 #include "../genClust/clustST.h"
 #include "../genClust/edClust.h"
 
+#include "../diFragSrc/diScore.h"
 #include "../diFragSrc/diScan.h"
 
 #include "../diIdsSrc/fluST.h"
@@ -51,6 +52,8 @@
 /*no .c files*/
 #include "../fluDI.h" /*version numbers*/
 #include "../genLib/dataTypeShortHand.h"
+#include "../diIdsSrc/defsDiIds.h"
+#include "../diFragSrc/defsDiFrag.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
 ! Hidden libraries:
@@ -61,6 +64,8 @@
 !   - .c  #include "../genBio/edDist.h"
 !   - .c  #include "../genAln/indexToCoord.h"
 !   - .c  #include "../genAln/memwater.h"
+!   - .c  #include "../genAln/needle.h"
+!   - .c  #include "../diCoordsSrc/diCoords.c"
 !   - .h  #include "../genBio/ntTo2Bit.h"
 !   - .h  #include "../genBio/ntTo5Bit.h"
 !   - .h  #include "../genBio/tbConDefs.h"
@@ -71,19 +76,10 @@
 #define def_fq_fluDI 1
 #define def_fa_fluDI 2
 
-#define def_lenKmer_fluDI 7 /*length of one kmer*/
-#define def_minPercScore_fluDI 0.5f /*90% min socre*/
-#define def_minKmerPerc_fluDI 0.4f  /*40% min kmers*/
-
-#define def_extend_fluDI -10    /*gap extend; -10 = -0.1*/
-#define def_gap_fluDI -1000     /*gap open; -1000 = -10*/
-
-#define def_minDels_fluDI 20   /*min del size for DI*/
 #define def_startTrim_fluDI 13 /*first x bases to trim*/
 #define def_endTrim_fluDI 13   /*last x bases to trim*/
+#define def_minMatchPerc_fluDI 0.9f /*90% bases match*/
 
-#define def_minPercLen_fluDI 0.85f
-#define def_maxPercLen_fluDI 1.1f /*110%*/
 
 signed char *glob_prefixStr = (schar *) "out";
 
@@ -291,8 +287,8 @@ phelp_fluDI(
    fprintf(
       (FILE *) outFILE,
       "    -min-del %u: [Optinal; %u]\n",
-      def_minDels_fluDI,
-      def_minDels_fluDI
+      def_minDels_defsDiFrag,
+      def_minDels_defsDiFrag
    );
 
    fprintf(
@@ -339,8 +335,8 @@ phelp_fluDI(
    fprintf(
       (FILE *) outFILE,
       "    -score-min-perc %0.2f: [Optinal; %0.2f]\n",
-      def_minPercScore_fluDI,
-      def_minPercScore_fluDI
+      def_minPercScore_defsDiFrag,
+      def_minPercScore_defsDiFrag
    );
 
    fprintf(
@@ -352,8 +348,8 @@ phelp_fluDI(
    fprintf(
       (FILE *) outFILE,
       "    -kmer-min-perc %0.2f: [Optinal; %0.2f]\n",
-      def_minKmerPerc_fluDI,
-      def_minKmerPerc_fluDI
+      def_minKmerPerc_defsDiFrag,
+      def_minKmerPerc_defsDiFrag
    );
 
    fprintf(
@@ -365,8 +361,8 @@ phelp_fluDI(
    fprintf(
       (FILE *) outFILE,
       "    -len-kmer %i: [Optinal; %i]\n",
-      def_lenKmer_fluDI,
-      def_lenKmer_fluDI
+      def_lenKmer_defsDiIds,
+      def_lenKmer_defsDiIds
    );
 
    fprintf(
@@ -915,7 +911,7 @@ main(
    '     - set up primer sequences for kmer scan
    '   o main sec04:
    '     - print headers
-   '   o main Sec05:
+   '   o main sec05:
    '     - find DI reads
    '   o main sec06:
    '     - cluster reads
@@ -974,20 +970,28 @@ main(
    \*****************************************************/
 
    /*for alignment*/
-   uchar lenKmerUC = def_lenKmer_fluDI;
-   float scorePercF = def_minPercScore_fluDI;
-   float kmerPercF = def_minKmerPerc_fluDI;
+   uchar fragKmerLenUC = def_lenKmer_defsDiFrag;
+   float fragKmerPercF = def_minKmerPerc_defsDiFrag;
    sint numKmersSI = 0;
 
+   float fragPercScoreF = def_minPercScore_defsDiFrag;
+      /*minimum % score for waterman to count*/
+
    /*last/first base to start trimming ends at*/
-   uint minDelUI = def_minDels_fluDI;
+   uint minDelUI = def_minDels_defsDiFrag;
    sint startTrimSI = def_startTrim_fluDI;
    sint endTrimSI = def_endTrim_fluDI;
 
    struct alnSet alnSetStackST; /*alingment settings*/
+
+   /*struct alnSet needleSetStackST;*//*needleman setting*/
+   /*float fragMatchPercF = def_minMatchPerc_fluDI;*/
+      /*minimum % matches for needleman to count*/
+
    struct dirMatrix matrixStackST; /*get alignment*/
    struct seqST seqStackST;     /*holds reads*/
    sint numDIEventsSI = 0;      /*# DI events in read*/
+   signed char noAlnBl = 0;     /*tells if got alignment*/
    
    struct samEntry samStackST; /*for printing/ other*/
    schar *buffHeapStr = 0;     /*sam printing/reading*/
@@ -1008,13 +1012,14 @@ main(
    schar *revSeqStr = revPrimStr_fluDI;
 
    /*settings*/
-   float minPercLenF = def_minPercLen_fluDI;
-   float maxPercLenF = def_maxPercLen_fluDI;
+   uchar idsKmerLenUC = def_lenKmer_defsDiFrag;
+   float minPercLenF = def_minPercLen_defsDiIds;
+   float maxPercLenF = def_maxPercLen_defsDiIds;
 
-   uchar primKmerUC = def_lenKmer_kmerFind;
+   uchar primKmerUC = def_lenKmer_defsDiIds;
    float minPercScoreF = def_minPercScore_kmerFind;
-   float frameShiftF = def_percShift_kmerFind;
-   float minPrimPercKmerF = def_minKmerPerc_kmerFind;
+   float frameShiftF = def_percShift_defsDiIds;
+   float minPrimPercKmerF = def_kmerPerc_defsDiIds;
    float extraNtInWinF = def_extraNtInWin_kmerFind;
 
    struct refST_kmerFind refKmerStackST[2];
@@ -1109,7 +1114,11 @@ main(
    \*****************************************************/
 
    init_samEntry(&samStackST);
+
    init_alnSet(&alnSetStackST);
+   set_diScore(&alnSetStackST); /*set diFrag scoring*/
+   /*init_alnSet(&needleSetStackST);*/
+
    init_dirMatrix(&matrixStackST);
    init_seqST(&seqStackST);
 
@@ -1118,6 +1127,8 @@ main(
    clustSetStackST.repIntervalSL=def_repInterveral_fluDI;
 
    init_set_tbCon(&conSetStackST);
+   conSetStackST.minMapqUC = 0;
+      /*waterman does not assign mapq scores*/
 
    init_alnSet(&alnPrimSetStackST);
    init_tblST_kmerFind(&kmerTblStackST);
@@ -1125,8 +1136,33 @@ main(
    init_refST_kmerFind(&refKmerStackST[1]);
    init_fluST(&fluStackST);
 
-   alnSetStackST.extendSS = def_extend_fluDI;
-   alnSetStackST.gapSS = def_gap_fluDI;
+   codeAryUI[0] = 0;
+   codeAryUI[1] = 0;
+   codeAryUI[2] = 0;
+
+   scoreArySL[0] = 0;
+   scoreArySL[1] = 0;
+   scoreArySL[2] = 0;
+
+   dirArySC[0] = 0;
+   dirArySC[1] = 0;
+   dirArySC[2] = 0;
+
+   seqStartAryUL[0] = 0;
+   seqStartAryUL[1] = 0;
+   seqStartAryUL[2] = 0;
+
+   seqEndAryUL[0] = 0;
+   seqEndAryUL[1] = 0;
+   seqEndAryUL[2] = 0;
+
+   primStartAryUL[0] = 0;
+   primStartAryUL[1] = 0;
+   primStartAryUL[2] = 0;
+
+   primEndAryUL[0] = 0;
+   primEndAryUL[1] = 0;
+   primEndAryUL[2] = 0;
 
    /*****************************************************\
    * Main Sec02 Sub02:
@@ -1144,9 +1180,9 @@ main(
          &minDelUI,
          &startTrimSI,
          &endTrimSI,
-         &lenKmerUC,
-         &scorePercF,
-         &kmerPercF
+         &idsKmerLenUC,
+         &fragPercScoreF,
+         &fragKmerPercF
       ); /*get user input*/
 
    if(errSC)
@@ -1206,7 +1242,7 @@ main(
    errSC =
       setup_refST_kmerFind(
          &refKmerStackST[0],
-         lenKmerUC
+         idsKmerLenUC
       );
 
    if(errSC)
@@ -1223,7 +1259,7 @@ main(
    errSC =
       setup_refST_kmerFind(
          &refKmerStackST[1],
-         lenKmerUC
+         idsKmerLenUC
       );
 
    if(errSC)
@@ -1244,7 +1280,7 @@ main(
    refHeapAryST =
       faToKmerCnt_kmerCnt(
          refFileStr,
-         lenKmerUC,
+         fragKmerLenUC,
          &numRefUI,
          &errSC
    ); /*get reference sequences*/
@@ -1280,7 +1316,7 @@ main(
 
    for(
      fragSegSI = 0;
-     fragSegSI < lenKmerUC;
+     fragSegSI < fragKmerLenUC;
      ++fragSegSI
    ) tmpUI <<= 2;
 
@@ -1688,7 +1724,7 @@ main(
 
    phead_diScan(
       tsvFILE,
-      lenKmerUC
+      fragKmerLenUC
    );
 
    pidHeader_fluST(diPrimScanFILE);
@@ -1994,23 +2030,28 @@ main(
             numRefUI,       /*number of refs to map*/
             kmerHeapTblSI,  /*gets kmers in sequence*/
             cntHeapArySI,   /*gets sequenced kmer counts*/
-            scorePercF,     /*min align score to keep*/
-            kmerPercF,      /*min % of kmers needed*/
-            lenKmerUC,      /*length of one kmer*/
+            fragPercScoreF, /*min align score to keep*/
+            fragKmerPercF,  /*min % of kmers needed*/
+            fragKmerLenUC,  /*length of one kmer*/
             minDelUI,       /*min deletion size to be DI*/
             endTrimSI,      /*min nt at ends before DI*/
             &samStackST,    /*will have aligned sequence*/
-            &fragSegSI,         /*returned segment number*/
+            &fragSegSI,     /*returned segment number*/
             &numKmersSI,    /*holds number kmers shared*/
             &alnSetStackST, /*alignment settings*/
             &matrixStackST  /*matrix for waterman to use*/
          );
+
+      noAlnBl = 0;
 
       if(numDIEventsSI < 0)
       { /*If: had an error; check if memory error*/
          if(numDIEventsSI == def_memErr_diScan)
             goto err_main_sec07_sub02;
 
+         noAlnBl = 1;
+
+         /*last segment not found, so find best segment*/
          fragSegSI =
              findSeg_diScan(
                 &seqStackST,    /*sequence*/
@@ -2018,7 +2059,7 @@ main(
                 numRefUI,       /*number of refs to map*/
                 kmerHeapTblSI,  /*gets kmers in sequence*/
                 cntHeapArySI, /*gets sequence kmer count*/
-                lenKmerUC,      /*length of one kmer*/
+                fragKmerLenUC,  /*length of one kmer*/
                 0,
                 &numKmersSI     /*number kmers found*/
              ); /*find the best segment*/
@@ -2172,16 +2213,18 @@ main(
       *   o main sec05 sub04 cat01:
       *     - find aligment flu segment
       *   o main sec05 sub04 cat02:
-      *     - check diIds only classified or nothing did
+      *     - if have segment agreement, do needleman
       *   o main sec05 sub04 cat03:
-      *     - check: ID and kmer count aggree on segment
+      *     - check diIds only classified or nothing did
       *   o main sec05 sub04 cat04:
-      *     - check if diFrag only classified (no diIds)
+      *     - check: ID and kmer count aggree on segment
       *   o main sec05 sub04 cat05:
-      *     - print diID result
+      *     - check if diFrag only classified (no diIds)
       *   o main sec05 sub04 cat06:
-      *     - check both diFrag and diIds got an answer
+      *     - print diID result
       *   o main sec05 sub04 cat07:
+      *     - check both diFrag and diIds got an answer
+      *   o main sec05 sub04 cat08:
       *     - print diFrag and diIds results
       \**************************************************/
 
@@ -2196,7 +2239,7 @@ main(
 
       if(
             fragSegSI >= 0
-         && refHeapAryST[fragSegSI].forSeqST->idStr[0] > '9'
+         && refHeapAryST[fragSegSI].forSeqST->idStr[0]>'9'
       ){ /*If: non-numeric segment id*/
 
          switch(
@@ -2305,6 +2348,50 @@ main(
 
       /*+++++++++++++++++++++++++++++++++++++++++++++++++\
       + Main Sec05 Sub04 Cat02:
+      +   - if have segment agreement, do needleman
+      \+++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+      /*if(alnSegSC == diIdSegSC)
+      {
+         numDIEventsSI =
+            needleScan_diScan(
+               &seqStackST,
+               refHeapAryST,
+               numRefUI,
+               kmerHeapTblSI,
+               cntHeapArySI,
+               fragMatchPercF,
+               fragKmerPercF,
+               fragKmerLenUC,
+               minDelUI,
+               endTrimSI,
+               &samStackST,
+               &fragSegSI,
+               &numKmersSI,
+               &needleSetStackST,
+               &matrixStackST
+            );
+
+         noAlnBl = 0;
+
+         if(numDIEventsSI < 0)
+         {
+            if(numDIEventsSI == def_memErr_diScan)
+               goto err_main_sec07_sub02;
+            noAlnBl = 1;
+         }
+
+         else
+            rmEndDels_diScan(
+               &samStackST,
+               (sint) minDelUI,
+               startTrimSI,
+               endTrimSI
+            );
+      }*/ /*If: read is tip to tip*/
+
+      /*+++++++++++++++++++++++++++++++++++++++++++++++++\
+      + Main Sec05 Sub04 Cat03:
       +   - check if diIds  only classified or nothing did
       \+++++++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -2312,29 +2399,10 @@ main(
             numDIEventsSI < 0
          || alnSegSC < 0
       ){ /*If: alignment could not find DI events*/
-          if(diFlagSC & def_diPrimNoCall_fluDI)
-             goto getNextSeq_main_sec05_sub04;
-             /*read not classified by either system*/
 
-         /*++++++++++++++++++++++++++++++++++++++++++++++\
-         + Main Sec05 Sub04 Cat03:
-         +   - check: ID and kmer count aggree on segment
-         \++++++++++++++++++++++++++++++++++++++++++++++*/
-
-         if(alnSegSC == diIdSegSC)
-         { /*If: both systems agreeded on same segment*/
-            /*read is already aligned*/
-            percLenDiffF =(float) samStackST.alnReadLenUI;
-            percLenDiffF /=(float) samStackST.readLenUI;
-
-            if(percLenDiffF < def_minPercLen_fluDI)
-               alnSegSC = -1;
-         } /*If: both systems agreeded on same segment*/
-
-         /*++++++++++++++++++++++++++++++++++++++++++++++\
-         + Main Sec05 Sub04 Cat04:
-         +   - print diID result
-         \++++++++++++++++++++++++++++++++++++++++++++++*/
+         if(diFlagSC & def_diPrimNoCall_fluDI)
+            goto getNextSeq_main_sec05_sub04;
+            /*read not classified by either system*/
 
          tmpStr = seqStackST.idStr;
 
@@ -2349,6 +2417,25 @@ main(
             seqStackST.idStr + 1
          );
 
+         /*++++++++++++++++++++++++++++++++++++++++++++++\
+         + Main Sec05 Sub04 Cat04:
+         +   - check: ID and kmer count aggree on segment
+         \++++++++++++++++++++++++++++++++++++++++++++++*/
+
+         if(alnSegSC == diIdSegSC)
+         { /*If: both systems agreeded on same segment*/
+            /*read is already aligned*/
+            percLenDiffF =(float) samStackST.alnReadLenUI;
+            percLenDiffF /=(float) samStackST.readLenUI;
+
+            if(percLenDiffF < def_minPercLen_defsDiIds)
+               alnSegSC = -1;
+         } /*If: both systems agreeded on same segment*/
+
+         /*++++++++++++++++++++++++++++++++++++++++++++++\
+         + Main Sec05 Sub04 Cat05:
+         +   - print diID result
+         \++++++++++++++++++++++++++++++++++++++++++++++*/
 
          if(alnSegSC)
          { /*If: segment found by kmer count*/
@@ -2418,7 +2505,7 @@ main(
       } /*If: alignment could not find DI events*/
 
       /*+++++++++++++++++++++++++++++++++++++++++++++++++\
-      + Main Sec05 Sub04 Cat03:
+      + Main Sec05 Sub04 Cat06:
       +   - check if diFrag only classified (no diIds)
       \+++++++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -2464,7 +2551,7 @@ main(
       } /*Else If: DI ids could not make a call*/
 
       /*+++++++++++++++++++++++++++++++++++++++++++++++++\
-      + Main Sec05 Sub04 Cat05:
+      + Main Sec05 Sub04 Cat07:
       +   - check if diFrag and diIds got same answers
       \+++++++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -2532,7 +2619,7 @@ main(
          } /*Else: diFrag and diIds disagree about DI*/
 
          /*++++++++++++++++++++++++++++++++++++++++++++++\
-         + Main Sec05 Sub04 Cat06:
+         + Main Sec05 Sub04 Cat08:
          +   - print diFrag and diIds results
          \++++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -2604,10 +2691,9 @@ main(
 
       if(
             numDIEventsSI < 0
-         &&
-            diFlagSC & def_segMatch_fluDI
-         &&
-            diFlagSC & def_diPrimDI_fluDI
+         && (diFlagSC & def_segMatch_fluDI)
+         && (diFlagSC & def_diPrimDI_fluDI)
+         && (! noAlnBl)
       ){ /*If: only diIDs could make a call*/
          /*In this case both agree on the segment, but
          `   only diIDs could call diRna or vRna
@@ -2744,20 +2830,20 @@ main(
 
       getNextSeq_main_sec05_sub04:;
 
-      if(fxFlagBl == def_fq_fluDI)
-         errSC =
-           (schar)
-           getFqSeq_seqST(
-              inFILE,
-              &seqStackST
-           );
-      else
-         errSC =
-           (schar)
-           getFaSeq_seqST(
-              inFILE,
-              &seqStackST
-           );
+         if(fxFlagBl == def_fq_fluDI)
+            errSC =
+              (schar)
+              getFqSeq_seqST(
+                 inFILE,
+                 &seqStackST
+              );
+         else
+            errSC =
+              (schar)
+              getFaSeq_seqST(
+                 inFILE,
+                 &seqStackST
+              );
    } /*Loop: find DI sequences*/
 
    /*****************************************************\
@@ -2887,6 +2973,7 @@ main(
    +   - cluster DI reads
    \++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+   goto cleanUp_main_sec07_sub03;
    diFILE =
       fopen(
          (char *) diStr,
@@ -3371,6 +3458,7 @@ main(
 
    cleanUp_main_sec07_sub03:;
       freeStack_alnSet(&alnSetStackST);
+      /*freeStack_alnSet(&needleSetStackST);*/
       freeStack_dirMatrix(&matrixStackST);
       freeStack_seqST(&seqStackST);
       freeStack_set_clustST(&clustSetStackST);

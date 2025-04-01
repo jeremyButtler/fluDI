@@ -24,7 +24,7 @@ objFiles=\
 all: diIds.$O
 	$(LD) /out:$(NAME).exe $(objFiles)
 
-diIds.$O: diIds.c fluST.$O $(genLib)\charCp.$O $(genAln)\kmerFind.$O
+diIds.$O: diIds.c fluST.$O $(genLib)\charCp.$O $(genAln)\kmerFind.$O defDiIds.h
 	$(CC) /Fo:diIds.$O /c $(CFLAGS) diIds.c
 
 fluST.$O: fluST.c fluST.h fluSeg.h $(genLib)\shellSort.$O $(genAln)\alnDefs.h $(genLib)\dataTypeShortHand.h

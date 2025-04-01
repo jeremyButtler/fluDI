@@ -279,6 +279,7 @@ typedef struct con_clustST
 {
    struct samEntry *samSTPtr; /*consensus sequence*/
    signed int clustSI;        /*cluster number*/
+   unsigned int refNumUI;     /*reference assigned*/
 
    unsigned long numReadsUL;  /*number reads in clust*/
    unsigned long maxReadsUL;

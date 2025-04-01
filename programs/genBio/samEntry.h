@@ -39,38 +39,40 @@
 '   o fun13: findRefPos_samEntry
 '     - Find an reference coordinate in an sequence in
 '       an sam entry structure
-'   o fun14: p_samEntry
+'   o fun14: swap_samEntry
+'     - swaps two samEntry structs
+'   o fun15: p_samEntry
 '     - Prints the sam file entry to a file. This does not
 '       print any extra stats that were found.
-'   o fun15: p_samEntryAsFastq
+'   o fun16: p_samEntryAsFastq
 '     - Prints the sam entry as a fastq entry to a fastq
 '       file
-'   o fun16: pfa_samEntry
+'   o fun17: pfa_samEntry
 '     - Prints the sam entry as a fasta entry to a fasta
 '       file
-'   o fun17: pstats_samEntry
+'   o fun18: pstats_samEntry
 '     - Prints out the stats in a samEntry struct to a file
-'   o fun18: revCmp_samEntry
+'   o fun19: revCmp_samEntry
 '      - reverse complements a sam file sequence entry
-'   o fun19: getHead_samEntry
+'   o fun20: getHead_samEntry
 '     - get header for a sam file
-'   o fun20: blank_refs_samEntry
+'   o fun21: blank_refs_samEntry
 '     - blanks a refs_samEntry struct
-'   o fun21: init_refs_samEntry
+'   o fun22: init_refs_samEntry
 '     - initializes a refs_samEntry struct
-'   o fun22: freeStack_refs_samEntry
+'   o fun23: freeStack_refs_samEntry
 '     - frees variables in a refs_samEntry struct
-'   o fun23: freeHeap_refs_samEntry
+'   o fun24: freeHeap_refs_samEntry
 '     - frees a refs_samEntry struct
-'   o fun24: setup_refs_samEntry
+'   o fun25: setup_refs_samEntry
 '     - allocates memory for a refs_samEntry struct
-'   o fun25: realloc_refs_samEntry
+'   o fun26: realloc_refs_samEntry
 '     - reallocates memory for a refs_samEntry struct
-'   o fun26: getRefLen_samEntry
+'   o fun27: getRefLen_samEntry
 '     - gets reference ids & length from a sam file header
-'   o fun27: findRef_refs_samEntry
+'   o fun28: findRef_refs_samEntry
 '     - finds a reference id in a refs_samEntry struct
-'   o fun28: addRef_samEntry
+'   o fun29: addRef_samEntry
 '     - adds reference information to array in refStack
 '   o .h note01:
 '      - Notes about the sam file format from the sam file
@@ -471,7 +473,26 @@ findRefPos_samEntry(
 );
 
 /*-------------------------------------------------------\
-| Fun14: p_samEntry
+| Fun14: swap_samEntry
+|   - swaps two samEntry structs
+| Input:
+|   - firstSTPtr:
+|     o pointer to first samEntry struct to swap
+|   - secSTPtr:
+|     o pointer to second samEntry struct to swap
+| Output:
+|   - Modifies:
+|     o all variables in firstSTPtr to be same as secSTPtr
+|     o all variables in sedSTPtr to be same as firstSTPtr
+\-------------------------------------------------------*/
+void
+swap_samEntry(
+   struct samEntry *firstSTPtr,
+   struct samEntry *secSTPtr
+);
+
+/*-------------------------------------------------------\
+| Fun15: p_samEntry
 |   - Prints the sam file entry to a file. This does not
 |     print any extra stats that were found.
 | Input:
@@ -510,7 +531,7 @@ p_samEntry(
 );
 
 /*-------------------------------------------------------\
-| Fun15: pfq_samEntry
+| Fun16: pfq_samEntry
 |   - Prints the sam entry as fastq entry to a fastq file
 | Input:
 |   - samST:
@@ -529,7 +550,7 @@ pfq_samEntry(
 );
 
 /*-------------------------------------------------------\
-| Fun16: pfa_samEntry
+| Fun17: pfa_samEntry
 | Use:
 |   - Prints the sam entry as fasta entry to a fasta file
 | Input:
@@ -549,7 +570,7 @@ pfa_samEntry(
 );
 
 /*-------------------------------------------------------\
-| Fun17: pstats_samEntry
+| Fun18: pstats_samEntry
 | Use:
 |  - Prints out the stats in a samEntry struct to a file
 | Input:
@@ -578,7 +599,7 @@ pstats_samEntry(
 );
 
 /*-------------------------------------------------------\
-| Fun18: revCmp_samEntry
+| Fun19: revCmp_samEntry
 |   - reverse complements a sam file sequence entry
 | Input:
 |   - samSTPtr:
@@ -593,7 +614,7 @@ revCmp_samEntry(
 );
 
 /*-------------------------------------------------------\
-| Fun19: getHead_samEntry
+| Fun20: getHead_samEntry
 |   - get header for a sam file
 | Input:
 |   - samSTPtr:
@@ -623,7 +644,7 @@ getHead_samEntry(
 );
 
 /*-------------------------------------------------------\
-| Fun20: blank_refs_samEntry
+| Fun21: blank_refs_samEntry
 |   - blanks a refs_samEntry struct
 | Input:
 |   - refsSTPtr:
@@ -638,7 +659,7 @@ blank_refs_samEntry(
 );
 
 /*-------------------------------------------------------\
-| Fun21: init_refs_samEntry
+| Fun22: init_refs_samEntry
 |   - initializes a refs_samEntry struct
 | Input:
 |   - refsSTPtr:
@@ -653,7 +674,7 @@ init_refs_samEntry(
 );
 
 /*-------------------------------------------------------\
-| Fun22: freeStack_refs_samEntry
+| Fun23: freeStack_refs_samEntry
 |   - frees variables in a refs_samEntry struct
 | Input:
 |   - refsSTPtr:
@@ -668,7 +689,7 @@ freeStack_refs_samEntry(
 );
 
 /*-------------------------------------------------------\
-| Fun23: freeHeap_refs_samEntry
+| Fun24: freeHeap_refs_samEntry
 |   - frees a refs_samEntry struct
 | Input:
 |   - refsSTPtr:
@@ -683,7 +704,7 @@ freeHeap_refs_samEntry(
 );
 
 /*-------------------------------------------------------\
-| Fun24: setup_refs_samEntry
+| Fun25: setup_refs_samEntry
 |   - allocates memory for a refs_samEntry struct
 | Input:
 |   - refsSTPtr:
@@ -704,7 +725,7 @@ setup_refs_samEntry(
 );
 
 /*-------------------------------------------------------\
-| Fun25: realloc_refs_samEntry
+| Fun26: realloc_refs_samEntry
 |   - reallocates memory for a refs_samEntry struct
 | Input:
 |   - refsSTPtr:
@@ -727,7 +748,7 @@ realloc_refs_samEntry(
 );
 
 /*-------------------------------------------------------\
-| Fun26: getRefLen_samEntry
+| Fun27: getRefLen_samEntry
 |   - gets reference ids and length from a sam file header
 | Input:
 |   - refSTPtr:
@@ -778,7 +799,7 @@ getRefLen_samEntry(
 );
 
 /*-------------------------------------------------------\
-| Fun27: findRef_refs_samEntry
+| Fun28: findRef_refs_samEntry
 |   - finds a reference id in a refs_samEntry struct
 | Input:
 |   - idStr:
@@ -797,7 +818,7 @@ findRef_refs_samEntry(
 );
 
 /*-------------------------------------------------------\
-| Fun28: addRef_samEntry
+| Fun29: addRef_samEntry
 |   - adds reference information to array in refStack
 | Input:
 |   - idStr:

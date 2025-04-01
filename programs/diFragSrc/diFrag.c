@@ -44,33 +44,25 @@
 #include "../genAln/dirMatrix.h"
 #include "../genAln/water.h"
 
+#include "diScore.h"
 #include "diScan.h"
 
 /*.h only*/
 #include "../genLib/dataTypeShortHand.h"
-
 #include "../fluDI.h"
+#include "defsDiFrag.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
 ! Hidden libraries:
 !   - .c  #include "../genLib/genMath.h"
 !   - .c  #include "../genLib/strAry.h"
 !   - .c  #include "../genAln/indexToCoord.h"
+!   - .c  #include "../genAln/needle.h"
 !   - .c  #include "../diCoordsSrc/diCoords.h"
 !   - .h  #include "../geBio/ntTo2Bit.h"
 !   - .h  #include "../geBio/ntTo5Bit.h"
 !   - .h  #include "../geAln/alnDefs.h"
 \%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-#define def_lenKmer_diFrag 7 /*length of one kmer*/
-#define def_minPercScore_diFrag 0.5f /*90% min socre*/
-#define def_minKmerPerc_diFrag 0.4f  /*40% min kmers*/
-
-#define def_minDels_diFrag 20 /*min del size for DI*/
-#define def_minPadNt_diFrag 12
-
-#define def_pDI_diFrag 1 /*1 = print DI reads*/
-#define def_pVRna_diFrag 1 /*1 = print vRNA reads*/
 
 /*-------------------------------------------------------\
 | Fun01: pversion_diFrag
@@ -235,8 +227,8 @@ phelp_diFrag(
    fprintf(
       (FILE *) outFILE,
       "  -min-del %i: [Optinal; %i]\n",
-      def_minDels_diFrag,
-      def_minDels_diFrag
+      def_minDels_defsDiFrag,
+      def_minDels_defsDiFrag
    );
 
    fprintf(
@@ -253,8 +245,8 @@ phelp_diFrag(
    fprintf(
       (FILE *) outFILE,
       "  -min-nt-pad %u: [Optinal; %u]\n",
-      def_minPadNt_diFrag,
-      def_minPadNt_diFrag
+      def_minPadNt_defsDiFrag,
+      def_minPadNt_defsDiFrag
    );
 
    fprintf(
@@ -280,8 +272,8 @@ phelp_diFrag(
    fprintf(
       (FILE *) outFILE,
       "  -score-min-perc %0.2f: [Optinal; %0.2f]\n",
-      def_minPercScore_diFrag,
-      def_minPercScore_diFrag
+      def_minPercScore_defsDiFrag,
+      def_minPercScore_defsDiFrag
    );
 
    fprintf(
@@ -292,8 +284,8 @@ phelp_diFrag(
    fprintf(
       (FILE *) outFILE,
       "  -kmer-min-perc %0.2f: [Optinal; %0.2f]\n",
-      def_minKmerPerc_diFrag,
-      def_minKmerPerc_diFrag
+      def_minKmerPerc_defsDiFrag,
+      def_minKmerPerc_defsDiFrag
    );
 
    fprintf(
@@ -314,8 +306,8 @@ phelp_diFrag(
    fprintf(
       (FILE *) outFILE,
       "  -len-kmer %i: [Optinal; %i]\n",
-      def_lenKmer_diFrag,
-      def_lenKmer_diFrag
+      def_lenKmer_defsDiFrag,
+      def_lenKmer_defsDiFrag
    );
 
    fprintf(
@@ -329,7 +321,7 @@ phelp_diFrag(
    \*****************************************************/
 
    /*diRNA flag*/
-   if(def_pDI_diFrag)
+   if(def_pDI_defsDiFrag)
       fprintf(
          (FILE *) outFILE,
          "  -di: [Optinal; Yes]\n"
@@ -351,7 +343,7 @@ phelp_diFrag(
    );
 
    /*vRNA flag*/
-   if(def_pVRna_diFrag)
+   if(def_pVRna_defsDiFrag)
       fprintf(
          (FILE *) outFILE,
          "  -vrna: [Optinal; Yes]\n"
@@ -978,23 +970,23 @@ main(
    schar *outFileStr = 0;
    schar *samFileStr = 0; /*save alignments to*/
 
-   schar pDIRnaBl = def_pDI_diFrag;
-   schar pVRnaBl = def_pVRna_diFrag;
+   schar pDIRnaBl = def_pDI_defsDiFrag;
+   schar pVRnaBl = def_pVRna_defsDiFrag;
 
    schar errSC = 0;
    schar *tmpStr = 0;
 
    sint segSI = 0; /*index of segment read mapped to*/
    sint numDIEventsSI = 0; /*number DI events in seq*/
-   uint minDIDelUI = def_minDels_diFrag;
-   uint minPadNtUI = def_minPadNt_diFrag;
+   uint minDIDelUI = def_minDels_defsDiFrag;
+   uint minPadNtUI = def_minPadNt_defsDiFrag;
 
    /*scoring variables for waterman*/
-   float minPercScoreF = def_minPercScore_diFrag;
-   float minKmerPercF = def_minKmerPerc_diFrag;
+   float minPercScoreF = def_minPercScore_defsDiFrag;
+   float minKmerPercF = def_minKmerPerc_defsDiFrag;
       /*min % of shared kmers needed to keep*/
 
-   uchar lenKmerUC = def_lenKmer_diFrag;/*kmer len*/
+   uchar lenKmerUC = def_lenKmer_defsDiFrag;/*kmer len*/
    sint numKmersSI = 0;     /*how many kmers shared*/
    sint *kmerHeapTblSI = 0; /*for get_kmerCnt*/;
    sint *cntHeapArySI = 0;  /*for get_kmerCnt*/
@@ -1037,7 +1029,10 @@ main(
    \*****************************************************/
 
    init_seqST(&seqStackST);
+
    init_alnSet(&alnSetStackST);
+   set_diScore(&alnSetStackST); /*set diFrag scoring*/
+
    init_dirMatrix(&matrixStackST);
    init_samEntry(&samStackST);
 
@@ -1552,6 +1547,7 @@ main(
    *   - clean up after no errors
    \*****************************************************/
 
+   errSC = 0;
    goto cleanUp_main_sec05_sub04; /*no error*/
 
    /*****************************************************\
@@ -1560,8 +1556,8 @@ main(
    \*****************************************************/
 
    memErr_main_sec05_sub02:;
-   errSC = 1;
-   goto cleanUp_main_sec05_sub04;
+     errSC = 1;
+     goto cleanUp_main_sec05_sub04;
 
    /*****************************************************\
    * Main Sec05 Sub03:
@@ -1569,8 +1565,8 @@ main(
    \*****************************************************/
 
    fileErr_main_sec05_sub03:;
-   errSC = 2;
-   goto cleanUp_main_sec05_sub04;
+     errSC = 2;
+     goto cleanUp_main_sec05_sub04;
 
    /*****************************************************\
    * Main Sec05 Sub04:
@@ -1578,47 +1574,46 @@ main(
    \*****************************************************/
 
    cleanUp_main_sec05_sub04:;
+      if(
+            fqFILE
+         && fqFILE != stdin
+         && fqFILE != stdout
+      ) fclose(fqFILE);
 
-   if(
-         fqFILE
-      && fqFILE != stdin
-      && fqFILE != stdout
-   ) fclose(fqFILE);
+      fqFILE = 0;
 
-   fqFILE = 0;
+      if(
+            outFILE
+         && outFILE != stdin
+         && outFILE != stdout
+      ) fclose(outFILE);
 
-   if(
-         outFILE
-      && outFILE != stdin
-      && outFILE != stdout
-   ) fclose(outFILE);
+      outFILE = 0;
 
-   outFILE = 0;
+      if(
+            samFILE
+         && samFILE != stdin
+         && samFILE != stdout
+      ) fclose(samFILE);
 
-   if(
-         samFILE
-      && samFILE != stdin
-      && samFILE != stdout
-   ) fclose(samFILE);
+      samFILE = 0;
 
-   samFILE = 0;
+      free(kmerHeapTblSI);
+      free(cntHeapArySI);
 
-   free(kmerHeapTblSI);
-   free(cntHeapArySI);
+      freeStack_seqST(&seqStackST);
+      freeStack_alnSet(&alnSetStackST);
+      freeStack_dirMatrix(&matrixStackST);
 
-   freeStack_seqST(&seqStackST);
-   freeStack_alnSet(&alnSetStackST);
-   freeStack_dirMatrix(&matrixStackST);
+      freeHeapAry_kmerCnt(
+         kmerHeapAryST,
+         numRefUI
+      );
 
-   freeHeapAry_kmerCnt(
-      kmerHeapAryST,
-      numRefUI
-   );
+      kmerHeapAryST = 0;
 
-   kmerHeapAryST = 0;
+      free(buffHeapStr);
+      buffHeapStr = 0;
 
-   free(buffHeapStr);
-   buffHeapStr = 0;
-
-   return errSC;
+      return errSC;
 } /*main*/

@@ -1741,9 +1741,10 @@ pid_fluST(
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
    
-   schar *nullSCPtr = idStr;
-   schar *tmpStr = idStr;
-   schar nullSC = 0;
+   signed char *nullSCPtr = idStr;
+   signed char *endStr = 0;
+   signed char *tmpStr = idStr;
+   signed char nullSC = 0;
 
    /*get truncate id at first white space*/
    while(*nullSCPtr++ > 32) ;
@@ -1751,6 +1752,7 @@ pid_fluST(
    --nullSCPtr;
    nullSC = *nullSCPtr;
    *nullSCPtr = '\0';
+   endStr = nullSCPtr;
    nullSCPtr = idStr;
 
    if(
@@ -1776,10 +1778,10 @@ pid_fluST(
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
    if(diFlagSC & def_diFound_fluST)
-      tmpStr = (schar *) "diRNA";
+      tmpStr = (schar *) "diRna";
 
    else
-      tmpStr = (schar *) "vRNA";
+      tmpStr = (schar *) "vRna";
 
    fprintf(
       (FILE *) outFILE,
@@ -1864,7 +1866,7 @@ pid_fluST(
       primEndAryUL[1] + 1
    );
 
-   *nullSCPtr = nullSC; /*revert character back*/
+   *endStr = nullSC; /*revert character back*/
 } /*pid_fluST*/
 
 /*=======================================================\

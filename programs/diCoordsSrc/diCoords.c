@@ -60,6 +60,11 @@
 |   - minEndNtUI:
 |     o how many bases in a DI event must be to be a DI
 |       event
+|   - indelFlagSC:
+|     o holds what type of indels targeting
+|       - 1: dels
+|       - 2: ins
+|       - 3: del/ins
 |   - diStartAryUI:
 |     o pointer to unsigned long to hold the starting
 |       coordinates of each DI event
@@ -69,6 +74,8 @@
 |   - delSizeAryUI:
 |     o pointer to unsigned int array to hold the deletion
 |       size of each DI event
+|   - indelArySC:
+|     o holds indels types found ("D" = del; "I" = ins)
 |   - lenArysUIPtr:
 |     o pointer to unsigned long to hold diStartAryUI and
 |       diEndAryUI lengths
@@ -87,9 +94,11 @@ get_diCoords(
    struct samEntry *samSTPtr,  /*sam entry to scan*/
    unsigned int minDILenUI,    /*min del length for DI*/
    unsigned int minEndNtUI,    /*max NT at ends*/
+   signed char indelFlagSC,    /*holds indel type*/
    unsigned int **diStartAryUI,/*gets start coordinates*/
    unsigned int **diEndAryUI,  /*gets DI end coordinates*/
    unsigned int **delSizeAryUI,/*gets DI deletion sizes*/
+   signed char **indelArySC,   /*indel types found*/
    unsigned int *lenArysUIPtr  /*current arrays lengths*/
 ){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
    ' Fun01 TOC:
@@ -109,11 +118,16 @@ get_diCoords(
    ^   - variable declerations
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
-   sint numDISI = 0;
-   uint coordUI = 0;
-   uint uiCig = 0;
-   uint curNonDIUI = 0;
+   signed int numDISI = 0;
+   unsigned int coordUI = 0;
+   unsigned int uiCig = 0;
+   unsigned int curNonDIUI = 0;
+   unsigned int startUI = 0;    /*start of DI event*/
 
+   unsigned int stopScanUI =
+      samSTPtr->readLenUI - minEndNtUI;
+      /*point in query to stop scaning for DI's*/
+  
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
    ^ Fun01 Sec02:
    ^   - allocate memory
@@ -122,6 +136,7 @@ get_diCoords(
    if(
          ! *diStartAryUI
       || ! *diEndAryUI
+      || ! *indelArySC
       || *lenArysUIPtr < samSTPtr->lenCigUI
    ){ /*If: need to resize the arrays*/
       if(*diStartAryUI)
@@ -158,6 +173,13 @@ get_diCoords(
 
       if(! *delSizeAryUI)
          goto memErr_sec04;
+
+
+     *indelArySC = 0;
+     *indelArySC = malloc(*lenArysUIPtr * sizeof(schar));
+
+     if(! *indelArySC)
+        goto memErr_sec04;
    } /*If: need to resize the arrays*/
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
@@ -165,45 +187,87 @@ get_diCoords(
    ^   - scan for DI coordinates
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
+   if(samSTPtr->cigTypeStr[samSTPtr->lenCigUI - 1] == 'S')
+      stopScanUI -=
+         samSTPtr->cigArySI[samSTPtr->lenCigUI - 1];
+         /*account for softmasking at end*/
+
+   if(samSTPtr->cigTypeStr[0] == 'S')
+      stopScanUI -= samSTPtr->cigArySI[0];
+      /*account for softmasking at start*/
+      
    coordUI = samSTPtr->refStartUI;
+
 
    for(
       uiCig = 0;
       uiCig < samSTPtr->lenCigUI;
       ++uiCig
    ){ /*Loop: find di events*/ 
-      if(samSTPtr->cigTypeStr[uiCig] == 'S')
-         continue; /*soft masked, do not care*/
 
-      if(samSTPtr->cigTypeStr[uiCig] != 'D')
-      { /*If: not a deletion*/
+      if(samSTPtr->cigTypeStr[uiCig] == 'S')
+         continue;
+
+      else if(samSTPtr->cigTypeStr[uiCig] == 'H')
+         continue;
+
+      else if( samSTPtr->cigTypeStr[uiCig] == 'D' )
+      { /*If: have deletion*/
+         startUI = coordUI; /*start of deletion*/
+         coordUI += samSTPtr->cigArySI[uiCig];
+
+         if(! (indelFlagSC & 1) )
+            continue; /*ignoring deletions*/
+      } /*If: have deletion*/
+  
+      else if(samSTPtr->cigTypeStr[uiCig] == 'I')
+      { /*If: have insertion*/
+         startUI = coordUI;
+
+         if(curNonDIUI < minEndNtUI)
+         { /*If: to early for recording DI*/
+            curNonDIUI += samSTPtr->cigArySI[uiCig];
+            continue; /*ignoring insertions*/
+         } /*If: to early for recording DI*/
+
+         curNonDIUI += samSTPtr->cigArySI[uiCig];
+
+         if(! (indelFlagSC & 2) )
+            continue; /*ignoring insertions*/
+      } /*If: have insertion*/
+
+      else
+      { /*If: not indel*/
          curNonDIUI += samSTPtr->cigArySI[uiCig];
          coordUI += samSTPtr->cigArySI[uiCig];
          continue;
-      } /*If: not a deletion*/
+      } /*If: not indel*/
 
-      if(samSTPtr->cigArySI[uiCig] < (sint) minDILenUI)
-      { /*If: deletion is to small*/
-         coordUI += samSTPtr->cigArySI[uiCig];
-         continue; /*if not a deletion*/
-      } /*If: deletion is to small*/
 
-      (*diStartAryUI)[numDISI] = coordUI;/*index 0 start*/
-      coordUI += samSTPtr->cigArySI[uiCig];
-      (*diEndAryUI)[numDISI] = coordUI - 1;/*index 0 end*/
+      if(curNonDIUI >= stopScanUI)
+         break; /*finished*/
 
-      (*delSizeAryUI)[numDISI] =
-         samSTPtr->cigArySI[uiCig];
+      else if(curNonDIUI < minEndNtUI)
+         continue; /*to early for DI event*/
 
-      /*check if DI event is out of bounds*/
-      if(numDISI > 0 || curNonDIUI >= minEndNtUI)
-         ++numDISI; /*number DI events*/
+      else if(
+         samSTPtr->cigArySI[uiCig] < (sint) minDILenUI
+      ) continue; /*DI event to small*/
 
-      curNonDIUI = 0;
+
+      (*delSizeAryUI)[numDISI]= samSTPtr->cigArySI[uiCig];
+      (*indelArySC)[numDISI]= samSTPtr->cigTypeStr[uiCig];
+      (*diStartAryUI)[numDISI] = startUI;/*first DI base*/
+
+      if(samSTPtr->cigTypeStr[uiCig] == 'D')
+         (*diEndAryUI)[numDISI] = coordUI - 1;/*end del*/
+      else
+         (*diEndAryUI)[numDISI] = coordUI + 1;
+         /*base after insertion*/
+
+      ++numDISI; /*number DI events*/
+
    } /*Loop: find di events*/ 
-
-   if(curNonDIUI < minEndNtUI)
-      --numDISI;
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
    ^ Fun01 Sec04:
@@ -213,11 +277,11 @@ get_diCoords(
    goto cleanUp_sec04;
 
    memErr_sec04:;
-   numDISI = -1;
-   goto cleanUp_sec04;
+      numDISI = -1;
+      goto cleanUp_sec04;
 
    cleanUp_sec04:;
-   return(numDISI);
+      return(numDISI);
 } /*get_diCoords*/
 
 /*-------------------------------------------------------\
@@ -244,30 +308,42 @@ scan_diCoords(
    unsigned int minDILenUI,    /*min del length for DI*/
    unsigned int minEndNtUI     /*max NT at ends*/
 ){ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-   ' Fun01 TOC:
+   ' Fun02 TOC:
    '   - gets start and ending coordinates for DI events
-   '   o fun01 sec01:
+   '   o fun02 sec02:
    '     - variable declerations
-   '   o fun01 sec02:
+   '   o fun02 sec02:
    '     - scan for DI coordinates
-   '   o fun01 sec03:
+   '   o fun02 sec03:
    '     - clean up and return
    \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun01 Sec01:
+   ^ Fun02 Sec02:
    ^   - variable declerations
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
    sint numDISI = 0;
    uint coordUI = 0;
    uint uiCig = 0;
-   uint curNonDIUI = 0;
+
+   unsigned int stopScanUI =
+      samSTPtr->readLenUI - minEndNtUI;
+      /*point in query to stop scaning for DI's*/
 
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun01 Sec02:
+   ^ Fun02 Sec02:
    ^   - scan for DI coordinates
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+   if(samSTPtr->cigTypeStr[samSTPtr->lenCigUI - 1] == 'S')
+      stopScanUI -=
+         samSTPtr->cigArySI[samSTPtr->lenCigUI - 1];
+         /*account for softmasking at end*/
+
+   if(samSTPtr->cigTypeStr[0] == 'S')
+      stopScanUI -= samSTPtr->cigArySI[0];
+      /*account for softmasking at start*/
 
    coordUI = samSTPtr->refStartUI;
 
@@ -279,33 +355,27 @@ scan_diCoords(
       if(samSTPtr->cigTypeStr[uiCig] == 'S')
          continue; /*soft masked, do not care*/
 
-      if(samSTPtr->cigTypeStr[uiCig] != 'D')
-      { /*If: not a deletion*/
-         curNonDIUI += samSTPtr->cigArySI[uiCig];
+      else if(samSTPtr->cigTypeStr[uiCig] != 'D')
+      { /*Else If: not a deletion*/
          coordUI += samSTPtr->cigArySI[uiCig];
          continue;
-      } /*If: not a deletion*/
+      } /*Else If: not a deletion*/
 
-      if(samSTPtr->cigArySI[uiCig] < (sint) minDILenUI)
-      { /*If: deletion is to small*/
+      else if(
+         samSTPtr->cigArySI[uiCig] < (sint) minDILenUI
+      ){ /*Else If: deletion is to small*/
          coordUI += samSTPtr->cigArySI[uiCig];
          continue; /*if not a deletion*/
-      } /*If: deletion is to small*/
+      }  /*Else If: deletion is to small*/
 
-      coordUI += samSTPtr->cigArySI[uiCig];
+      else if(coordUI >= stopScanUI)
+         break; /*finished (end of query scan area)*/
 
-      /*check if DI event is out of bounds*/
-      if(numDISI > 0 || curNonDIUI >= minEndNtUI)
-         ++numDISI; /*number DI events*/
-
-      curNonDIUI = 0;
+      ++numDISI; /*number DI events*/
    } /*Loop: find di events*/ 
 
-   if(curNonDIUI < minEndNtUI)
-      --numDISI;
-
    /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-   ^ Fun01 Sec03:
+   ^ Fun02 Sec03:
    ^   - return
    \<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
@@ -328,7 +398,12 @@ pDIHead_diCoords(
 ){
    fprintf(
       (FILE *) outFILE,
-      "read\tref\tnum_di\tstart_di\tend_di\tnum_del\n"
+      "read\tref\tstart_di\tend_di\tnum_del\ttype"
+   );
+
+   fprintf(
+      (FILE *) outFILE,
+      "\tref_start\tref_end\tnum_di\n"
    );
 } /*pDIHead_diCoords*/
 
@@ -349,8 +424,14 @@ pDIHead_diCoords(
 |   - delSizeAryUI:
 |     o unsigned int array with the deletion size for each
 |       DI event
+|   - indelArySC:
+|     o holds indels types found ("D" = del; "I" = ins)
 |   - numDIsSI:
 |     o number of DI events in diStartAryUI/diEndAryUI
+|   - refStartUI:
+|     o frist reference base in alignment
+|   - refEndUI:
+|     o last reference base in alignment
 |   - outFILE:
 |     o file to print to
 | Output:
@@ -365,7 +446,10 @@ pDI_diCoords(
    unsigned int *diStartAryUI, /*starting coordiantes*/
    unsigned int *diEndAryUI,   /*ending coordiantes*/
    unsigned int *delSizeAryUI, /*size of each deletion*/
+   signed char *indelArySC,    /*indel types found*/
    signed int numDIsSI,        /*number of DI events*/
+   unsigned int refStartUI,    /*first mapped ref base*/
+   unsigned int refEndUI,      /*last mapped ref base*/
    void *outFILE               /*filt to print to*/
 ){
    sint siDI = 0;
@@ -377,13 +461,16 @@ pDI_diCoords(
    ){ /*Loop: print out coordinates*/
       fprintf(
          (FILE *) outFILE,
-         "%s\t%s\t%i\t%u\t%u\t%u\n",
+         "%s\t%s\t%u\t%u\t%u\t%c\t%u\t%u\t%i\n",
          qryIdStr,
          refIdStr,
-         numDIsSI,
-         diStartAryUI[siDI],
-         diEndAryUI[siDI],
-         delSizeAryUI[siDI]
+         diStartAryUI[siDI] + 1,
+         diEndAryUI[siDI] + 1,
+         delSizeAryUI[siDI],
+         indelArySC[siDI],
+         refStartUI + 1,
+         refEndUI + 1,
+         numDIsSI
       );
    } /*Loop: print out coordinates*/
 
@@ -391,10 +478,9 @@ pDI_diCoords(
    { /*If: no DI events*/
       fprintf(
          (FILE *) outFILE,
-         "%s\t%s\t%i\tNA\tNA\tNA\n",
+         "%s\t%s\tNA\tNA\tNA\tNA\tNA\tNA\t0\n",
          qryIdStr,
-         refIdStr,
-         numDIsSI
+         refIdStr
       );
    } /*If: no DI events*/
 } /*pDI_diCoords*/

@@ -1,7 +1,7 @@
 b getDICoords.c:723
-b getDICoords.c:723 if numEntryUL == 3103
+b diCoords.c:199
 
-r -sam ~/files/testing/diflu/map-cal2009-filt.sam
+r -sam test.sam
 
 define pdel
    set $cigCnt = 0

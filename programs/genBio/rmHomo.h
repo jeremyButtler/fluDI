@@ -1,10 +1,89 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-' Has verision numbers for bio tools
+' rmHomo SOF: Start Of File
+'   - removes indels in homopolymers
+'   o header:
+'     - guards and forward declarations
+'   o fun01: indel_rmHomo
+'     - remove indels from homopolymers
+'   o license:
+'     - licensing for this code (public domain / mit)
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#define def_year_bioTools 2025
-#define def_month_bioTools 1
-#define def_day_bioTools 6
+/*-------------------------------------------------------\
+| Header:
+|   - guards and forward declarations
+\-------------------------------------------------------*/
+
+#ifndef REMOVE_INDELS_IN_HOMOPOLYMERS_H
+#define REMOVE_INDELS_IN_HOMOPOLYMERS_H
+
+struct samEntry;
+
+/*-------------------------------------------------------\
+| Fun01: indel_rmHomo
+|   - remove indels from homopolymers
+| Input:
+|   - samSTPtr:
+|     o samEntry struct pointer to sequence to remove
+|       indels from homopolymers
+|   - refStr:
+|     o c-string with reference sequence in samSTPtr is
+|       mapped to
+|   - minHomoSI:
+|     o minimum homopolymer length to remove indel from
+|   - maxIndelSI:
+|     o maximum indel size to remove
+|   - maskSC:
+|     o base to mask deletions with
+|     o if 0 if(! maskSC), then uses reference base
+|   - seqBuffStrPtr:
+|     o c-string pointer to buffer to use in copy sequence
+|     o size to avoid reallocation of buffer
+|       * sequence length + number deletions + 8
+|   - sizeSeqUIPtr:
+|     o unsigned long pointer to with size of
+|       seqBuffStrPtr
+|   - qBuffStrPtr:
+|     o c-string pointer to buffer to use in copy q-score
+|       entry
+|     o size to avoid reallocation of buffer
+|       * sequence length + number deletions + 8
+|   - sizeQUIPtr:
+|     o unsigned long pointer to with size of qBuffStrPtr
+| Output:
+|   - Modifies:
+|     o seqStr in samSTPtr to have no homopolymer indels
+|     o seqBuffStrPtr and qBuffStrPtr to be resized (or
+|       allocated) to sequence length + deletions
+|     o sizeQUIPtr and sizeSeqUIPtr to have their buffer
+|       size if seqBuffStrPtr or qBuffStrPtr are resized
+|   - Returns:
+|     o 0 for no errors
+|     o 1 for memory errors
+\-------------------------------------------------------*/
+signed char
+indel_rmHomo(
+   struct samEntry *samSTPtr,/*sequence with indels*/
+   signed char *refStr,      /*reference sequence*/
+   signed int minHomoSI,     /*min homoplymer length*/
+   signed int maxIndelSI,    /*indel to large to remove*/
+   signed char maskSC,       /*base to mask dels with*/
+   signed char **seqBuffStrPtr, /*sequence buffer*/
+   unsigned int *sizeSeqUIPtr,  /*size of seqBuffStrPtr*/
+   signed char **qBuffStrPtr,   /*q-score buffer*/
+   unsigned int *sizeQUIPtr     /*size of qBuffStrPtr*/
+);
+   /*having users provide temporary buffers was choosen,
+   `  because I need a temporary buffer to get sam
+   `  entries. Often times this temporary buffer will
+   `  be able to be easily split into two separate
+   `  buffers of the correct size. So, no point adding
+   `  more memory and waste time allocating memory.
+   `  This does come at the cost of having to always
+   `  copy the sequence though.
+   */
+
+#endif
 
 /*=======================================================\
 : License:
@@ -50,7 +129,7 @@
 : 
 : MIT License:
 : 
-: Copyright (c) 2024 jeremyButtler
+: Copyright (c) 2025 jeremyButtler
 : 
 : Permission is hereby granted, free of charge, to any
 :   person obtaining a copy of this software and

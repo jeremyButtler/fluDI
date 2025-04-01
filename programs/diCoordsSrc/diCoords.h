@@ -41,6 +41,12 @@
 |   - minEndNtUI:
 |     o how many bases in a DI event must be to be a DI
 |       event
+|       event
+|   - indelFlagSC:
+|     o holds what type of indels targeting
+|       - 1: dels
+|       - 2: ins
+|       - 3: del/ins
 |   - diStartAryUI:
 |     o pointer to unsigned long to hold the starting
 |       coordinates of each DI event
@@ -50,6 +56,8 @@
 |   - delSizeAryUI:
 |     o pointer to unsigned int array to hold the deletion
 |       size of each DI event
+|   - indelArySC:
+|     o holds indels types found ("D" = del; "I" = ins)
 |   - lenArysUIPtr:
 |     o pointer to unsigned long to hold diStartAryUI and
 |       diEndAryUI lengths
@@ -68,9 +76,11 @@ get_diCoords(
    struct samEntry *samSTPtr,  /*sam entry to scan*/
    unsigned int minDILenUI,    /*min del length for DI*/
    unsigned int minEndNtUI,    /*max NT at ends*/
+   signed char indelFlagSC,    /*holds indel type*/
    unsigned int **diStartAryUI,/*gets start coordinates*/
    unsigned int **diEndAryUI,  /*gets DI end coordinates*/
    unsigned int **delSizeAryUI,/*gets DI deletion sizes*/
+   signed char **indelArySC,   /*indel types found*/
    unsigned int *lenArysUIPtr  /*current arrays lengths*/
 );
 
@@ -131,8 +141,14 @@ pDIHead_diCoords(
 |   - delSizeAryUI:
 |     o unsigned int array with the deletion size for each
 |       DI event
+|   - indelArySC:
+|     o holds indels types found ("D" = del; "I" = ins)
 |   - numDIsSI:
 |     o number of DI events in diStartAryUI/diEndAryUI
+|   - refStartUI:
+|     o frist reference base in alignment
+|   - refEndUI:
+|     o last reference base in alignment
 |   - outFILE:
 |     o file to print to
 | Output:
@@ -147,7 +163,10 @@ pDI_diCoords(
    unsigned int *diStartAryUI, /*starting coordiantes*/
    unsigned int *diEndAryUI,   /*ending coordiantes*/
    unsigned int *delSizeAryUI, /*size of each deletion*/
+   signed char *indelArySC,    /*indel types found*/
    signed int numDIsSI,        /*number of DI events*/
+   unsigned int refStartUI,    /*first mapped ref base*/
+   unsigned int refEndUI,      /*last mapped ref base*/
    void *outFILE               /*filt to print to*/
 );
 

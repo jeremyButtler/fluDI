@@ -1,4 +1,8 @@
 b getDIIds.c:492
 b getDIIds.c:538 if entryOnUL == 15
+b diIds.c:1976 if seqStackST.idStr[13] == '2' && seqStackST.idStr[14] == '4'
+b diIds.c:1976 if seqStackST.idStr[13] == '6'
+# is index 483, before seqPosUL is 51 (2nd round)
+#   483 not added on
 
-r -fq "$HOME/files/testing/diflu/SRR29165088.fastq" -slow
+r -fq "$HOME/files/testing/diflu/SRR29165088.fastq" -fast

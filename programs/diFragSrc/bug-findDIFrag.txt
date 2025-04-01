@@ -1,6 +1,7 @@
 b findDIFrag.c:1248
 
-r -ref $HOME/files/testing/diflu/fluGenbankRef.fa -fq $HOME/files/testing/diflu/SRR29165088.fastq
+#r -ref $HOME/files/testing/diflu/fluGenbankRef.fa -fq $HOME/files/testing/diflu/SRR29165088.fastq
+r -ref fluGenbankRef.fa -fq $HOME/files/testing/diflu/SRR29165088.fastq
 
 define pdel
    set $cigCnt = 0

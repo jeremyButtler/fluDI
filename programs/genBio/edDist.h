@@ -4,6 +4,8 @@
 '     filtering)
 '   o header:
 '     - included libraries
+'   o .h st01: res_edDist
+'     - holds results and windows for edDist struct 
 '   o fun01: blank_res_edDist
 '     - blanks (sets 0) values in a res_edDist struct
 '   o fun02: init_res_edDist

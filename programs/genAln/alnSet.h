@@ -3,7 +3,7 @@
 '  - holds settings structures and supporting functions
 '    for my pairwise aligners
 '  o header:
-'    - Header guards and defined variables
+'    - header guards and defined variables
 '  o .h st01 alnSet:
 '     o Holds settings for my alignment program
 '  o .h fun01 setScore_alnSet:
@@ -27,14 +27,17 @@
 '  o fun10 indexToSeq_alnSet:
 '    - Converts a sequence of lookup indexs back into
 '      uppercase characters (a-z)
-'  o fun11: changeGap_alnSet
+'  o fun11: revCmpIndex_alnSet
+'    - reverse complement sequence in lookup index format
+'      (from seqToIndex_alnSet)
+'  o fun12: changeGap_alnSet
 '    - changes the gap penalties in an alnSet structure
-'  o fun13 init_alnSet:
+'  o fun14 init_alnSet:
 '    - Set all values in altSet (alingment settings)
 '      structure to defaults
-'  o fun12: maxScore_alnSet
+'  o fun13: maxScore_alnSet
 '    - finds maximum score possible for a sequence
-'  o fun14: pDefMatchMatrix_alnSet
+'  o fun15: pDefMatchMatrix_alnSet
 '    - print out the default match matrix
 '  o license:
 '    - Licensing for this code (public domain / mit)
@@ -318,7 +321,31 @@ indexToSeq_alnSet(
 );
 
 /*-------------------------------------------------------\
-| Fun11: changeGap_alnSet
+| Fun11: revCmpIndex_alnSet
+|   - reverse complement sequence in lookup index format
+|     (from seqToIndex_alnSet)
+| Input:
+|   - seqStr:
+|     o c-string with look up index sequence to
+|       reverse complement
+|   - syncStr:
+|     o c-string to keep in sync with seqStr
+|     o use 0/null for no sequence
+|   - lenSeqSL:
+|     o length of sequence to convert (index 1)
+| Output:
+|   - Modifies:
+|     o seqStr to be reverse complemented
+\-------------------------------------------------------*/
+void
+revCmpIndex_alnSet(
+   signed char *seqStr,
+   signed char *syncStr,
+   unsigned long lenSeqUL
+);
+
+/*-------------------------------------------------------\
+| Fun12: changeGap_alnSet
 |   - changes the gap penalties in an alnSet structure
 | Input:
 |   - alnSetSTPtr:
@@ -342,7 +369,7 @@ changeGap_alnSet(
 );
 
 /*-------------------------------------------------------\
-| Fun12: maxScore_alnSet
+| Fun13: maxScore_alnSet
 |  - finds maximum score possible for a sequence
 | Input:
 |  - seqStr:
@@ -369,7 +396,7 @@ maxScore_alnSet(
 );
 
 /*-------------------------------------------------------\
-| Fun13: init_alnSet
+| Fun14: init_alnSet
 |  - Set values in altSet (alingment settings) structure
 |    to default values
 | Input:
@@ -386,7 +413,7 @@ init_alnSet(
 );
 
 /*-------------------------------------------------------\
-| Fun14: pDefMatchMatrix_alnSet
+| Fun15: pDefMatchMatrix_alnSet
 |   - print out the default match matrix
 | Input:
 |   - outFILE:

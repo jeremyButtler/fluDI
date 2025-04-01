@@ -29,23 +29,28 @@ objFiles=\
    $(genAln)/indexToCoord.$O \
    $(genAln)/alnSet.$O \
    $(genAln)/dirMatrix.$O \
+   $(genAln)/needle.$O \
    $(genAln)/water.$O \
    $(genAln)/memwater.$O \
    $(genAln)/kmerFind.$O \
    $(genClust)/edClust.$O \
    $(genClust)/clustST.$O \
    $(diFrag)/diScan.$O \
+   $(diFrag)/diScore.$O \
    $(diIds)/fluST.$O \
    fluDI.$O
 
 all: fluDI.$O
 	$(LD) -o $(NAME) $(CFLAGS) $(objFiles)
 
-fluDI.$O: fluDI.c ../fluDI.h $(diFrag)/diScan.$O $(diIds)/fluST.$O $(genClust)/edClust.$O $(genAln)/kmerFind.$O
+fluDI.$O: fluDI.c ../fluDI.h $(diFrag)/diScan.$O $(diFrag)/diScore.$O $(diIds)/fluST.$O $(genClust)/edClust.$O $(genAln)/kmerFind.$O $(diIds)/defsDiIds.h
 	$(CC) -o fluDI.$O -c $(CFLAGS) fluDI.c
 
-$(diFrag)/diScan.$O: $(diFrag)/diScan.c $(diFrag)/diScan.h  $(genBio)/kmerCnt.$O $(genLib)/genMath.$O $(diCoords)/diCoords.$O $(genAln)/water.$O $(genAln)/dirMatrix.$O 
+$(diFrag)/diScan.$O: $(diFrag)/diScan.c $(diFrag)/diScan.h  $(genBio)/kmerCnt.$O $(genLib)/genMath.$O $(diCoords)/diCoords.$O $(genAln)/needle.$O $(genAln)/water.$O $(genAln)/dirMatrix.$O $(diFrag)/diScore.h
 	$(CC) -o $(diFrag)/diScan.$O -c $(CFLAGS) $(diFrag)/diScan.c
+
+$(diFrag)/diScore.$O: $(diFrag)/diScore.c $(diFrag)/diScore.h  $(genAln)/alnSet.$O
+	$(CC) -o $(diFrag)/diScore.$O -c $(CFLAGS) $(diFrag)/diScore.c
 
 $(diIds)/fluST.$O: $(diIds)/fluST.c $(diIds)/fluST.h $(diIds)/fluSeg.h $(genLib)/shellSort.$O $(genAln)/alnDefs.h $(genLib)/dataTypeShortHand.h
 	$(CC) -o $(diIds)/fluST.$O -c $(CFLAGS) $(diIds)/fluST.c
@@ -103,6 +108,9 @@ $(genAln)/alnSet.$O: $(genAln)/alnSet.c $(genAln)/alnSet.h $(genAln)/alnDefs.h $
 
 $(genAln)/dirMatrix.$O: $(genAln)/dirMatrix.c $(genAln)/dirMatrix.h $(genAln)/indexToCoord.$O $(genAln)/alnSet.$O $(genBio)/samEntry.$O $(genBio)/seqST.$O $(genLib)/charCp.$O
 	$(CC) -o $(genAln)/dirMatrix.$O -c $(CFLAGS) $(genAln)/dirMatrix.c
+
+$(genAln)/needle.$O: $(genAln)/needle.c $(genAln)/needle.h $(genAln)/dirMatrix.$O $(genLib)/genMath.h
+	$(CC) -o $(genAln)/needle.$O -c $(CFLAGS) $(genAln)/needle.c
 
 $(genAln)/water.$O: $(genAln)/water.c $(genAln)/water.h $(genAln)/dirMatrix.$O $(genLib)/genMath.h
 	$(CC) -o $(genAln)/water.$O -c $(CFLAGS) $(genAln)/water.c

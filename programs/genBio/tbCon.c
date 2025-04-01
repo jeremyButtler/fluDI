@@ -385,6 +385,7 @@ freeStack_set_tbCon(
 |     o def_header_tbConDefs for sam file header entry
 |     o def_noMap_tbConDefs for an unmapped read
 |     o def_noSeq_tbConDefs for a read missing a sequence
+|     o def_lowMapq_tbConDefs for low mapping qualities
 |     o def_memErr_tbConDefs for memory errors
 \-------------------------------------------------------*/
 signed char
@@ -1418,6 +1419,10 @@ collapse_tbCon(
 
       if(retSamST[siFrag].lenCigBuffUI < lenCigUI + 1)
       { /*If: I need to allocate memory for cigar buff*/
+          if(retSamST->cigTypeStr)
+             free(retSamST->cigTypeStr);
+          retSamST->cigTypeStr = 0;
+
           /*Make the cigar types buffer*/
           retSamST[siFrag].cigTypeStr =
              malloc((lenCigUI + 9) * sizeof(schar));
@@ -1426,6 +1431,11 @@ collapse_tbCon(
              goto memErr_fun13_sec06_sub02;
 
           retSamST[siFrag].lenCigBuffUI = lenCigUI;
+
+
+          if(retSamST->cigArySI)
+             free(retSamST->cigArySI);
+          retSamST->cigArySI = 0;
 
           retSamST[siFrag].cigArySI =
              malloc((lenCigUI + 9) * sizeof(sint));
@@ -2262,6 +2272,10 @@ noFragCollapse_tbCon(
 
    if(retSamST->lenCigBuffUI < lenCigUI + 1)
    { /*If: I need to allocate memory for cigar buff*/
+       if(retSamST->cigTypeStr)
+          free(retSamST->cigTypeStr);
+       retSamST->cigTypeStr = 0;
+
        /*Make the cigar types buffer*/
        retSamST->cigTypeStr =
           malloc((lenCigUI + 9) * sizeof(schar));
@@ -2270,6 +2284,11 @@ noFragCollapse_tbCon(
           goto memErr_fun14_sec06_sub02;
 
        retSamST->lenCigBuffUI = lenCigUI;
+
+
+       if(retSamST->cigArySI)
+          free(retSamST->cigArySI);
+       retSamST->cigArySI = 0;
 
        retSamST->cigArySI =
           malloc((lenCigUI + 9) * sizeof(sint));

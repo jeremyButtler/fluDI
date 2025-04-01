@@ -19,6 +19,8 @@
 '     - converts base 10 c-string to a signed short
 '   o fun08: strToSC_base10str
 '     - converts base 10 c-string to a signed char
+'   o fun09: strToF_base10str
+'     - converts base 10 c-string to float
 '   o license:
 '     - Licensing for this code (public domain / mit)
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -514,6 +516,102 @@ strToSC_base10str(
 
    return uiDig;
 } /*strToSC_base10str*/
+
+/*-------------------------------------------------------\
+| Fun09: strToF_base10str
+|   - converts base 10 c-string to float
+| Input:
+|   - inStr:
+|     o c-string with base 10 number to convert
+|   - retF:
+|     o pointer to float to hold converted number
+| Output:
+|   - Returns:
+|     o number of characters converted
+|   - Modifies:
+|     o retF to hold the float
+| Note:
+|   - only converts until retF overflows
+\-------------------------------------------------------*/
+unsigned char
+strToF_base10str(
+   signed char *inStr,
+   float *retF
+){
+   unsigned char uiDig = 0;
+   float tmpF = 0;
+   signed int powerTenSI;
+   unsigned char decUC = 0;
+
+   *retF = 0;
+
+
+   for(
+      uiDig = (inStr[0] == '-');
+      uiDig < def_maxF_base10str;
+      ++uiDig
+   ){ /*Loop: Convert digits with no overflow concern*/
+      if(
+            inStr[uiDig] > 47
+         && inStr[uiDig] < 58
+      ) *retF = *retF * 10 + inStr[uiDig] - 48;
+      else
+         break;
+   } /*Loop: Convert digits with no overflow concern*/
+
+
+   if(
+         inStr[uiDig] > 47
+      && inStr[uiDig] < 58
+   ){ /*If have a last digit (could overflow)*/
+
+      if(*retF <= def_maxF_base10str / 10)
+      { /*If: number is < the max float size/10*/
+         tmpF = 10 * *retF + inStr[uiDig] - 48;
+
+         if(tmpF > 9)
+         { /*If: I have room for 10th digit*/
+            *retF = tmpF;
+            ++uiDig;
+         } /*If: I have room for 10th digit*/
+
+      } /*If: number is < the max float size/10*/
+   } /*If have a last digit (could overflow)*/
+
+
+   if(inStr[uiDig] == '.')
+   { /*If: have decimal*/
+
+      powerTenSI = 10;
+      ++uiDig;
+
+      while(decUC < def_floatPercision_base10str)
+      { /*Loop: add decimial to float*/
+         if(
+               inStr[uiDig] > 47
+            && inStr[uiDig] < 58
+         ){ /*If: have digit*/
+            *retF +=
+               (float)
+               ( inStr[uiDig] - 48 ) / powerTenSI;
+            powerTenSI *= 10;
+         }  /*If: have digit*/
+
+         else
+            break;
+
+         ++decUC;
+         ++uiDig;
+      } /*Loop: add decimial to float*/
+
+   } /*If: have decimal*/
+
+
+   if(inStr[0] == '-')
+      *retF = -(*retF);
+
+   return uiDig;
+} /*strToF_base10str*/
 
 /*=======================================================\
 : License:
